@@ -4,289 +4,655 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RD Investment Holdings (Pty) Ltd</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy: #0d1b2a;
-      --navy-light: #1a2f47;
-      --accent: #c0392b;
-      --accent-light: #e74c3c;
-      --text: #f0f4f8;
-      --muted: #8fa3b8;
-      --white: #ffffff;
-      --card-bg: #162436;
+      --ink:      #0B141A;
+      --ink-soft: #1F2C33;
+      --ink-mid:  #162026;
+      --green:    #25D366;
+      --green-deep:#005C4B;
+      --amber:    #F5B82E;
+      --paper:    #F7F5F0;
+      --text:     rgba(247,245,240,0.95);
+      --muted:    rgba(247,245,240,0.55);
+      --line:     rgba(247,245,240,0.10);
+      --card:     #1a2830;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--navy);
+      background: var(--ink);
       color: var(--text);
       line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV */
+    ::selection { background: var(--green); color: var(--ink); }
+
+    /* ─── NAV ─── */
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 5%;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--line);
       position: sticky;
       top: 0;
-      background: var(--navy);
+      background: var(--ink);
       z-index: 100;
     }
 
     .nav-logo {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 110%;
       font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--white);
+      letter-spacing: -0.01em;
+      color: var(--text);
+      text-decoration: none;
     }
 
-    .nav-logo span {
-      color: var(--accent);
-    }
+    .nav-logo span { color: var(--green); }
+
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
 
     nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       transition: color 0.2s;
     }
 
-    nav a:hover { color: var(--white); }
+    nav a:hover { color: var(--text); }
 
-    /* HERO */
+    .nav-cta {
+      background: var(--green);
+      color: var(--ink) !important;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      padding: 0.45rem 1.1rem;
+      border-radius: 2rem;
+      font-size: 0.83rem;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: #20bf5a !important; }
+
+    /* ─── HERO ─── */
     .hero {
       text-align: center;
       padding: 7rem 5% 5rem;
-      max-width: 800px;
+      max-width: 820px;
       margin: 0 auto;
     }
 
-    .hero-label {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.3rem 0.9rem;
-      border-radius: 2rem;
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--green);
+      border: 1px solid rgba(37,211,102,.3);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
       margin-bottom: 1.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
+
+    .hero-tag .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
 
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.2;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 115%;
+      font-size: clamp(2rem, 5.5vw, 3.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text);
       margin-bottom: 1.25rem;
-      color: var(--white);
     }
 
+    .hero h1 em { font-style: normal; color: var(--green); }
+
     .hero p {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--muted);
-      max-width: 580px;
+      max-width: 54ch;
       margin: 0 auto 2.5rem;
     }
 
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
     .btn {
-      display: inline-block;
-      padding: 0.85rem 2rem;
-      border-radius: 0.4rem;
-      font-size: 0.95rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s;
-      cursor: pointer;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 13px 24px;
+      border-radius: 10px;
       border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform .12s, box-shadow .12s;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: var(--white);
-    }
+    .btn-green { background: var(--green); color: var(--ink); }
+    .btn-green:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,.3); }
 
-    .btn-primary:hover { background: var(--accent-light); }
-
-    .btn-outline {
+    .btn-ghost {
       background: transparent;
-      color: var(--white);
-      border: 1px solid rgba(255,255,255,0.2);
-      margin-left: 0.75rem;
+      color: var(--text);
+      border: 1px solid var(--line);
     }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green); }
 
-    .btn-outline:hover { border-color: rgba(255,255,255,0.5); }
-
-    /* DIVIDER */
-    .divider {
-      width: 60px;
-      height: 3px;
-      background: var(--accent);
-      margin: 0 auto 1.5rem;
-      border-radius: 2px;
-    }
-
-    /* SECTION */
-    section {
-      padding: 5rem 5%;
+    /* ─── SECTIONS ─── */
+    .section-wrap {
       max-width: 1100px;
       margin: 0 auto;
+      padding: 5rem 5%;
     }
 
     .section-label {
-      font-size: 0.75rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--green);
       margin-bottom: 0.5rem;
     }
 
     .section-title {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 1rem;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 112%;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 0.75rem;
     }
 
     .section-sub {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: var(--muted);
-      max-width: 560px;
+      max-width: 54ch;
       margin-bottom: 3rem;
     }
 
-    /* CARDS */
+    /* ─── CARDS ─── */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      gap: 1.25rem;
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
       padding: 2rem;
     }
 
-    .card-icon {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-    }
+    .card-icon { font-size: 1.75rem; margin-bottom: 1rem; }
 
     .card h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--white);
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      font-stretch: 110%;
+      font-size: 1.05rem;
+      color: var(--text);
       margin-bottom: 0.5rem;
     }
 
-    .card p {
-      font-size: 0.9rem;
+    .card p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: var(--green);
+      margin-bottom: 1.25rem;
+      border-radius: 2px;
+    }
+
+    /* ═══════════════════════════
+       LEXI SECTION
+    ═══════════════════════════ */
+    .lexi-section {
+      border-top: 1px solid rgba(37,211,102,.15);
+      border-bottom: 1px solid rgba(37,211,102,.15);
+      background: var(--ink-mid);
+    }
+
+    .lexi-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 5%;
+    }
+
+    /* Header */
+    .lexi-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .lexi-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--green);
+      border: 1px solid rgba(37,211,102,.3);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lexi-tag .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.6s infinite;
+    }
+
+    .lexi-header h2 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 115%;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+
+    .lexi-header h2 em { font-style: normal; color: var(--green); }
+
+    .lexi-header p {
       color: var(--muted);
-      line-height: 1.7;
+      font-size: 1rem;
+      max-width: 52ch;
+      margin: 0 auto;
     }
 
-    /* NEXAGENT SECTION */
-    .nexagent-section {
-      background: var(--navy-light);
-      border-top: 1px solid rgba(255,255,255,0.06);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .nexagent-section section {
+    /* Demo grid */
+    .lexi-demo-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 360px;
       gap: 4rem;
       align-items: center;
     }
 
-    @media (max-width: 768px) {
-      .nexagent-section section { grid-template-columns: 1fr; gap: 2rem; }
-      .btn-outline { margin-left: 0; margin-top: 0.75rem; }
+    /* Phone */
+    .lexi-phone-col { display: flex; justify-content: center; }
+
+    .l-phone {
+      width: 320px;
+      background: #000;
+      border-radius: 36px;
+      padding: 9px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.07);
+      position: relative;
     }
 
-    .nexagent-badge {
-      display: inline-block;
-      background: rgba(192,57,43,0.15);
-      color: var(--accent-light);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+    .l-phone::before {
+      content: '';
+      position: absolute;
+      top: 17px; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 22px;
+      background: #000;
+      border-radius: 12px;
+      z-index: 5;
+    }
+
+    .l-screen {
+      background: var(--ink);
+      border-radius: 28px;
+      overflow: hidden;
+      height: 560px;
+      display: flex;
+      flex-direction: column;
+      background-image: radial-gradient(rgba(255,255,255,.015) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+
+    .l-head {
+      background: var(--ink-soft);
+      padding: 32px 14px 11px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0,0,0,.3);
+      flex-shrink: 0;
+    }
+
+    .l-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), var(--green-deep));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900; color: var(--ink); font-size: 0.95rem;
+    }
+
+    .l-head .l-name { font-weight: 600; font-size: 0.88rem; color: var(--text); line-height: 1.3; }
+    .l-head .l-status { font-size: 0.7rem; color: var(--green); }
+
+    .l-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .l-body::-webkit-scrollbar { width: 0; }
+
+    .l-chip {
+      align-self: center;
+      font-size: 0.65rem;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--muted);
+      background: var(--ink-soft);
+      padding: 3px 10px;
+      border-radius: 7px;
+      margin-bottom: 3px;
+    }
+
+    .l-msg {
+      max-width: 84%;
+      padding: 8px 11px;
+      border-radius: 11px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: lMsgIn .28s ease forwards;
+    }
+
+    @keyframes lMsgIn { to { opacity: 1; transform: translateY(0); } }
+
+    .l-msg .lt {
+      display: block;
+      text-align: right;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,.4);
+      margin-top: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .l-msg.in { align-self: flex-start; background: var(--ink-soft); border-top-left-radius: 3px; color: var(--text); }
+    .l-msg.out { align-self: flex-end; background: var(--green-deep); border-top-right-radius: 3px; color: var(--text); }
+
+    .l-typing {
+      align-self: flex-end;
+      background: var(--green-deep);
+      border-radius: 11px;
+      border-top-right-radius: 3px;
+      padding: 11px 14px;
+      display: none;
+    }
+
+    .l-typing.show {
+      display: flex; gap: 5px;
+      opacity: 0;
+      animation: lMsgIn .2s ease forwards;
+    }
+
+    .l-typing i {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.7);
+      animation: lBounce 1.2s infinite;
+    }
+
+    .l-typing i:nth-child(2) { animation-delay: .15s; }
+    .l-typing i:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes lBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+    .l-replay {
+      background: var(--ink-soft);
+      border-top: 1px solid rgba(0,0,0,.3);
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .l-replay button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: 7px 16px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .l-replay button:hover { color: var(--green); border-color: var(--green); }
+
+    /* Pitch copy */
+    .lexi-pitch .lp-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 0.3rem 0.9rem;
-      border-radius: 2rem;
+      color: var(--green);
       margin-bottom: 1rem;
     }
 
-    .feature-list {
-      list-style: none;
-      margin-top: 1.5rem;
+    .lexi-pitch h3 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 112%;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 1rem;
     }
 
-    .feature-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
-      font-size: 0.95rem;
+    .lexi-pitch h3 em { font-style: normal; color: var(--green); }
+
+    .lexi-pitch p {
       color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 44ch;
+      margin-bottom: 1.75rem;
     }
 
-    .feature-list li::before {
-      content: '→';
-      color: var(--accent);
-      flex-shrink: 0;
-      margin-top: 0.1rem;
+    .lexi-pitch p strong { color: var(--text); }
+
+    /* Pricing pill */
+    .lexi-price {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--ink-soft);
+      border: 1px solid rgba(245,184,46,.3);
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 1.5rem;
     }
 
-    .nexagent-cta {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 0.75rem;
-      padding: 2.5rem;
-    }
-
-    .nexagent-cta h3 {
-      font-size: 1.3rem;
+    .lexi-price .price-main {
+      font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
-      color: var(--white);
+      font-size: 1.05rem;
+      color: var(--amber);
+    }
+
+    .lexi-price .price-sep {
+      width: 1px;
+      height: 28px;
+      background: var(--line);
+    }
+
+    .lexi-price .price-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .lexi-price .price-sub strong { color: var(--amber); font-size: 0.95rem; }
+
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Stats strip */
+    .lexi-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .lexi-stat .sn {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 115%;
+      font-size: 2.4rem;
+      letter-spacing: -0.02em;
+      color: var(--green);
+    }
+
+    .lexi-stat .sl {
+      font-size: 0.83rem;
+      color: var(--muted);
+      max-width: 24ch;
+      margin-top: 0.25rem;
+    }
+
+    /* ROI Calc */
+    .lexi-calc {
+      margin-top: 4.5rem;
+      padding-top: 3.5rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .lexi-calc h3 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 115%;
+      font-size: clamp(1.5rem, 2.8vw, 2rem);
+      letter-spacing: -0.025em;
+      color: var(--text);
       margin-bottom: 0.5rem;
     }
 
-    .nexagent-cta p {
-      font-size: 0.9rem;
+    .lexi-calc .calc-sub {
       color: var(--muted);
-      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      margin-bottom: 2.5rem;
+      max-width: 50ch;
     }
 
-    .price-tag {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.25rem;
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
     }
 
-    .price-tag span {
-      font-size: 1rem;
-      font-weight: 400;
+    .slider-wrap { margin-bottom: 2rem; }
+
+    .slider-wrap label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .slider-wrap label output {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    input[type=range] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+      border: 3px solid var(--ink);
+      box-shadow: 0 0 0 1px var(--green);
+    }
+
+    .result-box {
+      background: var(--ink-soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+
+    .result-box .rl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       color: var(--muted);
     }
 
-    .price-note {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
+    .result-box .rb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      color: var(--amber);
+      letter-spacing: -0.02em;
+      margin: 6px 0 1.5rem;
     }
 
-    /* CONTACT */
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .result-row b { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--text); }
+    .result-row.win b { color: var(--green); }
+    .result-foot { margin-top: 1rem; font-size: 0.76rem; color: var(--muted); }
+
+    /* ─── CONTACT ─── */
     .contact-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -294,76 +660,60 @@
       align-items: start;
     }
 
-    @media (max-width: 768px) {
-      .contact-grid { grid-template-columns: 1fr; }
-    }
-
-    .contact-info p {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 2rem;
-    }
+    .contact-info p { font-size: 0.92rem; color: var(--muted); margin-bottom: 2rem; }
 
     .contact-detail {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       margin-bottom: 1rem;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--muted);
     }
 
-    .contact-detail strong {
-      color: var(--white);
-      min-width: 60px;
-    }
+    .contact-detail strong { color: var(--text); min-width: 60px; }
+    .contact-detail a { color: var(--muted); text-decoration: none; }
+    .contact-detail a:hover { color: var(--green); }
 
-    .contact-detail a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .contact-detail a:hover { color: var(--white); }
-
-    /* FORM */
     .contact-form {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
       padding: 2rem;
     }
 
     .contact-form h3 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      font-stretch: 110%;
       font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--white);
+      color: var(--text);
       margin-bottom: 1.25rem;
     }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
+    .form-group { margin-bottom: 1rem; }
 
     .form-group label {
       display: block;
-      font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
       font-weight: 500;
       color: var(--muted);
       margin-bottom: 0.4rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
     }
 
     .form-group input,
     .form-group select,
     .form-group textarea {
       width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 0.4rem;
+      background: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
       padding: 0.7rem 0.9rem;
-      font-size: 0.9rem;
-      color: var(--white);
+      font-size: 0.88rem;
+      color: var(--text);
       font-family: 'Inter', sans-serif;
       transition: border-color 0.2s;
     }
@@ -372,34 +722,49 @@
     .form-group select:focus,
     .form-group textarea:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--green);
     }
 
-    .form-group select option { background: var(--navy); }
+    .form-group select option { background: var(--ink); }
     .form-group textarea { resize: vertical; min-height: 90px; }
 
-    /* FOOTER */
+    .success-msg {
+      display: none;
+      background: rgba(37,211,102,.08);
+      border: 1px solid rgba(37,211,102,.3);
+      color: var(--green);
+      border-radius: 8px;
+      padding: 0.9rem;
+      font-size: 0.88rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    /* ─── FOOTER ─── */
     footer {
       text-align: center;
       padding: 2.5rem 5%;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      font-size: 0.85rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.83rem;
       color: var(--muted);
     }
 
-    footer strong { color: var(--white); }
+    footer strong { color: var(--text); }
 
-    /* SUCCESS MSG */
-    .success-msg {
-      display: none;
-      background: rgba(39,174,96,0.1);
-      border: 1px solid rgba(39,174,96,0.3);
-      color: #2ecc71;
-      border-radius: 0.4rem;
-      padding: 0.9rem;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-      text-align: center;
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--green); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .lexi-demo-grid { grid-template-columns: 1fr; }
+      .lexi-phone-col { order: -1; }
+      .lexi-stats { grid-template-columns: 1fr; gap: 1.5rem; }
+      .calc-layout { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: .001s !important; transition: none !important; }
     }
   </style>
 </head>
@@ -408,134 +773,322 @@
   <!-- NAV -->
   <nav>
     <div class="nav-logo">RD <span>Investment</span> Holdings</div>
-    <a href="#contact">Get in touch</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#lexi">Lexi</a>
+      <a href="#contact">Contact</a>
+      <a href="#lexi" class="nav-cta">Try Lexi ↓</a>
+    </div>
   </nav>
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-label">Gqeberha, South Africa</div>
-    <h1>Building businesses powered by technology and capital</h1>
-    <p>RD Investment Holdings (Pty) Ltd is a South African private holding company investing in AI technology and agriculture.</p>
-    <a href="#nexagent" class="btn btn-primary">See NexAgent AI</a>
-    <a href="#contact" class="btn btn-outline">Request a meeting</a>
+    <div class="hero-tag"><span class="dot"></span> Gqeberha, South Africa</div>
+    <h1>Building businesses powered by <em>AI and capital</em></h1>
+    <p>RD Investment Holdings (Pty) Ltd is a South African holding company investing in AI automation and agriculture.</p>
+    <div class="btn-row">
+      <a href="#lexi" class="btn btn-green">Meet Lexi — our AI agent</a>
+      <a href="#contact" class="btn btn-ghost">Request a meeting</a>
+    </div>
   </div>
 
   <!-- VERTICALS -->
-  <section id="about">
-    <div class="divider"></div>
-    <div class="section-label">Our holdings</div>
-    <div class="section-title">What we build and invest in</div>
-    <p class="section-sub">Three active verticals — AI automation, property management, and agriculture — all built for long-term value creation.</p>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">🤖</div>
-        <h3>NexAgent AI</h3>
-        <p>AI agent solutions for South African SMEs across any industry. We build custom WhatsApp and web agents that handle bookings, qualify leads, and manage client communication — 24/7, fully automated.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🌾</div>
-        <h3>Agriculture</h3>
-        <p>Long-term investment interest in Bonsmara cattle farming in the Eastern Cape and Oyster Mushroom Farming. Building wealth through sustainable share-farming and agricultural ventures.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEXAGENT AI -->
-  <div class="nexagent-section" id="nexagent">
-    <section>
-      <div>
-        <div class="nexagent-badge">NexAgent AI</div>
-        <div class="section-title">AI agents for South African businesses</div>
-        <p class="section-sub" style="margin-bottom:1rem;">We build WhatsApp and web-based AI agents that qualify leads, handle bookings, and capture client information — without you lifting a finger.</p>
-        <ul class="feature-list">
-          <li>WhatsApp AI agent — handles client enquiries, qualifies leads, and notifies your team instantly</li>
-          <li>Fully customised per business — your brand, your industry, your workflow</li>
-          <li>Set up once, runs 24/7 with no maintenance from you</li>
-          <li>Built for South African SMEs across any industry</li>
-        </ul>
-      </div>
-      <div>
-        <div class="nexagent-cta" style="margin-bottom:1.25rem;">
-          <h3>WhatsApp AI Agent</h3>
-          <p>A custom AI assistant on WhatsApp that talks to your clients, qualifies leads, and notifies you the moment someone is ready — built for your business and your industry.</p>
-          <div class="price-tag">R2,999 <span>setup</span></div>
-          <div class="price-note">+ R999/month thereafter</div>
-          <a href="#contact" class="btn btn-primary" style="width:100%;text-align:center;display:block;">Request a demo</a>
+  <div id="about">
+    <div class="section-wrap">
+      <div class="divider"></div>
+      <div class="section-label">Our holdings</div>
+      <div class="section-title">What we build and invest in</div>
+      <p class="section-sub">Two active verticals — AI automation and agriculture — both built for long-term value creation.</p>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h3>NexAgent AI</h3>
+          <p>AI agent solutions for South African SMEs. We build custom WhatsApp agents — Lexi — that handle enquiries, qualify leads, and manage client communication 24/7, fully automated. R2,999 setup · R699/month.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌾</div>
+          <h3>Agriculture</h3>
+          <p>Long-term investment in agriculture — cattle farming and mushroom cultivation. Building wealth through sustainable, hands-on farming ventures.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <!-- LEXI SECTION -->
+  <div class="lexi-section" id="lexi">
+    <div class="lexi-inner">
+
+      <div class="lexi-header">
+        <div class="lexi-tag"><span class="dot"></span> NexAgent AI · Lexi</div>
+        <h2>Your leads message at night.<br><em>Lexi answers.</em></h2>
+        <p>Every enquiry that lands after hours goes to whoever replies first — usually your competitor. Watch how Lexi handles it.</p>
+      </div>
+
+      <div class="lexi-demo-grid">
+
+        <!-- Pitch copy -->
+        <div class="lexi-pitch">
+          <div class="lp-label">How it works</div>
+          <h3>She replies in seconds.<br><em>Qualifies the lead.</em><br>Books the appointment.</h3>
+          <p>Lexi is a WhatsApp AI agent built for your business — trained on your listings, stock, or services. She responds to every message, <strong>24 hours a day</strong>, and logs every lead to a live Google Sheet so nothing falls through the cracks.</p>
+
+          <div class="lexi-price">
+            <div>
+              <div class="price-sub">Once-off setup</div>
+              <div class="price-main">R2,999</div>
+            </div>
+            <div class="price-sep"></div>
+            <div>
+              <div class="price-sub">Monthly retainer</div>
+              <div class="price-main">R699<span style="font-size:0.65rem;opacity:.7">/mo</span></div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn btn-green" href="#contact">Get a live demo</a>
+            <a class="btn btn-ghost" href="#calc-section">See what silence costs →</a>
+          </div>
+        </div>
+
+        <!-- Phone demo -->
+        <div class="lexi-phone-col">
+          <div class="l-phone">
+            <div class="l-screen">
+              <div class="l-head">
+                <div class="l-avatar">L</div>
+                <div>
+                  <div class="l-name">Lexi · Coastal Properties</div>
+                  <div class="l-status" id="lexiStatus">online</div>
+                </div>
+              </div>
+              <div class="l-body" id="lexiBody">
+                <div class="l-chip">TUESDAY · 21:47</div>
+              </div>
+              <div class="l-replay">
+                <button id="lexiReplay" type="button">▶ replay conversation</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stats -->
+      <div class="lexi-stats">
+        <div class="lexi-stat">
+          <div class="sn" data-count="78" data-suffix="%">0%</div>
+          <div class="sl">of buyers go with the agent who responds first</div>
+        </div>
+        <div class="lexi-stat">
+          <div class="sn" data-count="21" data-suffix="×">0×</div>
+          <div class="sl">more likely to qualify a lead replying in 5 min vs 30</div>
+        </div>
+        <div class="lexi-stat">
+          <div class="sn" data-count="24" data-suffix="/7">0/7</div>
+          <div class="sl">Lexi never takes leave, never misses a message</div>
+        </div>
+      </div>
+
+      <!-- ROI Calc -->
+      <div class="lexi-calc" id="calc-section">
+        <h3>What is one missed lead worth?</h3>
+        <p class="calc-sub">Move the sliders to match your business — this is the revenue currently walking past your closed door every month.</p>
+        <div class="calc-layout">
+          <div>
+            <div class="slider-wrap">
+              <label>Enquiries missed per month <output id="oLeads">20</output></label>
+              <input type="range" id="sLeads" min="5" max="100" value="20" step="5">
+            </div>
+            <div class="slider-wrap">
+              <label>Average value of one deal <output id="oValue">R45,000</output></label>
+              <input type="range" id="sValue" min="1000" max="200000" value="45000" step="1000">
+            </div>
+            <div class="slider-wrap">
+              <label>Your close rate on a qualified lead <output id="oClose">10%</output></label>
+              <input type="range" id="sClose" min="2" max="40" value="10" step="1">
+            </div>
+          </div>
+          <div class="result-box">
+            <div class="rl">Revenue leaking every month</div>
+            <div class="rb" id="rLeak">R90,000</div>
+            <div class="result-row"><span>Deals recovered if Lexi saves 1 in 4</span><b id="rRecovered">R22,500/mo</b></div>
+            <div class="result-row"><span>Lexi — R2,999 setup + retainer</span><b>R699/mo</b></div>
+            <div class="result-row win"><span>Return on Lexi</span><b id="rRoi">32×</b></div>
+            <div class="result-foot">Conservative maths. One deal recovered likely pays for Lexi for the year.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- CONTACT -->
-  <section id="contact">
-    <div class="divider"></div>
-    <div class="section-label">Contact</div>
-    <div class="section-title">Let's talk</div>
-    <div class="contact-grid">
-      <div class="contact-info">
-        <p>Whether you want to see a demo of NexAgent AI, discuss a business opportunity, or just find out more — reach out directly or fill in the form.</p>
-        <div class="contact-detail">
-          <strong>Email</strong>
-          <a href="mailto:rubendiedericks24@gmail.com">rubendiedericks24@gmail.com</a>
+  <div id="contact">
+    <div class="section-wrap">
+      <div class="divider"></div>
+      <div class="section-label">Contact</div>
+      <div class="section-title">Let's talk</div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p>Whether you want to see a live demo of Lexi for your business, discuss an investment opportunity, or just find out more — reach out directly or fill in the form.</p>
+          <div class="contact-detail">
+            <strong>Email</strong>
+            <a href="mailto:rubendiedericks24@gmail.com">rubendiedericks24@gmail.com</a>
+          </div>
+          <div class="contact-detail">
+            <strong>Phone</strong>
+            <a href="tel:+27728400352">+27 72 840 0352</a>
+          </div>
+          <div class="contact-detail">
+            <strong>Based</strong>
+            <span>Gqeberha (Port Elizabeth), South Africa</span>
+          </div>
         </div>
-        <div class="contact-detail">
-          <strong>Phone</strong>
-          <a href="tel:+27728400352">+27 72 840 0352</a>
+        <div class="contact-form">
+          <h3>Request a Lexi demo</h3>
+          <form id="contactForm">
+            <div class="form-group">
+              <label>Your name</label>
+              <input type="text" placeholder="John Smith" required />
+            </div>
+            <div class="form-group">
+              <label>Email address</label>
+              <input type="email" placeholder="john@example.com" required />
+            </div>
+            <div class="form-group">
+              <label>I'm interested in</label>
+              <select>
+                <option>Lexi — WhatsApp AI Agent (R2,999 setup + R699/mo)</option>
+                <option>NexAgent AI (other enquiry)</option>
+                <option>Agriculture / Investment</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Message (optional)</label>
+              <textarea placeholder="Tell me about your business and what you're looking for..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-green" style="width:100%;border-radius:8px;">Send request</button>
+            <div class="success-msg" id="successMsg">Got it — Ruben will be in touch shortly.</div>
+          </form>
         </div>
-        <div class="contact-detail">
-          <strong>Based</strong>
-          <span>Gqeberha (Port Elizabeth), South Africa</span>
-        </div>
-      </div>
-      <div class="contact-form">
-        <h3>Request a meeting</h3>
-        <form id="contactForm">
-          <div class="form-group">
-            <label>Your name</label>
-            <input type="text" placeholder="John Smith" required />
-          </div>
-          <div class="form-group">
-            <label>Email address</label>
-            <input type="email" placeholder="john@example.com" required />
-          </div>
-          <div class="form-group">
-            <label>I'm interested in</label>
-            <select>
-              <option>NexAgent AI</option>
-              <option>Agriculture</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Message (optional)</label>
-            <textarea placeholder="Tell me a bit about what you're looking for..."></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width:100%">Send request</button>
-          <div class="success-msg" id="successMsg">Got it — Ruben will be in touch shortly.</div>
-        </form>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- FOOTER -->
   <footer>
-    <p><strong>RD Investment Holdings (Pty) Ltd</strong> &nbsp;·&nbsp; Gqeberha, South Africa &nbsp;·&nbsp; <a href="mailto:rubendiedericks24@gmail.com" style="color:inherit;">rubendiedericks24@gmail.com</a></p>
-    <p style="margin-top:0.5rem;">© 2026 RD Investment Holdings (Pty) Ltd. All rights reserved. &nbsp;·&nbsp; <a href="/privacy-policy.html" style="color:inherit;">Privacy Policy</a></p>
+    <p><strong>RD Investment Holdings (Pty) Ltd</strong> &nbsp;·&nbsp; Reg. No: 2026/237915/07 &nbsp;·&nbsp; Gqeberha, South Africa</p>
+    <p style="margin-top:0.5rem;">© 2026 RD Investment Holdings (Pty) Ltd. All rights reserved. &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy Policy</a></p>
   </footer>
 
   <script>
+    /* ── Chat simulation ── */
+    const lexiScript = [
+      {who:'in',  text:"Hi, I saw the 3-bed in Lorraine on Property24, is it still available?", t:"21:47", wait:800},
+      {who:'out', text:"Hi! 👋 Yes, the 3-bed in Lorraine is still available — great timing. It's listed at R1.85m with a double garage and a flatlet. Are you buying to live in, or as an investment?", t:"21:47", wait:2200, typing:1500},
+      {who:'in',  text:"To live in. We're relocating from Joburg in Sept", t:"21:48", wait:1200},
+      {who:'out', text:"Welcome to the Bay in advance! 🌊 What's your budget range, and do you already have bond pre-approval?", t:"21:48", wait:2400, typing:1600},
+      {who:'in',  text:"Up to R2m, pre-approved with FNB last month", t:"21:49", wait:1200},
+      {who:'out', text:"Perfect — strong position. I can book you a viewing this Saturday at 10:00 or 11:30. Which suits you?", t:"21:49", wait:2200, typing:1400},
+      {who:'in',  text:"Saturday 10am works 👍", t:"21:50", wait:1000},
+      {who:'out', text:"Booked ✅ Saturday 10:00, 14 Kabeljou St, Lorraine. The agent Chantel will confirm in the morning. Anything else I can help with tonight?", t:"21:50", wait:2000, typing:1500},
+    ];
+
+    const lexiBody   = document.getElementById('lexiBody');
+    const lexiStatus = document.getElementById('lexiStatus');
+    let lexiRunning  = false;
+
+    function addTyping() {
+      const el = document.createElement('div');
+      el.className = 'l-typing show';
+      el.innerHTML = '<i></i><i></i><i></i>';
+      lexiBody.appendChild(el);
+      lexiBody.scrollTop = lexiBody.scrollHeight;
+      lexiStatus.textContent = 'typing…';
+      return el;
+    }
+
+    function addMsg(m) {
+      const el = document.createElement('div');
+      el.className = 'l-msg ' + m.who;
+      el.innerHTML = m.text + '<span class="lt">' + m.t + (m.who === 'out' ? ' ✓✓' : '') + '</span>';
+      lexiBody.appendChild(el);
+      lexiBody.scrollTop = lexiBody.scrollHeight;
+    }
+
+    async function play() {
+      if (lexiRunning) return;
+      lexiRunning = true;
+      lexiBody.innerHTML = '<div class="l-chip">TUESDAY · 21:47</div>';
+      lexiStatus.textContent = 'online';
+      for (const m of lexiScript) {
+        await new Promise(r => setTimeout(r, m.wait));
+        if (m.typing) {
+          const t = addTyping();
+          await new Promise(r => setTimeout(r, m.typing));
+          t.remove();
+          lexiStatus.textContent = 'online';
+        }
+        addMsg(m);
+      }
+      lexiRunning = false;
+    }
+
+    document.getElementById('lexiReplay').addEventListener('click', play);
+
+    new IntersectionObserver((e, obs) => {
+      if (e[0].isIntersecting) { play(); obs.disconnect(); }
+    }, { threshold: 0.35 }).observe(document.querySelector('.l-phone'));
+
+    /* ── Count-up ── */
+    new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const el = en.target, target = +el.dataset.count, suf = el.dataset.suffix || '';
+        let cur = 0;
+        const step = () => {
+          cur = Math.min(target, cur + Math.max(1, target / 30));
+          el.textContent = Math.round(cur) + suf;
+          if (cur < target) requestAnimationFrame(step);
+        };
+        step();
+      });
+    }, { threshold: 0.6 }).observe(document.querySelector('.lexi-stats'));
+
+    /* ── ROI calc ── */
+    const R = n => 'R' + Math.round(n).toLocaleString('en-ZA');
+    function calcROI() {
+      const leads = +sLeads.value, val = +sValue.value, rate = +sClose.value / 100;
+      oLeads.textContent   = leads;
+      oValue.textContent   = R(val);
+      oClose.textContent   = sClose.value + '%';
+      const leak      = leads * val * rate;
+      const recovered = leak * 0.25;
+      rLeak.textContent      = R(leak);
+      rRecovered.textContent = R(recovered) + '/mo';
+      const roi = recovered / 699;
+      rRoi.textContent = roi >= 1 ? Math.round(roi) + '×' : Math.round(roi * 100) + '%';
+    }
+    const [sLeads, sValue, sClose] = ['sLeads','sValue','sClose'].map(id => document.getElementById(id));
+    const [oLeads, oValue, oClose] = ['oLeads','oValue','oClose'].map(id => document.getElementById(id));
+    const [rLeak, rRecovered, rRoi] = ['rLeak','rRecovered','rRoi'].map(id => document.getElementById(id));
+    [sLeads, sValue, sClose].forEach(s => s.addEventListener('input', calcROI));
+    calcROI();
+
+    /* ── Smooth scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    /* ── Contact form ── */
     document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
       document.getElementById('successMsg').style.display = 'block';
       this.reset();
-    });
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-      });
     });
   </script>
 
