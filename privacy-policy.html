@@ -4,83 +4,97 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — NexAgent AI | RD Investment Holdings (Pty) Ltd</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy: #0d1b2a;
-      --navy-light: #1a2f47;
-      --accent: #c0392b;
-      --accent-light: #e74c3c;
-      --text: #f0f4f8;
-      --muted: #8fa3b8;
-      --white: #ffffff;
-      --card-bg: #162436;
+      --ink:      #0B141A;
+      --ink-soft: #1F2C33;
+      --ink-mid:  #162026;
+      --green:    #25D366;
+      --amber:    #F5B82E;
+      --text:     rgba(247,245,240,0.95);
+      --muted:    rgba(247,245,240,0.55);
+      --line:     rgba(247,245,240,0.10);
+      --card:     #1a2830;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--navy);
+      background: var(--ink);
       color: var(--text);
       line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
     }
+
+    ::selection { background: var(--green); color: var(--ink); }
 
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 5%;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--line);
       position: sticky;
       top: 0;
-      background: var(--navy);
+      background: var(--ink);
       z-index: 100;
     }
 
     .nav-logo {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 110%;
       font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--white);
+      letter-spacing: -0.01em;
+      color: var(--text);
       text-decoration: none;
     }
 
-    .nav-logo span { color: var(--accent); }
+    .nav-logo span { color: var(--green); }
 
     nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       transition: color 0.2s;
     }
 
-    nav a:hover { color: var(--white); }
+    nav a:hover { color: var(--text); }
 
     .page-header {
-      background: var(--navy-light);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: var(--ink-mid);
+      border-bottom: 1px solid var(--line);
       padding: 4rem 5% 3rem;
       text-align: center;
     }
 
     .page-header .label {
-      display: inline-block;
-      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.3rem 0.9rem;
-      border-radius: 2rem;
+      color: var(--green);
+      border: 1px solid rgba(37,211,102,0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
       margin-bottom: 1.25rem;
     }
 
     .page-header h1 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-stretch: 112%;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 700;
-      color: var(--white);
+      letter-spacing: -0.03em;
+      color: var(--text);
       margin-bottom: 0.75rem;
     }
 
@@ -96,12 +110,15 @@
     }
 
     .content h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--white);
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      font-stretch: 108%;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      color: var(--text);
       margin: 2.5rem 0 0.75rem;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--accent);
+      border-bottom: 2px solid var(--green);
       display: inline-block;
     }
 
@@ -118,28 +135,26 @@
       margin-bottom: 1rem;
     }
 
-    .content ul li {
-      margin-bottom: 0.4rem;
-    }
+    .content ul li { margin-bottom: 0.4rem; }
+
+    .content strong { color: var(--text); }
 
     .info-box {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-left: 3px solid var(--accent);
-      border-radius: 0.5rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--green);
+      border-radius: 8px;
       padding: 1.25rem 1.5rem;
       margin: 1.5rem 0;
     }
 
     .info-box p {
       margin: 0;
-      color: var(--text);
+      color: var(--muted);
       font-size: 0.9rem;
     }
 
-    .info-box strong {
-      color: var(--white);
-    }
+    .info-box strong { color: var(--text); }
 
     table {
       width: 100%;
@@ -149,44 +164,50 @@
     }
 
     th {
-      background: var(--navy-light);
-      color: var(--white);
+      background: var(--ink-soft);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
       text-align: left;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--line);
     }
 
     td {
       color: var(--muted);
       padding: 0.65rem 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(247,245,240,0.04);
       vertical-align: top;
+      font-size: 0.9rem;
     }
 
     tr:last-child td { border-bottom: none; }
 
     footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid var(--line);
       padding: 2rem 5%;
       text-align: center;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.83rem;
     }
+
+    footer strong { color: var(--text); }
 
     footer a {
       color: var(--muted);
       text-decoration: none;
     }
 
-    footer a:hover { color: var(--white); }
+    footer a:hover { color: var(--green); }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="/" class="nav-logo">RD<span>.</span>Investment Holdings</a>
-    <a href="/">Home</a>
+    <a href="/" class="nav-logo">RD <span>Investment</span> Holdings</a>
+    <a href="/">← Back to site</a>
   </nav>
 
   <div class="page-header">
@@ -311,9 +332,8 @@
   </div>
 
   <footer>
-    <p>&copy; 2026 RD Investment Holdings (Pty) Ltd (Reg. No: 2026/237915/07) t/a NexAgent AI &nbsp;|&nbsp;
-    <a href="/">Home</a> &nbsp;|&nbsp;
-    <a href="/privacy-policy.html">Privacy Policy</a></p>
+    <p><strong>RD Investment Holdings (Pty) Ltd</strong> &nbsp;·&nbsp; Reg. No: 2026/237915/07 &nbsp;·&nbsp; t/a NexAgent AI</p>
+    <p style="margin-top:0.5rem;">&copy; 2026 RD Investment Holdings (Pty) Ltd. All rights reserved. &nbsp;·&nbsp; <a href="/">Home</a> &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy Policy</a></p>
   </footer>
 
 </body>
