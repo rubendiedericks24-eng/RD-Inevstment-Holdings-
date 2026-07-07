@@ -83,10 +83,16 @@ section{padding:96px 0}
 .phone-head .who{font-weight:600;font-size:.9rem}
 .phone-head .status{color:var(--green);font-size:.72rem}
 .chat{padding:18px 14px;display:flex;flex-direction:column;gap:10px;min-height:340px;background:#0d161b}
-.msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:.83rem;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:.83rem;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
 .msg.show{opacity:1;transform:translateY(0)}
 .msg.in{background:#1f2c33;align-self:flex-start;border-bottom-left-radius:4px}
 .msg.out{background:#144d2c;align-self:flex-end;border-bottom-right-radius:4px}
+.typing{background:#1f2c33;align-self:flex-start;border-bottom-left-radius:4px;padding:10px 16px;border-radius:14px;display:none;align-items:center;gap:5px}
+.typing.show{display:flex}
+.typing span{width:7px;height:7px;border-radius:50%;background:rgba(247,245,240,0.4);animation:typebounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typebounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 .msg .time{display:block;font-size:.62rem;color:var(--muted);margin-top:4px;text-align:right}
 /* ROI CALC */
 .roi{background:var(--card);border:1px solid rgba(247,245,240,.08);border-radius:20px;padding:36px;margin-top:64px}
@@ -217,10 +223,12 @@ footer a:hover{color:var(--green)}
           <div><div class="who">Lexi · Coastal Properties</div><div class="status">online</div></div>
         </div>
         <div class="chat" id="chat">
-          <div class="msg in">Hi, I saw the 3-bed in Lorraine on Property24, is it still available?<span class="time">21:47</span></div>
-          <div class="msg out">Hi! 👋 Yes, the 3-bed in Lorraine is still available — great timing. It's listed at R1.85m with a double garage and solar geyser. Would you like to view it this week?<span class="time">21:47 ✓✓</span></div>
-          <div class="msg in">Yes please, Saturday morning?<span class="time">21:48</span></div>
-          <div class="msg out">Perfect 🙌 I've noted Saturday morning. Our agent will confirm the exact time with you first thing tomorrow. May I have your name for the booking?<span class="time">21:48 ✓✓</span></div>
+          <div class="msg in" id="m1">Hi, I saw the 3-bed in Lorraine on Property24, is it still available?<span class="time">21:47</span></div>
+          <div class="typing" id="t1"><span></span><span></span><span></span></div>
+          <div class="msg out" id="m2">Hi! 👋 Yes, the 3-bed in Lorraine is still available — great timing. It's listed at R1.85m with a double garage and solar geyser. Would you like to view it this week?<span class="time">21:47 ✓✓</span></div>
+          <div class="msg in" id="m3">Yes please, Saturday morning?<span class="time">21:48</span></div>
+          <div class="typing" id="t2"><span></span><span></span><span></span></div>
+          <div class="msg out" id="m4">Perfect 🙌 I've noted Saturday morning. Our agent will confirm the exact time with you first thing tomorrow. May I have your name for the booking?<span class="time">21:48 ✓✓</span></div>
         </div>
       </div>
       <div style="text-align:center;margin-top:16px;">
@@ -294,9 +302,20 @@ footer a:hover{color:var(--green)}
 const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
 burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
-// chat animation on scroll into view
-const msgs=document.querySelectorAll('#chat .msg');
-const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){msgs.forEach((m,i)=>setTimeout(()=>m.classList.add('show'),i*900));io.disconnect();}})},{threshold:.4});
+// chat animation — typing indicator then message
+function runChat(){
+  const seq=[
+    ()=>document.getElementById('m1').classList.add('show'),
+    ()=>document.getElementById('t1').classList.add('show'),
+    ()=>{document.getElementById('t1').classList.remove('show');document.getElementById('m2').classList.add('show');},
+    ()=>document.getElementById('m3').classList.add('show'),
+    ()=>document.getElementById('t2').classList.add('show'),
+    ()=>{document.getElementById('t2').classList.remove('show');document.getElementById('m4').classList.add('show');}
+  ];
+  const delays=[0,900,1800,3000,3900,5100];
+  seq.forEach((fn,i)=>setTimeout(fn,delays[i]));
+}
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){runChat();io.disconnect();}})},{threshold:.3});
 io.observe(document.getElementById('chat'));
 // ROI calculator
 const s1=document.getElementById('s1'),s2=document.getElementById('s2'),s3=document.getElementById('s3');
