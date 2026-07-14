@@ -700,7 +700,7 @@ async function sendEmail() {
     status: 'sent', date: fmtDate(new Date())
   };
   try {
-    await fetch(url, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(q) });
+    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(q) });
     toast('Quote emailed to '+v('clientEmail'), 'success');
   } catch(e) { toast('Email send failed.', 'error'); }
 }
@@ -711,8 +711,8 @@ async function syncToSheets(q, action='upsert') {
   if(!url || !q) return;
   try {
     await fetch(url, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         action, num:q.num, clientName:q.clientName,
         clientEmail:q.clientEmail||'', clientPhone:q.clientPhone, reference:q.reference||'',
