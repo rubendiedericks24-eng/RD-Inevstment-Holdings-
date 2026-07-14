@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexQuote — Auto Quote Generator</title>
+<style>
+:root{
+  --bg:#F0F4F8;--surface:#FFFFFF;--surface2:#F8FAFC;
+  --blue:#1E293B;--blue-dk:#0F172A;--blue-lt:#F1F5F9;--blue-border:#CBD5E1;
+  --text:#0F172A;--muted:#64748B;--subtle:#94A3B8;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --green:#16A34A;--green-lt:#F0FDF4;--green-border:#BBF7D0;
+  --wa:#25D366;
+  --amber:#D97706;--amber-lt:#FFFBEB;
+  --red:#DC2626;--red-lt:#FEF2F2;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.05);
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;line-height:1.5}
+input,select,textarea,button{font-family:inherit;font-size:inherit}
+
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.app-mark{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;letter-spacing:-.5px}
+.app-name{font-weight:700;font-size:1.05rem;color:var(--text)}
+.app-name em{font-style:normal;color:var(--text)}
+.topbar-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
+.biz-label{font-size:.82rem;color:var(--muted)}
+.biz-label strong{color:var(--text);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#64748B;display:inline-block;margin-right:5px}
+.top-status{font-size:.78rem;color:var(--muted)}
+
+.page{display:grid;grid-template-columns:1fr 420px;gap:0;min-height:calc(100vh - 58px)}
+.left-col{padding:28px;overflow-y:auto;border-right:1px solid var(--border)}
+.right-col{padding:24px;background:var(--surface2);overflow-y:auto}
+@media(max-width:860px){.page{grid-template-columns:1fr}.right-col{border-top:1px solid var(--border)}}
+
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;box-shadow:var(--shadow)}
+.section-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.section-body{padding:18px 20px}
+
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea{width:100%;padding:8px 12px;border:1px solid var(--border-dk);border-radius:7px;background:var(--surface);color:var(--text);font-size:.9rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,41,59,0.08)}
+.field textarea{resize:vertical;min-height:64px}
+.field select{cursor:pointer}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+.items-wrap{overflow-x:auto}
+table.items{width:100%;border-collapse:collapse}
+table.items thead tr{background:var(--surface2)}
+table.items th{padding:8px 10px;text-align:left;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}
+table.items th.r{text-align:right}
+table.items td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.items td input{border:1px solid transparent;border-radius:6px;padding:6px 9px;background:transparent;color:var(--text);width:100%;outline:none;transition:border-color .15s,background .15s}
+table.items td input:focus{border-color:var(--border-dk);background:var(--blue-lt)}
+table.items .td-desc{width:38%}
+table.items .td-qty{width:10%}
+table.items .td-unit{width:18%}
+table.items .td-total{width:16%;font-size:.88rem;font-weight:600;text-align:right;padding-right:10px;color:var(--text)}
+table.items .td-del{width:8%;text-align:center}
+.row-del{background:none;border:none;color:var(--subtle);cursor:pointer;padding:5px 7px;border-radius:5px;transition:all .15s;font-size:.95rem}
+.row-del:hover{background:var(--red-lt);color:var(--red)}
+.add-row-btn{display:flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:var(--blue-lt);border:1px dashed var(--border-dk);border-radius:7px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;width:100%}
+.add-row-btn:hover{background:var(--blue);color:#fff;border-style:solid;border-color:var(--blue)}
+
+.totals-box{margin-top:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.tot-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.88rem}
+.tot-row span:first-child{color:var(--muted)}
+.tot-row.grand{font-size:1.05rem;font-weight:700;color:var(--text);border-top:1px solid var(--border-dk);margin-top:8px;padding-top:10px}
+
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:16px 20px;border-top:1px solid var(--border);background:var(--surface2);border-radius:0 0 var(--radius) var(--radius)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dk)}
+.btn-whatsapp{background:var(--wa);color:#fff}
+.btn-whatsapp:hover{background:#1aab50}
+.btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border-dk)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-danger{background:var(--surface);color:var(--red);border:1px solid var(--border)}
+.btn-danger:hover{background:var(--red-lt);border-color:var(--red)}
+
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.preview-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.quote-doc{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);overflow:hidden}
+.doc-header{padding:22px 24px;border-bottom:2px solid var(--blue)}
+.doc-biz{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.doc-contact{font-size:.75rem;color:var(--muted)}
+.doc-meta{display:flex;justify-content:space-between;align-items:flex-start;margin-top:16px;flex-wrap:wrap;gap:8px}
+.doc-quote-num{font-size:.9rem;font-weight:800;color:var(--text)}
+.doc-date{font-size:.75rem;color:var(--muted);margin-top:3px}
+.doc-vat-badge{background:var(--blue-lt);color:var(--text);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:4px;border:1px solid var(--border-dk)}
+.doc-body{padding:20px 24px}
+.doc-bill-to{margin-bottom:18px;padding:12px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)}
+.doc-bill-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.doc-bill-name{font-weight:700;font-size:.95rem}
+.doc-bill-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.doc-table{width:100%;border-collapse:collapse}
+.doc-table th{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--border);text-align:left}
+.doc-table th:last-child{text-align:right}
+.doc-table td{padding:9px 8px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.doc-table td:last-child{text-align:right;font-weight:600}
+.doc-table td:nth-child(2),.doc-table td:nth-child(3){color:var(--muted);text-align:center}
+.doc-totals{margin-top:14px;padding-top:12px}
+.dt-row{display:flex;justify-content:space-between;font-size:.84rem;padding:3px 0;color:var(--muted)}
+.dt-row.grand{font-size:1rem;font-weight:800;color:var(--text);border-top:2px solid var(--blue);margin-top:8px;padding-top:10px}
+.doc-validity{margin-top:14px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;font-size:.75rem;color:var(--muted)}
+.doc-notes{margin-top:10px;font-size:.76rem;color:var(--muted);font-style:italic}
+.doc-footer{padding:14px 24px;border-top:1px solid var(--border);background:var(--surface2);font-size:.72rem;color:var(--muted);text-align:center}
+
+.hist-empty{text-align:center;padding:24px;color:var(--subtle);font-size:.85rem}
+.hist-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.hist-item:hover{border-color:var(--blue-border);box-shadow:0 0 0 3px rgba(30,41,59,0.06)}
+.h-num{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:2px}
+.h-name{font-size:.88rem;font-weight:600}
+.h-date{font-size:.72rem;color:var(--muted)}
+.h-total{font-size:.9rem;font-weight:700;text-align:right}
+.h-actions{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+.h-act-btn{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:4px;border:none;cursor:pointer;transition:all .15s}
+.h-act-accept{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+.h-act-accept:hover{background:var(--green);color:#fff}
+.h-act-del{background:var(--red-lt);color:var(--red);border:1px solid #FECACA}
+.h-act-del:hover{background:var(--red);color:#fff}
+.badge{padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.badge-draft{background:var(--amber-lt);color:var(--amber);border:1px solid #FDE68A}
+.badge-sent{background:var(--blue-lt);color:var(--muted);border:1px solid var(--border)}
+.badge-accepted{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+
+/* SHEETS SETUP */
+.setup-block{background:var(--blue-lt);border:1px solid var(--border-dk);border-radius:8px;padding:14px 16px;margin-top:14px}
+.setup-block summary{cursor:pointer;font-size:.8rem;font-weight:700;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px}
+.setup-block summary::before{content:'▸';font-size:.7rem}
+details[open] .setup-block summary::before{content:'▾'}
+.setup-code{background:var(--text);color:#F0F4F8;border-radius:7px;padding:12px;font-family:monospace;font-size:.72rem;line-height:1.6;margin-top:10px;white-space:pre-wrap;overflow-x:auto}
+
+.toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:#fff;padding:11px 20px;border-radius:9px;font-size:.85rem;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:1000;max-width:300px}
+.toast.visible{opacity:1;transform:translateY(0)}
+.toast.error{background:var(--red)}
+.toast.success{background:var(--green)}
+
+@media print{
+  .topbar,.left-col,.preview-header,.doc-footer,.print-hide{display:none!important}
+  .page{display:block}
+  .right-col{background:#fff;padding:0;border:none}
+  .quote-doc{border:none;box-shadow:none;border-radius:0}
+  .doc-header{border-bottom:2px solid #1E293B}
+  body,html{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="app-mark">NQ</div>
+    <span class="app-name">Nex<em>Quote</em></span>
+    <div class="topbar-divider"></div>
+    <span class="biz-label">Logged in as <strong id="topBizName">Auto Workshop PE</strong></span>
+  </div>
+  <div class="topbar-right">
+    <span class="top-status"><span class="status-dot"></span>Live</span>
+  </div>
+</div>
+
+<div class="page">
+  <div class="left-col">
+
+    <!-- Business Settings -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Business Settings</span>
+        <span style="font-size:.75rem;color:var(--muted)">Auto-saved</span>
+      </div>
+      <div class="section-body">
+        <div class="grid2">
+          <div class="field">
+            <label>Business Name</label>
+            <input id="bizName" value="Auto Workshop PE" oninput="saveBiz();sync()">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input id="bizPhone" placeholder="072 000 0000" oninput="saveBiz();sync()">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="bizEmail" placeholder="info@yourbusiness.co.za" oninput="saveBiz();sync()">
+          </div>
+          <div class="field">
+            <label>VAT Number</label>
+            <input id="bizVat" placeholder="Optional" oninput="saveBiz();sync()">
+          </div>
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label>Validity Statement</label>
+          <input id="validNote" value="This quote is valid for 7 days from the date of issue." oninput="saveBiz();sync()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Client -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Client &amp; Job Details</span>
+      </div>
+      <div class="section-body">
+        <div class="grid2">
+          <div class="field">
+            <label>Client Name</label>
+            <input id="clientName" placeholder="John Smith" oninput="sync()">
+          </div>
+          <div class="field">
+            <label>Client Phone</label>
+            <input id="clientPhone" placeholder="083 000 0000" oninput="sync()">
+          </div>
+          <div class="field">
+            <label>Vehicle / Reference</label>
+            <input id="reference" placeholder="Toyota Hilux — CA 123-456" oninput="sync()">
+          </div>
+          <div class="field">
+            <label>Job Category</label>
+            <select id="jobType" onchange="sync()">
+              <option>Service &amp; Maintenance</option>
+              <option>Brake Repair</option>
+              <option>Engine Work</option>
+              <option>Electrical</option>
+              <option>Tyres</option>
+              <option>Body Work</option>
+              <option>Suspension</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Notes / Scope of Work</label>
+          <textarea id="scopeNotes" placeholder="Describe the job…" oninput="sync()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Items -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Line Items</span>
+        <span style="font-size:.75rem;color:var(--muted)" id="itemCount">0 items</span>
+      </div>
+      <div class="section-body" style="padding-bottom:0">
+        <div class="items-wrap">
+          <table class="items">
+            <thead>
+              <tr>
+                <th class="td-desc">Description</th>
+                <th class="td-qty" style="text-align:center">Qty</th>
+                <th class="td-unit">Unit Price (R)</th>
+                <th class="td-total r">Total</th>
+                <th class="td-del"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" onclick="addItem()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Line Item
+        </button>
+        <div class="totals-box" style="margin-top:14px">
+          <div class="tot-row"><span>Subtotal (excl. VAT)</span><span id="subTot">R 0.00</span></div>
+          <div class="tot-row"><span>VAT @ 15%</span><span id="vatTot">R 0.00</span></div>
+          <div class="tot-row grand"><span>Total (incl. VAT)</span><span id="grandTot">R 0.00</span></div>
+        </div>
+      </div>
+      <div class="btn-row print-hide">
+        <button class="btn btn-primary" onclick="saveQuote()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Quote
+        </button>
+        <button class="btn btn-whatsapp" onclick="sendWA()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp to Client
+        </button>
+        <button class="btn btn-ghost" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></rect></svg>
+          Print / PDF
+        </button>
+        <button class="btn btn-danger" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Saved Quotes -->
+    <div class="section print-hide">
+      <div class="section-head">
+        <span class="section-title">Saved Quotes</span>
+        <button class="btn btn-ghost" style="padding:5px 12px;font-size:.75rem" onclick="clearHistory()">Clear all</button>
+      </div>
+      <div class="section-body" id="histWrap">
+        <div class="hist-empty">No quotes saved yet.</div>
+      </div>
+    </div>
+
+    <!-- Google Sheets Sync -->
+    <div class="section print-hide">
+      <div class="section-head">
+        <span class="section-title">Google Sheets Sync</span>
+        <span style="font-size:.75rem;color:var(--muted)">Optional</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Apps Script URL</label>
+          <input id="sheetsScriptUrl" placeholder="https://script.google.com/macros/s/…/exec" oninput="saveSettings()">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="syncAll()">Sync All Quotes Now</button>
+        </div>
+        <details style="margin-top:14px">
+          <summary style="cursor:pointer;font-size:.8rem;font-weight:600;color:var(--muted);padding:6px 0">How to set up Google Sheets sync ▸</summary>
+          <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7">
+            1. Open Google Sheets → Extensions → Apps Script<br>
+            2. Paste the code below → Save → Deploy → New Deployment → Web App<br>
+            3. Set "Who has access" to Anyone → Deploy → Copy the URL → paste above
+          </div>
+          <pre class="setup-code">function doPost(e){
+  var d=JSON.parse(e.postData.contents);
+  var sh=SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var headers=['Quote No','Client','Phone','Reference','Items','Subtotal','VAT','Total','Status','Date','Saved'];
+  if(sh.getLastRow()===0)sh.appendRow(headers);
+  var rows=sh.getDataRange().getValues();
+  var idx=-1;
+  for(var i=1;i<rows.length;i++){if(rows[i][0]===d.num){idx=i+1;break;}}
+  var row=[d.num,d.clientName,d.clientPhone,d.reference,d.itemsSummary,d.sub,d.vat,d.grand,d.status,d.date,new Date().toLocaleString()];
+  if(idx>0)sh.getRange(idx,1,1,row.length).setValues([row]);
+  else sh.appendRow(row);
+  return ContentService.createTextOutput(JSON.stringify({ok:true}));
+}</pre>
+        </details>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN — PREVIEW -->
+  <div class="right-col">
+    <div class="preview-header print-hide">
+      <span class="preview-label">Quote Preview</span>
+      <span style="font-size:.75rem;color:var(--muted)">Updates live</span>
+    </div>
+    <div class="quote-doc" id="quoteDoc">
+      <div class="doc-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="doc-biz" id="pvBizName">Auto Workshop PE</div>
+            <div class="doc-contact" id="pvContact">—</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1.4rem;font-weight:900;color:var(--text);letter-spacing:-.5px">QUOTE</div>
+            <div class="doc-vat-badge" id="pvVatBadge" style="display:none"></div>
+          </div>
+        </div>
+        <div class="doc-meta">
+          <div>
+            <div class="doc-quote-num" id="pvQuoteNum">AQ-0001</div>
+            <div class="doc-date" id="pvDate"></div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-body">
+        <div class="doc-bill-to">
+          <div class="doc-bill-label">Prepared For</div>
+          <div class="doc-bill-name" id="pvClientName">—</div>
+          <div class="doc-bill-sub" id="pvClientPhone"></div>
+          <div class="doc-bill-sub" id="pvRef" style="font-weight:600;margin-top:3px"></div>
+          <div class="doc-bill-sub" id="pvJobType"></div>
+        </div>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th style="text-align:center">Qty</th>
+              <th style="text-align:center">Unit Price</th>
+              <th style="text-align:right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="pvItems"></tbody>
+        </table>
+        <div class="doc-totals">
+          <div class="dt-row"><span>Subtotal (excl. VAT)</span><span id="pvSub">R 0.00</span></div>
+          <div class="dt-row"><span>VAT (15%)</span><span id="pvVat">R 0.00</span></div>
+          <div class="dt-row grand"><span>TOTAL DUE</span><span id="pvGrand">R 0.00</span></div>
+        </div>
+        <div class="doc-validity" id="pvValidity"></div>
+        <div class="doc-notes" id="pvNotes"></div>
+      </div>
+      <div class="doc-footer" id="pvFooter">
+        Generated by NexQuote · Powered by NexAgent AI App Division
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const DB = {
+  load(){ return JSON.parse(localStorage.getItem('nq_data')||'{"qNum":1,"quotes":[]}'); },
+  save(d){ localStorage.setItem('nq_data', JSON.stringify(d)); },
+  loadBiz(){ return JSON.parse(localStorage.getItem('nq_biz')||'{}'); },
+  saveBiz(b){ localStorage.setItem('nq_biz', JSON.stringify(b)); },
+  loadSettings(){ return JSON.parse(localStorage.getItem('nq_settings')||'{}'); },
+  saveSettings(s){ localStorage.setItem('nq_settings', JSON.stringify(s)); }
+};
+
+let S = DB.load();
+let iCount = 0;
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  document.getElementById('pvDate').textContent = 'Date: ' + fmtDate(new Date());
+
+  // Restore biz settings
+  const biz = DB.loadBiz();
+  if(biz.name) document.getElementById('bizName').value = biz.name;
+  if(biz.phone) document.getElementById('bizPhone').value = biz.phone;
+  if(biz.email) document.getElementById('bizEmail').value = biz.email;
+  if(biz.vat) document.getElementById('bizVat').value = biz.vat;
+  if(biz.validity) document.getElementById('validNote').value = biz.validity;
+
+  // Restore settings
+  const settings = DB.loadSettings();
+  if(settings.sheetsScriptUrl) document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl;
+
+  // Start with demo items
+  addItem('Oil Filter', 1, 120);
+  addItem('Engine Oil — 5L', 1, 480);
+  addItem('Full Service Labour', 1, 650);
+
+  renderHistory();
+  sync();
+};
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const R = n => 'R ' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const fmtDate = d => d.toLocaleDateString('en-ZA', {day:'2-digit', month:'long', year:'numeric'});
+const v = id => document.getElementById(id).value.trim();
+
+function saveBiz() {
+  DB.saveBiz({
+    name: v('bizName'), phone: v('bizPhone'),
+    email: v('bizEmail'), vat: v('bizVat'),
+    validity: v('validNote')
+  });
+}
+
+function saveSettings() {
+  DB.saveSettings({ sheetsScriptUrl: v('sheetsScriptUrl') });
+}
+
+// ── LINE ITEMS ────────────────────────────────────────────────────────────────
+function addItem(desc='', qty=1, price='') {
+  iCount++;
+  const id = iCount;
+  const tr = document.createElement('tr');
+  tr.id = 'row'+id;
+  tr.innerHTML = `
+    <td class="td-desc"><input placeholder="Item or service" value="${desc}" oninput="rowCalc(${id});sync()"></td>
+    <td class="td-qty"><input type="number" min="0" step="0.5" value="${qty}" style="text-align:center" oninput="rowCalc(${id});sync()"></td>
+    <td class="td-unit"><input type="number" min="0" step="0.01" value="${price}" placeholder="0.00" oninput="rowCalc(${id});sync()"></td>
+    <td class="td-total" id="rt${id}">R 0.00</td>
+    <td class="td-del"><button class="row-del" onclick="delRow(${id})" title="Remove">✕</button></td>
+  `;
+  document.getElementById('itemsBody').appendChild(tr);
+  rowCalc(id); sync();
+}
+
+function rowCalc(id) {
+  const tr = document.getElementById('row'+id);
+  if (!tr) return;
+  const ins = tr.querySelectorAll('input');
+  const total = (parseFloat(ins[1].value)||0) * (parseFloat(ins[2].value)||0);
+  document.getElementById('rt'+id).textContent = R(total);
+  calcTotals();
+}
+
+function delRow(id) {
+  const el = document.getElementById('row'+id);
+  if (el) el.remove();
+  calcTotals(); sync();
+}
+
+function calcTotals() {
+  let sub = 0;
+  document.querySelectorAll('#itemsBody tr').forEach(tr => {
+    const ins = tr.querySelectorAll('input');
+    if (ins.length >= 3) sub += (parseFloat(ins[1].value)||0)*(parseFloat(ins[2].value)||0);
+  });
+  const vat = sub * .15, grand = sub + vat;
+  document.getElementById('subTot').textContent = R(sub);
+  document.getElementById('vatTot').textContent = R(vat);
+  document.getElementById('grandTot').textContent = R(grand);
+  return {sub, vat, grand};
+}
+
+function getItems() {
+  const items = [];
+  document.querySelectorAll('#itemsBody tr').forEach(tr => {
+    const ins = tr.querySelectorAll('input');
+    if (ins.length >= 3) {
+      const d = ins[0].value.trim(), q = parseFloat(ins[1].value)||0, p = parseFloat(ins[2].value)||0;
+      if (d || p) items.push({d, q, p, t: q*p});
+    }
+  });
+  return items;
+}
+
+// ── SYNC PREVIEW ─────────────────────────────────────────────────────────────
+function sync() {
+  const biz = v('bizName') || 'Your Business';
+  document.getElementById('topBizName').textContent = biz;
+  document.getElementById('pvBizName').textContent = biz;
+  document.getElementById('pvQuoteNum').textContent = 'AQ-' + String(S.qNum).padStart(4, '0');
+
+  const parts = [];
+  if(v('bizPhone')) parts.push('T: '+v('bizPhone'));
+  if(v('bizEmail')) parts.push(v('bizEmail'));
+  document.getElementById('pvContact').textContent = parts.join('  ·  ') || '—';
+
+  const vatN = v('bizVat');
+  const vatBadge = document.getElementById('pvVatBadge');
+  if(vatN){ vatBadge.textContent = 'VAT Reg: '+vatN; vatBadge.style.display='inline-block'; }
+  else vatBadge.style.display = 'none';
+
+  document.getElementById('pvClientName').textContent = v('clientName') || '—';
+  document.getElementById('pvClientPhone').textContent = v('clientPhone');
+  document.getElementById('pvRef').textContent = v('reference');
+  document.getElementById('pvJobType').textContent = v('reference') && v('jobType') ? 'Category: '+v('jobType') : (v('jobType')||'');
+  document.getElementById('pvValidity').textContent = v('validNote');
+  document.getElementById('pvNotes').textContent = v('scopeNotes') ? 'Notes: '+v('scopeNotes') : '';
+
+  const items = getItems();
+  const pvItems = document.getElementById('pvItems');
+  pvItems.innerHTML = '';
+  document.getElementById('itemCount').textContent = items.length + ' item' + (items.length===1?'':'s');
+  items.forEach(i => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i.d||'—'}</td><td>${i.q}</td><td>${R(i.p)}</td><td>${R(i.t)}</td>`;
+    pvItems.appendChild(tr);
+  });
+
+  const {sub, vat, grand} = calcTotals();
+  document.getElementById('pvSub').textContent = R(sub);
+  document.getElementById('pvVat').textContent = R(vat);
+  document.getElementById('pvGrand').textContent = R(grand);
+}
+
+// ── SAVE / LOAD / DELETE ──────────────────────────────────────────────────────
+function saveQuote() {
+  if(!v('clientName')){ toast('Add a client name first.', 'error'); return; }
+  const items = getItems();
+  if(!items.length){ toast('Add at least one line item.', 'error'); return; }
+  const {sub, vat, grand} = calcTotals();
+  const q = {
+    num: 'AQ-'+String(S.qNum).padStart(4,'0'),
+    clientName: v('clientName'), clientPhone: v('clientPhone'),
+    reference: v('reference'), bizName: v('bizName'),
+    jobType: v('jobType'), scopeNotes: v('scopeNotes'),
+    items, sub, vat, grand, status: 'draft',
+    date: fmtDate(new Date())
+  };
+  S.quotes.unshift(q);
+  S.qNum++;
+  DB.save(S);
+  renderHistory();
+  syncToSheets(q, 'upsert');
+  toast('Quote '+q.num+' saved.', 'success');
+}
+
+function loadQuote(idx) {
+  const q = S.quotes[idx];
+  if(!q) return;
+  document.getElementById('bizName').value = q.bizName || '';
+  document.getElementById('clientName').value = q.clientName || '';
+  document.getElementById('clientPhone').value = q.clientPhone || '';
+  document.getElementById('reference').value = q.reference || '';
+  document.getElementById('scopeNotes').value = q.scopeNotes || '';
+  document.getElementById('itemsBody').innerHTML = '';
+  iCount = 0;
+  q.items.forEach(i => addItem(i.d, i.q, i.p));
+  sync(); saveBiz();
+  toast('Loaded '+q.num);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function deleteQuote(idx, e) {
+  e.stopPropagation();
+  if(!confirm('Delete this quote?')) return;
+  S.quotes.splice(idx, 1);
+  DB.save(S);
+  renderHistory();
+  toast('Quote deleted.');
+}
+
+function markAccepted(idx, e) {
+  e.stopPropagation();
+  S.quotes[idx].status = 'accepted';
+  DB.save(S);
+  syncToSheets(S.quotes[idx], 'upsert');
+  renderHistory();
+  toast('Marked as accepted.', 'success');
+}
+
+function clearForm() {
+  if(!confirm('Clear this quote?')) return;
+  ['clientName','clientPhone','reference','scopeNotes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('jobType').selectedIndex = 0;
+  document.getElementById('itemsBody').innerHTML = '';
+  iCount = 0;
+  addItem(); sync();
+}
+
+function clearHistory() {
+  if(!S.quotes.length) return;
+  if(!confirm('Clear all saved quotes?')) return;
+  S.quotes = [];
+  DB.save(S);
+  renderHistory();
+}
+
+// ── RENDER HISTORY ────────────────────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById('histWrap');
+  if(!S.quotes.length){
+    el.innerHTML = '<div class="hist-empty">No quotes saved yet. Fill in the form and click Save Quote.</div>';
+    return;
+  }
+  el.innerHTML = S.quotes.map((q,i) => `
+    <div class="hist-item" onclick="loadQuote(${i})">
+      <div style="flex:1;min-width:0">
+        <div class="h-num">${q.num}</div>
+        <div class="h-name">${q.clientName}</div>
+        <div class="h-date">${q.date}${q.reference?' · '+q.reference:''}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:12px">
+        <div class="h-total">${R(q.grand)}</div>
+        <div style="margin-top:4px"><span class="badge badge-${q.status}">${q.status}</span></div>
+        <div class="h-actions">
+          ${q.status!=='accepted'?`<button class="h-act-btn h-act-accept" onclick="markAccepted(${i},event)">✓ Accept</button>`:''}
+          <button class="h-act-btn h-act-del" onclick="deleteQuote(${i},event)">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── WHATSAPP ──────────────────────────────────────────────────────────────────
+function sendWA() {
+  if(!v('clientPhone')){ toast('Add client phone number first.', 'error'); return; }
+  const items = getItems();
+  if(!items.length){ toast('Add at least one line item.', 'error'); return; }
+  const {sub, vat, grand} = calcTotals();
+  const biz = v('bizName') || 'Us';
+  const cname = v('clientName') || 'there';
+  const ref = v('reference');
+  const num = 'AQ-'+String(S.qNum).padStart(4,'0');
+
+  let msg = `*QUOTE ${num}*\n*${biz}*\nDate: ${fmtDate(new Date())}\n\nHi ${cname}! Please find your quote below:\n`;
+  if(ref) msg += `_Ref: ${ref}_\n`;
+  msg += `\n*Items:*\n`;
+  items.forEach(i => msg += `• ${i.d} × ${i.q} @ ${R(i.p)} = *${R(i.t)}*\n`);
+  msg += `\n———\nSubtotal: ${R(sub)}\nVAT (15%): ${R(vat)}\n*TOTAL: ${R(grand)}*`;
+  const note = v('validNote');
+  if(note) msg += `\n\n_${note}_`;
+  msg += `\n\nPlease confirm to proceed. Thank you!`;
+
+  let ph = v('clientPhone').replace(/\D/g,'');
+  if(ph.startsWith('0')) ph = '27'+ph.slice(1);
+  window.open(`https://wa.me/${ph}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // Update status of matching saved quote
+  const existing = S.quotes.find(q => q.clientName === cname && q.status === 'draft');
+  if(existing){ existing.status = 'sent'; DB.save(S); syncToSheets(existing, 'upsert'); renderHistory(); }
+  toast('WhatsApp opened — message pre-filled.');
+}
+
+// ── SHEETS SYNC ───────────────────────────────────────────────────────────────
+async function syncToSheets(q, action='upsert') {
+  const url = v('sheetsScriptUrl');
+  if(!url || !q) return;
+  try {
+    await fetch(url, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({
+        action, num:q.num, clientName:q.clientName,
+        clientPhone:q.clientPhone, reference:q.reference||'',
+        itemsSummary:q.items.map(i=>`${i.d}×${i.q}`).join(', '),
+        sub:q.sub.toFixed(2), vat:q.vat.toFixed(2), grand:q.grand.toFixed(2),
+        status:q.status, date:q.date
+      })
+    });
+  } catch(e) {}
+}
+
+async function syncAll() {
+  const url = v('sheetsScriptUrl');
+  if(!url){ toast('No Sheets script URL configured.', 'error'); return; }
+  if(!S.quotes.length){ toast('No quotes to sync.', 'error'); return; }
+  for(const q of S.quotes) await syncToSheets(q, 'upsert');
+  toast('All quotes synced to Sheets.', 'success');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 3000);
+}
+</script>
+</body>
+</html>

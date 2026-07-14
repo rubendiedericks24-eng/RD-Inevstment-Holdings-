@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexTrack — Job Card Tracker</title>
+<style>
+:root{
+  --bg:#F0F4F8;--surface:#FFFFFF;--surface2:#F8FAFC;
+  --blue:#2563EB;--blue-dk:#1D4ED8;--blue-lt:#EFF6FF;--blue-border:#BFDBFE;
+  --text:#0F172A;--muted:#64748B;--subtle:#94A3B8;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --amber:#D97706;--amber-lt:#FFFBEB;--amber-border:#FDE68A;
+  --green:#16A34A;--green-lt:#F0FDF4;--green-border:#BBF7D0;
+  --red:#DC2626;--red-lt:#FEF2F2;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.04);
+  --radius:10px;--sidebar:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh}
+input,select,textarea,button{font-family:inherit;font-size:inherit;color:inherit}
+.sidebar{position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.sidebar-brand{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.brand-mark{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex-shrink:0}
+.brand-name{font-size:.95rem;font-weight:700;color:var(--text)}
+.brand-name em{font-style:normal;color:var(--blue)}
+.brand-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.biz-chip{margin:10px 12px 0;padding:7px 10px;background:var(--blue-lt);border:1px solid var(--blue-border);border-radius:7px;font-size:.75rem;font-weight:600;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-nav{padding:12px 10px;flex:1}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:2px;transition:all .12s;border:1px solid transparent}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--blue-lt);color:var(--blue);border-color:var(--blue-border);font-weight:600}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border);font-size:.68rem;color:var(--subtle);text-align:center}
+.main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
+@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;gap:12px;flex-wrap:wrap}
+.pg-title{font-size:1.35rem;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.pg-sub{font-size:.82rem;color:var(--muted);margin-top:3px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:16px;background:none;border:none;padding:5px 0;transition:color .15s}
+.back-btn:hover{color:var(--blue)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.stat-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.stat-val{font-size:1.7rem;font-weight:800;line-height:1}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px}
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl thead tr{background:var(--surface2)}
+table.tbl th{padding:9px 14px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+table.tbl td{padding:11px 14px;font-size:.87rem;border-bottom:1px solid var(--border)}
+table.tbl tbody tr:last-child td{border-bottom:none}
+table.tbl tbody tr.clickable{cursor:pointer;transition:background .1s}
+table.tbl tbody tr.clickable:hover{background:var(--blue-lt)}
+.job-num{font-weight:700;color:var(--blue)}
+.client-name{font-weight:600}
+.client-phone{font-size:.75rem;color:var(--muted);margin-top:2px}
+.job-desc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.date-cell{color:var(--subtle);font-size:.82rem;white-space:nowrap}
+.badge{padding:3px 9px;border-radius:4px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;display:inline-block}
+.badge-pending{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-inprogress{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-done{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{padding:5px 13px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all .12s}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dk)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border-dk)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.btn-amber{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
+.btn-amber:hover{background:var(--amber);color:#fff}
+.btn-danger{background:var(--surface);color:var(--red);border:1px solid var(--border)}
+.btn-danger:hover{background:var(--red-lt);border-color:var(--red)}
+.btn-sm{padding:6px 13px;font-size:.78rem;border-radius:7px}
+.btn-link{background:none;border:none;color:var(--blue);font-size:.82rem;font-weight:600;cursor:pointer;padding:0}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid var(--border-dk);border-radius:7px;background:var(--surface);color:var(--text);font-size:.88rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--subtle)}
+.field textarea{resize:vertical;min-height:80px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.search-input{padding:8px 12px;border:1px solid var(--border-dk);border-radius:7px;background:var(--surface);font-size:.84rem;outline:none;width:240px;transition:border-color .15s}
+.search-input:focus{border-color:var(--blue)}
+.empty{text-align:center;padding:52px 24px;color:var(--subtle)}
+.empty-icon{font-size:2.2rem;margin-bottom:10px}
+.empty-title{font-size:1rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.empty-sub{font-size:.83rem}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.info-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.info-val{font-size:.92rem;font-weight:600}
+.info-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.alert{padding:11px 14px;border-radius:8px;font-size:.82rem;display:flex;align-items:center;gap:9px}
+.alert-success{background:var(--green-lt);border:1px solid var(--green-border);color:var(--green)}
+.toast-el{position:fixed;bottom:26px;right:26px;padding:11px 20px;border-radius:9px;font-size:.84rem;font-weight:600;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999;box-shadow:var(--shadow-md)}
+.toast-el.show{opacity:1;transform:translateY(0)}
+.toast-el.success{background:var(--text);color:#fff}
+.toast-el.error{background:var(--red);color:#fff}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast-el"></div>
+<script>
+const DB={
+  getJobs:()=>JSON.parse(localStorage.getItem('jct_jobs')||'[]'),
+  saveJobs:j=>localStorage.setItem('jct_jobs',JSON.stringify(j)),
+  getConfig:()=>JSON.parse(localStorage.getItem('jct_config')||JSON.stringify({businessName:'Auto Workshop',technicianList:['Andile','Sipho','James'],makeWebhookUrl:'',sheetsScriptUrl:''})),
+  saveConfig:c=>localStorage.setItem('jct_config',JSON.stringify(c)),
+  nextId:()=>{const jobs=JSON.parse(localStorage.getItem('jct_jobs')||'[]');const max=jobs.reduce((m,j)=>Math.max(m,parseInt(j.id.replace('JOB-',''))||0),0);return 'JOB-'+String(max+1).padStart(3,'0');}
+};
+let S={page:'dashboard',selectedJobId:null,filterStatus:'all',searchQuery:'',jobs:DB.getJobs(),config:DB.getConfig()};
+function set(u){S={...S,...u};render();}
+function createJob(data){const job={id:DB.nextId(),date:today(),clientName:data.clientName.trim(),clientPhone:data.clientPhone.trim(),jobDescription:data.jobDescription.trim(),technician:data.technician,status:'Pending',notes:(data.notes||'').trim(),completedAt:null,createdAt:new Date().toISOString()};const jobs=[...S.jobs,job];DB.saveJobs(jobs);set({jobs,page:'dashboard'});toast('Job card created: '+job.id);syncToSheets(job,'upsert');}
+function setStatus(jobId,newStatus){const jobs=S.jobs.map(j=>j.id!==jobId?j:{...j,status:newStatus,completedAt:newStatus==='Done'?new Date().toISOString():j.completedAt});DB.saveJobs(jobs);set({jobs});const updated=jobs.find(j=>j.id===jobId);if(newStatus==='Done'){fireWebhook(updated);toast('Job complete — WhatsApp notification sent');}else toast('Status updated → '+newStatus);syncToSheets(updated,'upsert');}
+function saveNotes(jobId,notes){const jobs=S.jobs.map(j=>j.id===jobId?{...j,notes}:j);DB.saveJobs(jobs);set({jobs});toast('Notes saved');syncToSheets(jobs.find(j=>j.id===jobId),'upsert');}
+function deleteJob(jobId){if(!confirm('Delete this job card?'))return;const job=S.jobs.find(j=>j.id===jobId);const jobs=S.jobs.filter(j=>j.id!==jobId);DB.saveJobs(jobs);set({jobs,page:'all-jobs'});toast('Deleted','error');if(job)syncToSheets(job,'delete');}
+async function fireWebhook(job){if(!S.config.makeWebhookUrl)return;try{await fetch(S.config.makeWebhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'job_completed',clientName:job.clientName,clientPhone:job.clientPhone,jobDescription:job.jobDescription,technician:job.technician,completedAt:job.completedAt,businessName:S.config.businessName})});}catch(e){}}
+async function syncToSheets(job,action='upsert'){if(!S.config.sheetsScriptUrl||!job)return;try{await fetch(S.config.sheetsScriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action,id:job.id,clientName:job.clientName,clientPhone:job.clientPhone,jobDescription:job.jobDescription,technician:job.technician,status:action==='delete'?'DELETED':job.status,date:job.date,notes:job.notes||'',completedAt:job.completedAt||'',updatedAt:new Date().toISOString()})});}catch(e){}}
+async function syncAllToSheets(){if(!S.config.sheetsScriptUrl){toast('No Sheets script URL configured','error');return;}toast('Syncing all jobs…');for(const job of S.jobs){await syncToSheets(job,'upsert');}toast('All jobs synced to Google Sheets');}
+function saveSettings(data){const config={businessName:data.businessName||'Workshop',technicianList:(data.technicianList||'').split('\n').map(t=>t.trim()).filter(Boolean),makeWebhookUrl:data.makeWebhookUrl||'',sheetsScriptUrl:data.sheetsScriptUrl||''};DB.saveConfig(config);set({config});toast('Settings saved');}
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtDate=iso=>iso?new Date(iso).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}):'—';
+const fmtDT=iso=>iso?new Date(iso).toLocaleString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function badge(s){const m={Pending:'badge-pending','In Progress':'badge-inprogress',Done:'badge-done'};return`<span class="badge ${m[s]||''}">${esc(s)}</span>`;}
+function stats(){const t=today();return{total:S.jobs.length,pending:S.jobs.filter(j=>j.status==='Pending').length,inProgress:S.jobs.filter(j=>j.status==='In Progress').length,doneToday:S.jobs.filter(j=>j.status==='Done'&&j.completedAt?.slice(0,10)===t).length};}
+function filtered(){return S.jobs.filter(j=>S.filterStatus==='all'||j.status===S.filterStatus).filter(j=>{if(!S.searchQuery)return true;const q=S.searchQuery.toLowerCase();return[j.clientName,j.technician,j.id,j.jobDescription].some(f=>f?.toLowerCase().includes(q));}).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));}
+const IC={
+  grid:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+  plus:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  list:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>`,
+  cog:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  back:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  check:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+};
+let tt;
+function toast(msg,type='success'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast-el show '+(type||'success');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),3000);}
+function render(){document.getElementById('app').innerHTML=layout();bind();}
+function layout(){
+  const navs=[{id:'dashboard',label:'Dashboard',icon:IC.grid},{id:'new-job',label:'New Job Card',icon:IC.plus},{id:'all-jobs',label:'All Jobs',icon:IC.list},{id:'settings',label:'Settings',icon:IC.cog}];
+  const active=S.page==='job-detail'?'all-jobs':S.page;
+  const sidebar=`<div class="sidebar"><div class="sidebar-brand"><div style="display:flex;align-items:center;gap:10px"><div class="brand-mark">NT</div><div><div class="brand-name">Nex<em>Track</em></div><div class="brand-sub">Job Card Tracker</div></div></div></div><div class="biz-chip">${esc(S.config.businessName)}</div><nav class="sidebar-nav">${navs.map(n=>`<div class="nav-item${n.id===active?' active':''}" data-nav="${n.id}">${n.icon} ${n.label}</div>`).join('')}</nav><div class="sidebar-footer">Powered by NexAgent AI App Division</div></div>`;
+  let pg;switch(S.page){case'dashboard':pg=pgDash();break;case'new-job':pg=pgNew();break;case'all-jobs':pg=pgAll();break;case'job-detail':pg=pgDetail();break;case'settings':pg=pgSettings();break;default:pg=pgDash();}
+  return sidebar+`<div class="main">${pg}</div>`;
+}
+function pgDash(){
+  const s=stats();
+  const active=[...S.jobs].filter(j=>j.status!=='Done').sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  return`<div style="max-width:900px"><div class="pg-header"><div><div class="pg-title">Dashboard</div><div class="pg-sub">${new Date().toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div><button class="btn btn-primary" data-nav="new-job">${IC.plus} New Job Card</button></div>
+  <div class="stat-grid"><div class="stat-card"><div class="stat-label">Total Jobs</div><div class="stat-val" style="color:var(--text)">${s.total}</div></div><div class="stat-card"><div class="stat-label">Pending</div><div class="stat-val" style="color:var(--blue)">${s.pending}</div></div><div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-val" style="color:var(--amber)">${s.inProgress}</div></div><div class="stat-card"><div class="stat-label">Done Today</div><div class="stat-val" style="color:var(--green)">${s.doneToday}</div></div></div>
+  <div class="card"><div class="card-head"><span class="card-title">Active Jobs <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem;margin-left:4px">(${active.length})</span></span><button class="btn-link" data-nav="all-jobs">View all →</button></div>
+  ${active.length===0?`<div class="empty"><div class="empty-icon">✓</div><div class="empty-title">All clear</div><div class="empty-sub">No active jobs right now.</div></div>`:`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Job #</th><th>Client</th><th>Description</th><th>Technician</th><th>Status</th><th>Date</th></tr></thead><tbody>${active.map(j=>`<tr class="clickable" data-job="${esc(j.id)}"><td><span class="job-num">${esc(j.id)}</span></td><td><div class="client-name">${esc(j.clientName)}</div><div class="client-phone">${esc(j.clientPhone)}</div></td><td><div class="job-desc">${esc(j.jobDescription)}</div></td><td>${esc(j.technician)}</td><td>${badge(j.status)}</td><td class="date-cell">${fmtDate(j.date)}</td></tr>`).join('')}</tbody></table></div>`}</div></div>`;
+}
+function pgNew(){
+  const techs=S.config.technicianList||[];
+  return`<div style="max-width:540px"><button class="back-btn" data-nav="dashboard">${IC.back} Back to Dashboard</button><div class="pg-header"><div><div class="pg-title">New Job Card</div><div class="pg-sub">Fill in the details below</div></div></div><div class="card" style="padding:26px"><form id="new-job-form"><div class="grid2"><div class="field"><label>Client Name *</label><input name="clientName" required placeholder="e.g. Sipho Dlamini" autocomplete="off"></div><div class="field"><label>Client Phone *</label><input name="clientPhone" required placeholder="e.g. 082 123 4567"></div></div><div class="field"><label>Job Description *</label><textarea name="jobDescription" required placeholder="e.g. Oil change, brake pads, filter replacement"></textarea></div><div class="field"><label>Assign Technician *</label><select name="technician" required><option value="">Select technician…</option>${techs.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}</select></div><div class="field"><label>Notes (optional)</label><textarea name="notes" style="min-height:60px" placeholder="Parts needed, special instructions…"></textarea></div><div style="display:flex;gap:10px;margin-top:8px"><button type="submit" class="btn btn-primary" style="flex:1;justify-content:center">Create Job Card</button><button type="button" class="btn btn-secondary" data-nav="dashboard">Cancel</button></div></form></div></div>`;
+}
+function pgAll(){
+  const jobs=filtered();
+  return`<div style="max-width:960px"><div class="pg-header"><div><div class="pg-title">All Jobs</div><div class="pg-sub">${S.jobs.length} total job cards</div></div><button class="btn btn-primary" data-nav="new-job">${IC.plus} New Job Card</button></div><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap"><input id="search-box" class="search-input" placeholder="Search by client, tech, job ID…" value="${esc(S.searchQuery)}"><div class="chips">${['all','Pending','In Progress','Done'].map(f=>`<div class="chip${S.filterStatus===f?' active':''}" data-filter="${f}">${f==='all'?'All':f}</div>`).join('')}</div></div><div class="card">${jobs.length===0?`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No jobs found</div><div class="empty-sub">Try adjusting your search or filter.</div></div>`:`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Job #</th><th>Client</th><th>Description</th><th>Technician</th><th>Status</th><th>Date</th></tr></thead><tbody>${jobs.map(j=>`<tr class="clickable" data-job="${esc(j.id)}"><td><span class="job-num">${esc(j.id)}</span></td><td><div class="client-name">${esc(j.clientName)}</div><div class="client-phone">${esc(j.clientPhone)}</div></td><td><div class="job-desc">${esc(j.jobDescription)}</div></td><td>${esc(j.technician)}</td><td>${badge(j.status)}</td><td class="date-cell">${fmtDate(j.date)}</td></tr>`).join('')}</tbody></table></div>`}</div></div>`;
+}
+function pgDetail(){
+  const job=S.jobs.find(j=>j.id===S.selectedJobId);
+  if(!job)return`<div style="padding:48px;text-align:center;color:var(--muted)">Job not found. <span data-nav="all-jobs" style="color:var(--blue);cursor:pointer;font-weight:600">Go back</span></div>`;
+  const isDone=job.status==='Done';
+  return`<div style="max-width:640px"><button class="back-btn" data-nav="all-jobs">${IC.back} All Jobs</button><div class="card" style="padding:24px;margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"><div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Job Card</div><div style="font-size:1.6rem;font-weight:800;color:var(--blue)">${esc(job.id)}</div></div><div style="text-align:right">${badge(job.status)}<div style="font-size:.75rem;color:var(--muted);margin-top:6px">Created ${fmtDate(job.date)}</div></div></div><div class="info-grid"><div><div class="info-lbl">Client</div><div class="info-val">${esc(job.clientName)}</div><div class="info-sub">${esc(job.clientPhone)}</div></div><div><div class="info-lbl">Technician</div><div class="info-val">${esc(job.technician)}</div></div></div><div><div class="info-lbl">Description</div><div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.88rem;line-height:1.65">${esc(job.jobDescription)}</div></div>${isDone&&job.completedAt?`<div class="alert alert-success" style="margin-top:14px">${IC.check} Completed ${fmtDT(job.completedAt)}</div>`:''}</div>${!isDone?`<div class="card" style="padding:18px 22px;margin-bottom:14px"><div class="section-label">Update Status</div><div style="display:flex;gap:9px;flex-wrap:wrap">${job.status!=='Pending'?`<button class="btn btn-secondary btn-sm" data-status="Pending" data-jobid="${esc(job.id)}">Set Pending</button>`:''} ${job.status!=='In Progress'?`<button class="btn btn-amber btn-sm" data-status="In Progress" data-jobid="${esc(job.id)}">In Progress</button>`:''}<button class="btn btn-primary btn-sm" data-status="Done" data-jobid="${esc(job.id)}">${IC.check} Mark Done</button></div><div style="font-size:.75rem;color:var(--muted);margin-top:10px">Marking Done fires Make.com webhook → WhatsApp notification to client</div></div>`:''}<div class="card" style="padding:18px 22px;margin-bottom:14px"><div class="section-label">Notes</div><div class="field" style="margin-bottom:10px"><textarea id="notes-field" placeholder="Parts used, extra work, client notes…">${esc(job.notes)}</textarea></div><button id="save-notes-btn" class="btn btn-secondary btn-sm" data-jobid="${esc(job.id)}">Save Notes</button></div><div style="display:flex;justify-content:flex-end"><button class="btn btn-danger btn-sm" data-delete="${esc(job.id)}">Delete Job Card</button></div></div>`;
+}
+function pgSettings(){
+  const c=S.config;
+  const scriptCode=`function doPost(e){
+  try{
+    var d=JSON.parse(e.postData.contents);
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
+    var sh=ss.getSheets()[0];
+    var hdr=['Job ID','Client','Phone','Description','Technician','Status','Date','Notes','Completed','Updated'];
+    if(sh.getLastRow()===0)sh.appendRow(hdr);
+    var rows=sh.getDataRange().getValues();
+    var found=-1;
+    for(var i=1;i<rows.length;i++){if(rows[i][0]===d.id){found=i+1;break;}}
+    var row=[d.id,d.clientName,d.clientPhone,d.jobDescription,d.technician,d.status,d.date,d.notes,d.completedAt,d.updatedAt];
+    if(found>0)sh.getRange(found,1,1,row.length).setValues([row]);
+    else sh.appendRow(row);
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+  return`<div style="max-width:580px"><div class="pg-header"><div><div class="pg-title">Settings</div><div class="pg-sub">Configure NexTrack for your business</div></div></div><form id="settings-form"><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Business Details</div><div class="field"><label>Business Name</label><input name="businessName" value="${esc(c.businessName)}" placeholder="e.g. Pete's Auto Workshop"></div><div class="field" style="margin-bottom:0"><label>Technicians <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--subtle)">(one per line)</span></label><textarea name="technicianList" rows="4" placeholder="Andile&#10;Sipho&#10;James">${esc((c.technicianList||[]).join('\n'))}</textarea></div></div><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Make.com Webhook</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Fires when a job is marked Done — triggers WhatsApp notification to client via Make.com.</div><div class="field" style="margin-bottom:0"><label>Webhook URL</label><input name="makeWebhookUrl" value="${esc(c.makeWebhookUrl)}" placeholder="https://hook.us2.make.com/…"></div></div><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Google Sheets Sync <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--subtle)">(optional)</span></div><div style="font-size:.8rem;color:var(--muted);margin-bottom:14px">NexTrack syncs every job create, update, and delete to your sheet in real time. Uses a Google Apps Script web app as a relay — no OAuth needed.</div><div class="field" style="margin-bottom:14px"><label>Apps Script URL</label><input name="sheetsScriptUrl" value="${esc(c.sheetsScriptUrl||'')}" placeholder="https://script.google.com/macros/s/…/exec"></div><details style="margin-bottom:0"><summary style="font-size:.78rem;font-weight:700;color:var(--blue);cursor:pointer;user-select:none;padding:8px 0">How to set this up (one-time, 3 minutes)</summary><div style="margin-top:12px;font-size:.8rem;color:var(--muted);line-height:1.7"><ol style="padding-left:18px;margin-bottom:12px"><li>Open your Google Sheet → Extensions → Apps Script</li><li>Delete any existing code, paste the script below</li><li>Click Deploy → New deployment → Web app</li><li>Set "Execute as" = Me, "Who has access" = Anyone</li><li>Click Deploy, copy the URL, paste it above</li></ol><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:.72rem;white-space:pre;overflow-x:auto;color:var(--text)">${esc(scriptCode)}</div></div></details></div><button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;margin-bottom:10px">Save Settings</button></form><button id="sync-all-btn" class="btn btn-secondary" style="width:100%;justify-content:center;padding:10px;margin-bottom:18px">Sync All Jobs to Sheets Now</button><div class="card" style="padding:18px 22px;border-color:rgba(220,38,38,0.2)"><div style="font-size:.82rem;font-weight:700;color:var(--red);margin-bottom:6px">Danger Zone</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Permanently delete all job cards stored on this device.</div><button id="clear-all-btn" class="btn btn-danger btn-sm">Clear All Jobs</button></div></div>`;
+}
+function bind(){
+  document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>set({page:el.dataset.nav})));
+  document.querySelectorAll('[data-job]').forEach(el=>el.addEventListener('click',()=>set({page:'job-detail',selectedJobId:el.dataset.job})));
+  document.querySelectorAll('[data-status]').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();setStatus(el.dataset.jobid,el.dataset.status);}));
+  document.querySelectorAll('[data-delete]').forEach(el=>el.addEventListener('click',()=>deleteJob(el.dataset.delete)));
+  document.querySelectorAll('[data-filter]').forEach(el=>el.addEventListener('click',()=>set({filterStatus:el.dataset.filter})));
+  const sb=document.getElementById('search-box');if(sb){let t;sb.addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>set({searchQuery:e.target.value}),200);});sb.focus();}
+  const njf=document.getElementById('new-job-form');if(njf)njf.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(njf);createJob({clientName:fd.get('clientName'),clientPhone:fd.get('clientPhone'),jobDescription:fd.get('jobDescription'),technician:fd.get('technician'),notes:fd.get('notes')});});
+  const sf=document.getElementById('settings-form');if(sf)sf.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(sf);saveSettings({businessName:fd.get('businessName'),technicianList:fd.get('technicianList'),makeWebhookUrl:fd.get('makeWebhookUrl'),sheetsScriptUrl:fd.get('sheetsScriptUrl')});});
+  const sab=document.getElementById('sync-all-btn');if(sab)sab.addEventListener('click',syncAllToSheets);
+  const snb=document.getElementById('save-notes-btn');if(snb)snb.addEventListener('click',()=>saveNotes(snb.dataset.jobid,document.getElementById('notes-field')?.value||''));
+  const cab=document.getElementById('clear-all-btn');if(cab)cab.addEventListener('click',()=>{if(confirm('Clear ALL job cards? Cannot be undone.')){DB.saveJobs([]);set({jobs:[],page:'dashboard'});toast('All jobs cleared','error');}});
+}
+function seedDemo(){
+  if(DB.getJobs().length>0)return;
+  const techs=S.config.technicianList;
+  const seed=[
+    {id:'JOB-001',date:today(),clientName:'Sipho Dlamini',clientPhone:'082 123 4567',jobDescription:'Full service — oil change, air filter, cabin filter, spark plugs, brake inspection',technician:techs[0]||'Andile',status:'In Progress',notes:'Client waiting — needs brake pads front and rear',completedAt:null,createdAt:new Date(Date.now()-3600000).toISOString()},
+    {id:'JOB-002',date:today(),clientName:'Thandi Nkosi',clientPhone:'073 987 6543',jobDescription:'Alternator replacement + battery load test',technician:techs[1]||'Sipho',status:'Pending',notes:'',completedAt:null,createdAt:new Date(Date.now()-7200000).toISOString()},
+    {id:'JOB-003',date:new Date(Date.now()-86400000).toISOString().slice(0,10),clientName:'Pieter van der Berg',clientPhone:'083 456 7890',jobDescription:'Clutch kit replacement — Toyota Hilux 2.8 GD6',technician:techs[0]||'Andile',status:'Done',notes:'Replaced full clutch kit. Flywheel resurfaced. Tested — smooth.',completedAt:new Date(Date.now()-82800000).toISOString(),createdAt:new Date(Date.now()-90000000).toISOString()}
+  ];
+  DB.saveJobs(seed);S.jobs=seed;
+}
+seedDemo();render();
+</script>
+</body>
+</html>
