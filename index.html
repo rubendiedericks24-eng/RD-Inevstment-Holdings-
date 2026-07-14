@@ -27,7 +27,7 @@ a{color:inherit;text-decoration:none}
 nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid #E2E8F0;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1140px;margin:0 auto}
 .nav-logo{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.05rem;line-height:1.2}
-.nav-logo span{color:var(--green)}
+.nav-logo span{color:#0F172A}
 .nav-links{display:flex;align-items:center;gap:28px}
 .nav-links a{color:#475569;font-size:.95rem;font-weight:500;transition:color .2s}
 .nav-links a:hover{color:#0F172A}
@@ -39,7 +39,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.97);backdrop
 .hero{padding:120px 0 100px;text-align:center;position:relative}
 .hero::before{content:'';position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:none;pointer-events:none}
 .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid #E2E8F0;border-radius:999px;padding:8px 20px;font-size:.8rem;letter-spacing:.12em;color:#475569;margin-bottom:36px;background:#F8FAFC}
-.badge .dot{width:8px;height:8px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:#64748B;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .hero h1{font-size:clamp(2.4rem,6vw,4.2rem);margin-bottom:24px}
 .hero h1 em{font-style:normal;color:#0F172A}
@@ -60,8 +60,8 @@ section{padding:96px 0}
 .holding-logo{width:100px;display:block}
 .holding-logo-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;gap:0}
 .holding-brand{font-family:'Archivo',sans-serif;font-weight:800;font-size:1rem;color:#0F172A;margin-top:2px;text-align:center}
-.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.3);border-radius:999px;padding:6px 16px;font-size:.78rem;font-weight:600;margin-bottom:14px}
-.live-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:999px;padding:6px 16px;font-size:.78rem;font-weight:600;margin-bottom:14px}
+.live-badge .dot{width:7px;height:7px;border-radius:50%;background:#64748B;animation:pulse 2s infinite}
 .holding-card h3{font-size:1.7rem;margin-bottom:12px;color:#0F172A}
 .holding-card p{color:#475569}
 .holding-card strong{color:#0F172A}
@@ -69,11 +69,11 @@ section{padding:96px 0}
 #lexi{background:var(--surface2)}
 .lexi-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
 .lexi-copy h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:20px}
-.lexi-copy h2 em{font-style:normal;color:var(--green)}
+.lexi-copy h2 em{font-style:normal;color:#0F172A}
 .lexi-copy p{color:var(--muted);margin-bottom:20px}
 .price-row{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap}
 .price-box{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:20px 26px;flex:1;min-width:150px}
-.price-box .amt{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.6rem;color:var(--green)}
+.price-box .amt{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.6rem;color:#0F172A}
 .price-box .lbl{color:var(--muted);font-size:.85rem;margin-top:4px}
 .stats{display:flex;gap:0;border:1px solid #E2E8F0;border-radius:14px;overflow:hidden;margin-top:8px}
 .stat{flex:1;text-align:center;padding:22px 10px;background:var(--card)}
@@ -85,7 +85,7 @@ section{padding:96px 0}
 .phone-head{background:#1F2C33;padding:14px 16px;display:flex;align-items:center;gap:12px}
 .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#3ee07f,#188c43);display:flex;align-items:center;justify-content:center;font-weight:800;color:#07110b;font-family:'Archivo',sans-serif}
 .phone-head .who{font-weight:600;font-size:.9rem;color:#F0F4F8}
-.phone-head .status{color:var(--green);font-size:.72rem}
+.phone-head .status{color:#94A3B8;font-size:.72rem}
 .chat{padding:18px 14px;display:flex;flex-direction:column;gap:10px;min-height:340px;background:#050610}
 .msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:.83rem;color:#F0F4F8;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
 .msg.show{opacity:1;transform:translateY(0)}
@@ -107,11 +107,11 @@ section{padding:96px 0}
 .slider-row label{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:10px}
 .slider-row label b{color:#0F172A;font-family:'IBM Plex Mono',monospace}
 input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:#E2E8F0;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 0 12px rgba(37,211,102,.5)}
-input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--green);cursor:pointer;border:none}
-.roi-result{text-align:center;background:var(--surface2);border-radius:16px;padding:34px 20px;border:1px solid rgba(37,211,102,.2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#0F172A;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#0F172A;cursor:pointer;border:none}
+.roi-result{text-align:center;background:var(--surface2);border-radius:16px;padding:34px 20px;border:1px solid #E2E8F0}
 .roi-result .cap{color:var(--muted);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
-.roi-result .big{font-family:'Archivo',sans-serif;font-weight:900;font-size:2.6rem;color:var(--green);margin:8px 0}
+.roi-result .big{font-family:'Archivo',sans-serif;font-weight:900;font-size:2.6rem;color:#0F172A;margin:8px 0}
 .roi-result .sub{color:var(--muted);font-size:.88rem}
 .roi-result .sub b{color:var(--amber)}
 /* CONTACT */
@@ -119,25 +119,25 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .c-item{margin-bottom:26px}
 .c-item .k{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
 .c-item .v{font-size:1.05rem;font-weight:600}
-.c-item .v a:hover{color:var(--green)}
-.wa-box{background:linear-gradient(135deg,#0D0F22,#0A0C1C);border:1px solid rgba(37,211,102,.3);border-radius:16px;padding:26px;margin-top:10px}
+.c-item .v a:hover{color:#0F172A}
+.wa-box{background:linear-gradient(135deg,#0D0F22,#0A0C1C);border:1px solid #E2E8F0;border-radius:16px;padding:26px;margin-top:10px}
 .wa-box .t{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px}
-.wa-box .t .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.wa-box .t .dot{width:8px;height:8px;border-radius:50%;background:#64748B;animation:pulse 2s infinite}
 .wa-box p{color:var(--muted);font-size:.9rem;margin-bottom:16px}
 .wa-box a.btn{width:100%;text-align:center}
 form .frow{margin-bottom:18px}
 form label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:8px}
 form input,form textarea{width:100%;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:.95rem;transition:border-color .2s}
-form input:focus,form textarea:focus{outline:none;border-color:var(--green)}
+form input:focus,form textarea:focus{outline:none;border-color:#0F172A}
 form textarea{min-height:120px;resize:vertical}
-.form-note{color:var(--green);font-size:.9rem;margin-top:14px;display:none}
+.form-note{color:#16A34A;font-size:.9rem;margin-top:14px;display:none}
 /* APP DIVISION */
 #apps{background:var(--surface2)}
 .app-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:20px;padding:44px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
 .app-card-top{display:flex;align-items:flex-start;gap:20px;margin-bottom:36px}
 .app-icon-box{width:56px;height:56px;border-radius:14px;background:#F1F5F9;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
-.app-live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.3);border-radius:999px;padding:5px 14px;font-size:.75rem;font-weight:600;margin-bottom:10px}
-.app-live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.app-live-badge{display:inline-flex;align-items:center;gap:8px;background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;id #E2E8F0;border-radius:999px;padding:5px 14px;font-size:.75rem;font-weight:600;margin-bottom:10px}
+.app-live-badge .dot{width:6px;height:6px;border-radius:50%;background:#64748B;animation:pulse 2s infinite}
 .app-card h3{font-size:1.6rem;margin-bottom:8px;color:#0F172A}
 .app-card-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
 .demo-panel{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
@@ -147,14 +147,14 @@ form textarea{min-height:120px;resize:vertical}
 .demo-job-row.completed{background:#F0FDF4}
 .demo-job-name{font-weight:600;font-size:.88rem;margin-bottom:3px;color:#0F172A}
 .demo-job-desc{color:#64748B;font-size:.78rem}
-.demo-status-done{color:var(--green);font-size:.78rem;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.demo-status-done{color:#16A34A;font-size:.78rem;font-weight:600;font-family:'IBM Plex Mono',monospace}
 .demo-mark-btn{background:#0F172A;color:#FFFFFF;border:none;border-radius:8px;padding:8px 16px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
 .demo-mark-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.25)}
 .demo-mark-btn:disabled{background:#E2E8F0;color:#94A3B8;cursor:default;transform:none;box-shadow:none}
 .demo-wa-notif{margin:14px 18px 18px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
 .demo-wa-notif.visible{opacity:1;transform:translateY(0)}
-.wa-notif-icon{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#07110b;font-size:.9rem;font-family:'Archivo',sans-serif}
-.wa-notif-meta{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--green);margin-bottom:4px}
+.wa-notif-icon{width:34px;height:34px;border-radius:50%;background:#0F172A;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#07110b;font-size:.9rem;font-family:'Archivo',sans-serif}
+.wa-notif-meta{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:#64748B;margin-bottom:4px}
 .wa-notif-body{font-size:.78rem;color:var(--text);line-height:1.5}
 .app-feature-list{margin-bottom:28px}
 .app-feature{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:.9rem;border-bottom:1px solid #F1F5F9;color:#0F172A}
@@ -170,19 +170,19 @@ form textarea{min-height:120px;resize:vertical}
 .app-tier.featured{border-color:#0F172A;border-top:3px solid #0F172A;box-shadow:0 2px 8px rgba(15,23,42,0.1)}
 .tier-name{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace}
 .tier-setup{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.1rem;color:var(--text);margin-bottom:4px}
-.tier-mo{font-size:.75rem;color:var(--green);font-weight:600}
+.tier-mo{font-size:.75rem;color:#475569;font-weight:600}
 @media(max-width:900px){.app-card{padding:28px}.app-card-top{flex-direction:column;gap:14px}.app-card-body{grid-template-columns:1fr;gap:32px}}
 /* FOOTER */
 footer{border-top:1px solid #E2E8F0;padding:36px 0;text-align:center;color:var(--muted);font-size:.85rem}
 footer a{color:var(--muted);text-decoration:underline}
-footer a:hover{color:var(--green)}
+footer a:hover{color:#0F172A}
 /* Policy accordion */
 .policy-bar{background:#F8FAFC;border-top:1px solid #E2E8F0;padding:24px 0}
 .policy-accordions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 details.policy-item{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;min-width:200px;max-width:480px;flex:1}
 details.policy-item summary{list-style:none;padding:12px 16px;font-size:.8rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
 details.policy-item summary::-webkit-details-marker{display:none}
-details.policy-item summary::after{content:'+';font-size:1rem;font-weight:400;color:var(--green);transition:transform .2s}
+details.policy-item summary::after{content:'+';font-size:1rem;font-weight:400;color:#64748B;transition:transform .2s}
 details.policy-item[open] summary::after{content:'−'}
 details.policy-item[open] summary{color:var(--text)}
 .policy-body{padding:0 16px 16px;font-size:.78rem;color:var(--muted);line-height:1.7}
@@ -252,7 +252,7 @@ details.policy-item[open] summary{color:var(--text)}
     <p class="sec-sub">Ready-to-deploy apps that automate your operations and connect to WhatsApp — no installs, works on any device.</p>
     <div class="app-card" id="card-nextrack">
       <div class="app-card-top">
-        <div class="app-icon-box" style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;letter-spacing:-.5px;color:var(--green)">NT</div>
+        <div class="app-icon-box" style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;letter-spacing:-.5px;color:#0F172A">NT</div>
         <div>
           <div class="app-live-badge"><span class="dot"></span> App #1 — Available now</div>
           <h3>Job Card Tracker</h3>
@@ -316,7 +316,7 @@ details.policy-item[open] summary{color:var(--text)}
     </div>
     <div class="app-card" id="card-nexquote" style="margin-top:28px">
       <div class="app-card-top">
-        <div class="app-icon-box" style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;letter-spacing:-.5px;color:var(--green)">NQ</div>
+        <div class="app-icon-box" style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;letter-spacing:-.5px;color:#0F172A">NQ</div>
         <div>
           <div class="app-live-badge"><span class="dot"></span> App #2 — Available now</div>
           <h3>Auto Quote Generator</h3>
@@ -386,17 +386,17 @@ details.policy-item[open] summary{color:var(--text)}
         <div class="label">// NexAgent AI · Lexi</div>
         <h2>Your leads message at night. <em>Lexi answers.</em></h2>
         <p>Every enquiry that lands after hours goes to whoever replies first — usually your competitor. Lexi replies in seconds, in natural conversation, qualifies the lead, and logs everything before you've even seen the message.</p>
-        <div style="margin:24px 0 8px;background:linear-gradient(135deg,rgba(37,211,102,0.08),rgba(37,211,102,0.03));border:1px solid rgba(37,211,102,0.3);border-radius:14px;padding:18px 20px;">
+        <div style="margin:24px 0 8px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:18px 20px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
           </div>
           <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;">
             <div>
-              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:var(--green);">R2,999</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:#0F172A;">R2,999</div>
               <div style="font-size:0.8rem;color:var(--muted);">Once-off setup</div>
             </div>
             <div style="width:1px;background:rgba(247,245,240,0.1);align-self:stretch;"></div>
             <div>
-              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:var(--green);">R699<span style="font-size:1rem">/mo</span></div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:#0F172A;">R699<span style="font-size:1rem">/mo</span></div>
               <div style="font-size:0.8rem;color:var(--muted);">Fully managed retainer</div>
             </div>
           </div>
@@ -644,7 +644,7 @@ document.getElementById('cform').addEventListener('submit',function(ev){
   const body=encodeURIComponent('Name: '+n+'\nEmail: '+e+'\nBusiness: '+(b||'—')+'\n\n'+m);
   const gmailUrl='https://mail.google.com/mail/?view=cm&to=rubendiedericks24%40gmail.com&su='+subject+'&body='+body;
   document.getElementById('fnote').textContent='Opening Gmail with your message pre-filled — just hit Send.';
-  document.getElementById('fnote').style.color='var(--green)';
+  document.getElementById('fnote').style.color='#16A34A';
   window.open(gmailUrl,'_blank');
 });
 </script>
