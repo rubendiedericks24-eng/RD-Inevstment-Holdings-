@@ -222,6 +222,10 @@ details[open] .setup-block summary::before{content:'▾'}
             <input id="clientPhone" placeholder="083 000 0000" oninput="sync()">
           </div>
           <div class="field">
+            <label>Client Email</label>
+            <input id="clientEmail" placeholder="client@email.com" oninput="sync()">
+          </div>
+          <div class="field">
             <label>Vehicle / Reference</label>
             <input id="reference" placeholder="Toyota Hilux — CA 123-456" oninput="sync()">
           </div>
@@ -313,33 +317,15 @@ details[open] .setup-block summary::before{content:'▾'}
       </div>
       <div class="section-body">
         <div class="field">
-          <label>Apps Script URL</label>
-          <input id="sheetsScriptUrl" placeholder="https://script.google.com/macros/s/…/exec" oninput="saveSettings()">
+          <label>Webhook URL (Make.com)</label>
+          <input id="sheetsScriptUrl" placeholder="https://hook.us2.make.com/…" oninput="saveSettings()">
         </div>
         <div style="display:flex;gap:8px;margin-top:10px">
           <button class="btn btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="syncAll()">Sync All Quotes Now</button>
         </div>
-        <details style="margin-top:14px">
-          <summary style="cursor:pointer;font-size:.8rem;font-weight:600;color:var(--muted);padding:6px 0">How to set up Google Sheets sync ▸</summary>
-          <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7">
-            1. Open Google Sheets → Extensions → Apps Script<br>
-            2. Paste the code below → Save → Deploy → New Deployment → Web App<br>
-            3. Set "Who has access" to Anyone → Deploy → Copy the URL → paste above
-          </div>
-          <pre class="setup-code">function doPost(e){
-  var d=JSON.parse(e.postData.contents);
-  var sh=SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  var headers=['Quote No','Client','Phone','Reference','Items','Subtotal','VAT','Total','Status','Date','Saved'];
-  if(sh.getLastRow()===0)sh.appendRow(headers);
-  var rows=sh.getDataRange().getValues();
-  var idx=-1;
-  for(var i=1;i<rows.length;i++){if(rows[i][0]===d.num){idx=i+1;break;}}
-  var row=[d.num,d.clientName,d.clientPhone,d.reference,d.itemsSummary,d.sub,d.vat,d.grand,d.status,d.date,new Date().toLocaleString()];
-  if(idx>0)sh.getRange(idx,1,1,row.length).setValues([row]);
-  else sh.appendRow(row);
-  return ContentService.createTextOutput(JSON.stringify({ok:true}));
-}</pre>
-        </details>
+        <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7">
+          Powered by Make.com. The webhook URL above is pre-configured — quotes sync automatically when saved or sent.
+        </div>
       </div>
     </div>
 
@@ -434,7 +420,8 @@ window.onload = () => {
 
   // Restore settings
   const settings = DB.loadSettings();
-  if(settings.sheetsScriptUrl) document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl;
+  const defaultWebhook = 'https://hook.us2.make.com/rxat8rcnbnvi77y8rjlsnaf1a58tppet';
+  document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl || defaultWebhook;
 
   // Start with demo items
   addItem('Oil Filter', 1, 120);
@@ -570,6 +557,7 @@ function saveQuote() {
     clientName: v('clientName'), clientPhone: v('clientPhone'),
     reference: v('reference'), bizName: v('bizName'),
     jobType: v('jobType'), scopeNotes: v('scopeNotes'),
+    clientEmail: v('clientEmail'),
     items, sub, vat, grand, status: 'draft',
     date: fmtDate(new Date())
   };
@@ -698,7 +686,7 @@ async function syncToSheets(q, action='upsert') {
       headers:{'Content-Type':'text/plain'},
       body: JSON.stringify({
         action, num:q.num, clientName:q.clientName,
-        clientPhone:q.clientPhone, reference:q.reference||'',
+        clientEmail:q.clientEmail||'', clientPhone:q.clientPhone, reference:q.reference||'',
         itemsSummary:q.items.map(i=>`${i.d}×${i.q}`).join(', '),
         sub:q.sub.toFixed(2), vat:q.vat.toFixed(2), grand:q.grand.toFixed(2),
         status:q.status, date:q.date
