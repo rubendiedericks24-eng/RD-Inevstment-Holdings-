@@ -127,10 +127,58 @@ form input,form textarea{width:100%;background:var(--card);border:1px solid rgba
 form input:focus,form textarea:focus{outline:none;border-color:var(--green)}
 form textarea{min-height:120px;resize:vertical}
 .form-note{color:var(--green);font-size:.9rem;margin-top:14px;display:none}
+/* APP DIVISION */
+#apps{background:var(--section)}
+.app-card{background:linear-gradient(135deg,#1a2830,#18281e);border:1px solid rgba(37,211,102,0.22);border-radius:20px;padding:44px}
+.app-card-top{display:flex;align-items:flex-start;gap:20px;margin-bottom:36px}
+.app-icon-box{width:56px;height:56px;border-radius:14px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.25);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.app-live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.3);border-radius:999px;padding:5px 14px;font-size:.75rem;font-weight:600;margin-bottom:10px}
+.app-live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.app-card h3{font-size:1.6rem;margin-bottom:8px}
+.app-card-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.demo-panel{background:#0d161b;border:1px solid rgba(247,245,240,.08);border-radius:16px;overflow:hidden}
+.demo-panel-head{background:#1F2C33;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;font-size:.82rem;font-weight:600}
+.demo-sublabel{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--green);letter-spacing:.12em;margin-bottom:12px}
+.demo-job-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(247,245,240,.05);transition:background .4s}
+.demo-job-row.completed{background:rgba(37,211,102,.04)}
+.demo-job-name{font-weight:600;font-size:.88rem;margin-bottom:3px}
+.demo-job-desc{color:var(--muted);font-size:.78rem}
+.demo-status-done{color:var(--green);font-size:.78rem;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.demo-mark-btn{background:var(--green);color:#07110b;border:none;border-radius:8px;padding:8px 16px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.demo-mark-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,211,102,.4)}
+.demo-mark-btn:disabled{background:rgba(37,211,102,.25);color:rgba(7,17,11,.6);cursor:default;transform:none;box-shadow:none}
+.demo-wa-notif{margin:14px 18px 18px;background:#1F2C33;border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.demo-wa-notif.visible{opacity:1;transform:translateY(0)}
+.wa-notif-icon{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#07110b;font-size:.9rem;font-family:'Archivo',sans-serif}
+.wa-notif-meta{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--green);margin-bottom:4px}
+.wa-notif-body{font-size:.78rem;color:var(--text);line-height:1.5}
+.app-feature-list{margin-bottom:28px}
+.app-feature{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:.9rem;border-bottom:1px solid rgba(247,245,240,.05)}
+.app-feature:last-child{border-bottom:none}
+.app-feature-tick{color:var(--green);font-weight:700;flex-shrink:0}
+.app-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.app-tier{background:var(--card);border:1px solid rgba(247,245,240,.08);border-radius:12px;padding:16px 10px;text-align:center}
+.app-tier.featured{border-color:rgba(37,211,102,.35);background:rgba(37,211,102,.06)}
+.tier-name{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace}
+.tier-setup{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.1rem;color:var(--text);margin-bottom:4px}
+.tier-mo{font-size:.75rem;color:var(--green);font-weight:600}
+@media(max-width:900px){.app-card{padding:28px}.app-card-top{flex-direction:column;gap:14px}.app-card-body{grid-template-columns:1fr;gap:32px}}
 /* FOOTER */
 footer{border-top:1px solid rgba(247,245,240,.07);padding:36px 0;text-align:center;color:var(--muted);font-size:.85rem}
 footer a{color:var(--muted);text-decoration:underline}
 footer a:hover{color:var(--green)}
+/* Policy accordion */
+.policy-bar{background:rgba(255,255,255,.03);border-top:1px solid rgba(247,245,240,.06);padding:24px 0}
+.policy-accordions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+details.policy-item{background:var(--card);border:1px solid rgba(247,245,240,.08);border-radius:8px;min-width:200px;max-width:480px;flex:1}
+details.policy-item summary{list-style:none;padding:12px 16px;font-size:.8rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+details.policy-item summary::-webkit-details-marker{display:none}
+details.policy-item summary::after{content:'+';font-size:1rem;font-weight:400;color:var(--green);transition:transform .2s}
+details.policy-item[open] summary::after{content:'−'}
+details.policy-item[open] summary{color:var(--text)}
+.policy-body{padding:0 16px 16px;font-size:.78rem;color:var(--muted);line-height:1.7}
+.policy-body h4{font-family:'Inter',sans-serif;font-weight:600;font-size:.78rem;color:var(--text);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+.policy-body p{margin-bottom:6px}
 /* RESPONSIVE */
 @media(max-width:900px){
   .nav-links{position:fixed;top:64px;right:0;background:var(--nav);flex-direction:column;padding:28px;gap:22px;width:230px;transform:translateX(110%);transition:transform .3s;border-left:1px solid rgba(247,245,240,.08);height:calc(100vh - 64px)}
@@ -151,6 +199,7 @@ footer a:hover{color:var(--green)}
     <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
     <div class="nav-links" id="navLinks">
       <a href="#about">About</a>
+      <a href="#apps">Apps</a>
       <a href="#lexi">Lexi</a>
       <a href="#contact">Contact</a>
       <a href="#lexi" class="cta-pill">Try Lexi ↓</a>
@@ -180,6 +229,83 @@ footer a:hover{color:var(--green)}
         <div class="live-badge"><span class="dot"></span> Live · WhatsApp AI Agent</div>
         <h3>NexAgent AI</h3>
         <p>Custom WhatsApp AI agents for South African SMEs. Lexi handles enquiries, qualifies leads, and manages client communication 24/7 — fully automated. <strong>R2,999 setup · R699/month.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="apps">
+  <div class="container">
+    <div class="label">// App Division</div>
+    <h2 class="sec-title">Purpose-built web apps for SA businesses</h2>
+    <p class="sec-sub">Ready-to-deploy apps that automate your operations and connect to WhatsApp — no installs, works on any device.</p>
+    <div class="app-card">
+      <div class="app-card-top">
+        <div class="app-icon-box">🔧</div>
+        <div>
+          <div class="app-live-badge"><span class="dot"></span> App #1 — Available now</div>
+          <h3>Job Card Tracker</h3>
+          <p style="color:var(--muted);max-width:520px;margin-top:4px">Track jobs, assign technicians, and auto-notify clients on WhatsApp the moment work is complete — built for auto workshops, service centres, and trade businesses.</p>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div>
+          <div class="demo-sublabel">LIVE DEMO — click to try</div>
+          <div class="demo-panel">
+            <div class="demo-panel-head">
+              <span>Job Card Tracker</span>
+              <span style="color:var(--muted);font-size:.72rem;font-family:'IBM Plex Mono',monospace">Auto Workshop</span>
+            </div>
+            <div class="demo-job-row completed">
+              <div>
+                <div class="demo-job-name">Thandi Nkosi</div>
+                <div class="demo-job-desc">Brake pads + rotor replacement</div>
+              </div>
+              <span class="demo-status-done">✓ Done</span>
+            </div>
+            <div class="demo-job-row" id="demoRow">
+              <div>
+                <div class="demo-job-name">Sipho Dlamini</div>
+                <div class="demo-job-desc">Full service + oil change</div>
+              </div>
+              <button class="demo-mark-btn" id="demoBtn" onclick="triggerJobDemo()">Mark Done</button>
+            </div>
+            <div class="demo-wa-notif" id="demoNotif">
+              <div class="wa-notif-icon">W</div>
+              <div>
+                <div class="wa-notif-meta">WhatsApp · just now</div>
+                <div class="wa-notif-body">Hi Sipho Dlamini, your job is complete at Auto Workshop. Work done: Full service + oil change. Thank you!</div>
+              </div>
+            </div>
+          </div>
+          <a href="app-division/job-card-tracker.html" target="_blank" rel="noopener" class="btn btn-ghost" style="margin-top:16px;display:inline-block;font-size:.9rem;padding:11px 24px">Open full app ↗</a>
+        </div>
+        <div>
+          <div class="app-feature-list">
+            <div class="app-feature"><span class="app-feature-tick">✓</span> Job tracking with real-time status updates</div>
+            <div class="app-feature"><span class="app-feature-tick">✓</span> Technician assignment per job</div>
+            <div class="app-feature"><span class="app-feature-tick">✓</span> Auto WhatsApp notification on completion</div>
+            <div class="app-feature"><span class="app-feature-tick">✓</span> Works on any device — no app install</div>
+            <div class="app-feature"><span class="app-feature-tick">✓</span> Client search and full job history</div>
+          </div>
+          <div class="app-tiers">
+            <div class="app-tier featured">
+              <div class="tier-name">Starter</div>
+              <div class="tier-setup">R4,999</div>
+              <div class="tier-mo">+ R999/mo</div>
+            </div>
+            <div class="app-tier">
+              <div class="tier-name">Growth</div>
+              <div class="tier-setup">R9,999</div>
+              <div class="tier-mo">+ R1,399/mo</div>
+            </div>
+            <div class="app-tier">
+              <div class="tier-name">Power</div>
+              <div class="tier-setup">R14,999</div>
+              <div class="tier-mo">+ R2,499/mo</div>
+            </div>
+          </div>
+          <a href="#contact" class="btn btn-green" style="width:100%;text-align:center;display:block">Request this app →</a>
+        </div>
       </div>
     </div>
   </div>
@@ -227,10 +353,6 @@ footer a:hover{color:var(--green)}
           <div class="msg out" id="m4">Perfect 🙌 I've noted Saturday morning. Our agent will confirm the exact time with you first thing tomorrow. May I have your name for the booking?<span class="time">21:48 ✓✓</span></div>
         </div>
       </div>
-      <div style="text-align:center;margin-top:16px;">
-        <div style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span> This is Lexi — try her now on WhatsApp</div>
-        <a href="https://wa.me/27676076506" target="_blank" rel="noopener" class="btn btn-green" style="display:inline-block;padding:12px 28px;font-size:0.95rem;">Message +27 67 607 6506</a>
-      </div>
     </div>
     <div class="roi">
       <h3>What is one missed lead costing you?</h3>
@@ -263,17 +385,12 @@ footer a:hover{color:var(--green)}
   <div class="container">
     <div class="label">// Contact</div>
     <h2 class="sec-title">Let's talk</h2>
-    <p class="sec-sub">Book a free live demo — Lexi answers with your real business data on the call.</p>
+    <p class="sec-sub">Get in touch — whether you need Lexi, a custom web app, or just want to explore what's possible.</p>
     <div class="contact-grid">
       <div>
         <div class="c-item"><div class="k">Email</div><div class="v"><a href="mailto:rubendiedericks24@gmail.com">rubendiedericks24@gmail.com</a></div></div>
         <div class="c-item"><div class="k">Phone</div><div class="v"><a href="tel:+27728400352">+27 72 840 0352</a></div></div>
         <div class="c-item"><div class="k">Location</div><div class="v">Gqeberha, South Africa</div></div>
-        <div class="wa-box">
-          <div class="t"><span class="dot"></span> WhatsApp Lexi</div>
-          <p>+27 67 607 6506 — try her now. Ask her anything, she replies in seconds.</p>
-          <a class="btn btn-green" href="https://wa.me/27676076506" target="_blank" rel="noopener">Chat with Lexi on WhatsApp</a>
-        </div>
       </div>
       <div>
         <form id="cform" novalidate>
@@ -282,15 +399,61 @@ footer a:hover{color:var(--green)}
           <div class="frow"><label for="fb">Business</label><input id="fb" type="text" placeholder="Business name (optional)"></div>
           <div class="frow"><label for="fm">Message</label><textarea id="fm" required placeholder="Tell us what you need automated…"></textarea></div>
           <button type="submit" class="btn btn-green" style="border:none;cursor:pointer;width:100%">Send message</button>
-          <div class="form-note" id="fnote">Thanks — opening your email app with the message pre-filled.</div>
+          <div class="form-note" id="fnote">Opening Gmail with your message pre-filled — just hit Send.</div>
         </form>
       </div>
     </div>
   </div>
 </section>
+<div class="policy-bar">
+  <div class="container">
+    <div class="policy-accordions">
+      <details class="policy-item">
+        <summary>Privacy Policy</summary>
+        <div class="policy-body">
+          <h4>Who We Are</h4>
+          <p>NexAgent AI is a product of RD Investment Holdings (Pty) Ltd, Reg. No: 2026/237915/07, Gqeberha, South Africa. Contact: rubendiedericks24@gmail.com.</p>
+          <h4>What We Collect</h4>
+          <p>Via the contact form: your name, email address, business name, and message. Via our web apps (Job Card Tracker, Inventory Manager, Quote Generator, Invoice Tracker, Payroll Calculator, Supplier Comparison Tool, Operations Dashboard): business operational data you enter, including employee timesheet and payroll data.</p>
+          <h4>How We Use It</h4>
+          <p>To respond to your enquiry, deliver and maintain the services you've subscribed to, and send service-related communications. We do not sell or rent your data to third parties.</p>
+          <h4>Third-Party Processors</h4>
+          <p>We use Make.com (automation) and Anthropic (AI) to deliver certain features. Both operate under Data Processing Agreements to ensure your data is handled in line with POPIA Section 72 cross-border transfer requirements.</p>
+          <h4>Payroll & HR Data</h4>
+          <p>Employee data entered into the Payroll Calculator & Staff Timesheet module is processed solely for the purpose of generating your business's payroll records. You remain responsible for verifying all payroll outputs before processing payments.</p>
+          <h4>Your Rights (POPIA)</h4>
+          <p>You have the right to access, correct, or request deletion of your personal information at any time. Contact us at rubendiedericks24@gmail.com to exercise these rights.</p>
+          <h4>Last Updated</h4>
+          <p>July 2026</p>
+        </div>
+      </details>
+      <details class="policy-item">
+        <summary>Terms of Service</summary>
+        <div class="policy-body">
+          <h4>Services</h4>
+          <p>NexAgent AI (RD Investment Holdings (Pty) Ltd) provides custom web applications for South African SMEs, including the following modules: Job Card & Work Order Tracker, Inventory & Stock Manager, Auto Quote Generator, Invoice & Payment Tracker, Payroll Calculator & Staff Timesheet, Supplier Price Comparison Tool, and Daily Operations Dashboard.</p>
+          <h4>Payment</h4>
+          <p>Fees are as per your individual quote and confirmed service agreement (setup fee + monthly retainer). Monthly fees are invoiced in advance. Non-payment may result in suspension of access.</p>
+          <h4>Cooling-Off Period</h4>
+          <p>In terms of Section 44 of the Consumer Protection Act, you have 5 business days from the date of signing your service agreement to cancel without penalty.</p>
+          <h4>Intellectual Property</h4>
+          <p>All software, code, and systems developed by NexAgent AI remain the intellectual property of RD Investment Holdings (Pty) Ltd. You receive a non-exclusive, non-transferable licence to use your commissioned application for the duration of your active subscription.</p>
+          <h4>Client Responsibility</h4>
+          <p>You are responsible for the accuracy of all data entered into your application. NexAgent AI accepts no liability for errors arising from incorrect input, including payroll calculations.</p>
+          <h4>Limitation of Liability</h4>
+          <p>Our total liability to you in any calendar month shall not exceed three (3) months' worth of your monthly retainer fee.</p>
+          <h4>Governing Law</h4>
+          <p>These terms are governed by the laws of the Republic of South Africa. Any disputes shall be resolved in the Eastern Cape High Court, Gqeberha.</p>
+          <h4>Last Updated</h4>
+          <p>July 2026</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
 <footer>
   <div class="container">
-    RD Investment Holdings (Pty) Ltd · Reg. No: 2026/237915/07 · Gqeberha, South Africa · <a href="/privacy-policy.html">Privacy Policy</a>
+    RD Investment Holdings (Pty) Ltd · Reg. No: 2026/237915/07 · Gqeberha, South Africa
   </div>
 </footer>
 <script>
@@ -298,7 +461,7 @@ footer a:hover{color:var(--green)}
 const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
 burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
-// chat animation — typing indicator then message
+// chat animation
 function runChat(){
   const seq=[
     ()=>document.getElementById('m1').classList.add('show'),
@@ -323,7 +486,20 @@ function calc(){
   out.textContent=fmt(Math.round(e*(m/100)*d));
 }
 [s1,s2,s3].forEach(s=>s.addEventListener('input',calc)); calc();
-// contact form -> mailto
+// Job card demo
+function triggerJobDemo(){
+  const btn=document.getElementById('demoBtn');
+  const row=document.getElementById('demoRow');
+  const notif=document.getElementById('demoNotif');
+  btn.disabled=true;btn.textContent='✓ Done';
+  row.classList.add('completed');
+  setTimeout(()=>notif.classList.add('visible'),500);
+  setTimeout(()=>{
+    notif.classList.remove('visible');
+    setTimeout(()=>{btn.disabled=false;btn.textContent='Mark Done';row.classList.remove('completed');},400);
+  },5000);
+}
+// contact form
 document.getElementById('cform').addEventListener('submit',ev=>{
   ev.preventDefault();
   const n=document.getElementById('fn').value.trim(),
@@ -331,8 +507,9 @@ document.getElementById('cform').addEventListener('submit',ev=>{
         b=document.getElementById('fb').value.trim(),
         m=document.getElementById('fm').value.trim();
   if(!n||!e||!m){alert('Please fill in name, email and message.');return;}
+  const subject=encodeURIComponent('Website enquiry — '+n);
   const body=encodeURIComponent(`Name: ${n}\nEmail: ${e}\nBusiness: ${b}\n\n${m}`);
-  window.location.href=`mailto:rubendiedericks24@gmail.com?subject=${encodeURIComponent('Website enquiry — '+n)}&body=${body}`;
+  window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=rubendiedericks24@gmail.com&su=${subject}&body=${body}`,'_blank');
   document.getElementById('fnote').style.display='block';
 });
 </script>
