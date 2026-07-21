@@ -66,11 +66,6 @@ section{padding:96px 0}
 .holding-card p{color:#475569}
 .holding-card strong{color:#0F172A}
 /* LEXI */
-#lexi{background:var(--surface2)}
-.lexi-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
-.lexi-copy h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:20px}
-.lexi-copy h2 em{font-style:normal;color:#0F172A}
-.lexi-copy p{color:var(--muted);margin-bottom:20px}
 .price-row{display:flex;gap:16px;margin:28px 0;flex-wrap:wrap}
 .price-box{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:20px 26px;flex:1;min-width:150px}
 .price-box .amt{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.6rem;color:#0F172A}
@@ -196,7 +191,7 @@ details.policy-item[open] summary{color:var(--text)}
   .hero{padding:80px 0 64px}
   section{padding:64px 0}
   .holding-card{flex-direction:column;text-align:center;padding:32px}
-  .lexi-grid,.roi-grid,.contact-grid{grid-template-columns:1fr;gap:44px}
+  .roi-grid,.contact-grid{grid-template-columns:1fr;gap:44px}
   .phone{margin-top:8px}
 }
 </style>
@@ -207,11 +202,10 @@ details.policy-item[open] summary{color:var(--text)}
     <a href="#" class="nav-logo">RD <span>Investment</span> Holdings</a>
     <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
     <div class="nav-links" id="navLinks">
-      <a href="#about">About</a>
-      <a href="#apps">Apps</a>
-      <a href="#lexi">Lexi</a>
+      <a href="#nexos">NexOS</a>
+      <a href="#apps">Modules</a>
       <a href="#contact">Contact</a>
-      <a href="#lexi" class="cta-pill">Try Lexi ↓</a>
+      <a href="#contact" class="cta-pill">Get a Demo →</a>
     </div>
   </div>
 </nav>
@@ -240,11 +234,93 @@ details.policy-item[open] summary{color:var(--text)}
       <div>
         <div class="live-badge"><span class="dot"></span> Live · App Division</div>
         <h3>App Division</h3>
-        <p>Ready-to-deploy web apps for South African SMEs — from job card tracking to instant VAT-compliant quotes. Built for workshops, service centres, and trade businesses. <strong>From R4,999 setup · R999/month.</strong></p>
+        <p>Complete automated business systems for South African SMEs. NexOS brings all 7 modules together in one connected system. Or start with one module and upgrade when ready. <strong>NexOS R14,999 · Individual modules from R6,999.</strong></p>
       </div>
     </div>
   </div>
 </section>
+
+<section id="nexos" style="background:var(--surface2);padding:96px 0">
+  <div class="container">
+    <div class="label">// NexAgent AI · Complete System</div>
+    <h2 class="sec-title">NexOS</h2>
+    <p class="sec-sub">All 7 modules connected. One system that runs your entire business — from the first WhatsApp enquiry to payroll and the owner's daily briefing.</p>
+    <div class="app-card" id="card-nexos">
+      <div class="app-card-top">
+        <div class="app-icon-box" style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;letter-spacing:-.5px;color:#0F172A">NX</div>
+        <div>
+          <div class="app-live-badge"><span class="dot"></span> Complete System — All 7 Modules</div>
+          <h3>NexOS — Business Operating System</h3>
+          <p style="color:var(--muted);max-width:520px;margin-top:4px">Customer messages on WhatsApp → quote generated → job card opened → stock decremented → invoice sent → payment chased → owner sees everything on a dashboard at 07:00 every morning.</p>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <div>
+          <div class="demo-sublabel">LIVE DEMO — click to run briefing</div>
+          <div class="demo-panel">
+            <div class="demo-panel-head">
+              <span>NexOS Dashboard</span>
+              <span style="color:var(--muted);font-size:.72rem;font-family:'IBM Plex Mono',monospace">Auto Workshop PE</span>
+            </div>
+            <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-bottom:1px solid #F1F5F9">
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center">
+                <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1.4rem;color:#0F172A" id="nxJobs">4</div>
+                <div style="font-size:.72rem;color:#64748B;margin-top:2px">Jobs today</div>
+              </div>
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center">
+                <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1.4rem;color:#16A34A" id="nxInv">R8,450</div>
+                <div style="font-size:.72rem;color:#64748B;margin-top:2px">Invoiced today</div>
+              </div>
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center">
+                <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1.4rem;color:#D97706" id="nxStock">2</div>
+                <div style="font-size:.72rem;color:#64748B;margin-top:2px">Low stock alerts</div>
+              </div>
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center">
+                <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1.4rem;color:#0F172A" id="nxQuotes">3</div>
+                <div style="font-size:.72rem;color:#64748B;margin-top:2px">Quotes sent</div>
+              </div>
+            </div>
+            <div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:.8rem;color:#64748B">Owner briefing</span>
+              <button class="demo-mark-btn" id="nxBtn" onclick="triggerNexOSDemo()">Send to WhatsApp</button>
+            </div>
+            <div class="demo-wa-notif" id="nxNotif">
+              <div class="wa-notif-icon" style="background:#25D366;color:#fff;font-size:.7rem;font-weight:900">NX</div>
+              <div>
+                <div class="wa-notif-meta">NexOS · 07:00</div>
+                <div class="wa-notif-body">Good morning! Today: 4 jobs · R8,450 invoiced · 2 stock alerts (brake pads, oil filter) · 3 quotes pending. Outstanding: R12,300.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="app-feature-list">
+            <div class="app-feature"><span class="app-feature-tick">→</span> WhatsApp AI inbound handler (M1)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Auto-Quote Generator (M2)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Job Card Tracker (M3)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Inventory &amp; Stock Manager (M4)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Staff Timesheet &amp; Payroll (M5)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Invoice &amp; Payment Tracker (M6)</div>
+            <div class="app-feature"><span class="app-feature-tick">→</span> Operations Dashboard — daily 07:00 briefing (M7)</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;margin-top:24px">
+            <a href="#contact" style="border:2px solid #0F172A;border-top:3px solid #0F172A;border-radius:12px;padding:16px;text-align:center;background:#0F172A;text-decoration:none;transition:opacity .15s;display:block" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Complete system</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#F8FAFC;margin-bottom:4px">Book a demo →</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,0.55);font-weight:600">R14,999 setup · R2,499/mo</div>
+            </a>
+            <a href="#apps" style="border:1px solid #E2E8F0;border-radius:12px;padding:16px;text-align:center;background:#F8FAFC;text-decoration:none;display:block;transition:border-color .15s" onmouseover="this.style.borderColor='#94A3B8'" onmouseout="this.style.borderColor='#E2E8F0'">
+              <div style="font-size:.7rem;color:#475569;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Start smaller</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#0F172A;margin-bottom:4px">Individual modules ↓</div>
+              <div style="font-size:.72rem;color:#475569;font-weight:600">From R6,999 · upgrade anytime</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="apps">
   <div class="container">
     <div class="label">// App Division</div>
@@ -292,24 +368,18 @@ details.policy-item[open] summary{color:var(--text)}
         </div>
         <div>
           <div class="app-feature-list" id="track-features"></div>
-          <div class="app-tiers" id="track-tiers">
-            <div class="app-tier featured" data-app="track" data-tier="starter" onclick="switchTier('track','starter')">
-              <div class="tier-name">Starter</div>
-              <div class="tier-setup">R4,999</div>
-              <div class="tier-mo">+ R999/mo</div>
-            </div>
-            <div class="app-tier" data-app="track" data-tier="growth" onclick="switchTier('track','growth')">
-              <div class="tier-name">Growth</div>
-              <div class="tier-setup">R7,999</div>
-              <div class="tier-mo">+ R1,499/mo</div>
-            </div>
-            <div class="app-tier" data-app="track" data-tier="power" onclick="switchTier('track','power')">
-              <div class="tier-name">Power</div>
-              <div class="tier-setup">R14,999</div>
-              <div class="tier-mo">+ R2,499/mo</div>
-            </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+            <a href="#contact" style="border:2px solid #0F172A;border-top:3px solid #0F172A;border-radius:12px;padding:16px;text-align:center;background:#0F172A;text-decoration:none;transition:opacity .15s;display:block" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Get this module</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#F8FAFC;margin-bottom:4px">Job Card Tracker →</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,0.55);font-weight:600">R6,999 setup · R1,499/mo</div>
+            </a>
+            <a href="#nexos" style="border:1px solid #E2E8F0;border-radius:12px;padding:16px;text-align:center;background:#F8FAFC;text-decoration:none;display:block;transition:border-color .15s" onmouseover="this.style.borderColor='#94A3B8'" onmouseout="this.style.borderColor='#E2E8F0'">
+              <div style="font-size:.7rem;color:#475569;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Complete system</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#0F172A;margin-bottom:4px">Get NexOS ↑</div>
+              <div style="font-size:.72rem;color:#475569;font-weight:600">R14,999 · All 7 modules</div>
+            </a>
           </div>
-          <a href="#contact" class="btn btn-green" style="width:100%;text-align:center;display:block">Request this app →</a>
         </div>
       </div>
     </div>
@@ -354,95 +424,18 @@ details.policy-item[open] summary{color:var(--text)}
         </div>
         <div>
           <div class="app-feature-list" id="quote-features"></div>
-          <div class="app-tiers" id="quote-tiers">
-            <div class="app-tier" data-app="quote" data-tier="starter" onclick="switchTier('quote','starter')">
-              <div class="tier-name">Starter</div>
-              <div class="tier-setup">R4,999</div>
-              <div class="tier-mo">+ R999/mo</div>
-            </div>
-            <div class="app-tier featured" data-app="quote" data-tier="growth" onclick="switchTier('quote','growth')">
-              <div class="tier-name">Growth</div>
-              <div class="tier-setup">R7,999</div>
-              <div class="tier-mo">+ R1,499/mo</div>
-            </div>
-            <div class="app-tier" data-app="quote" data-tier="power" onclick="switchTier('quote','power')">
-              <div class="tier-name">Power</div>
-              <div class="tier-setup">R14,999</div>
-              <div class="tier-mo">+ R2,499/mo</div>
-            </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+            <a href="#contact" style="border:2px solid #0F172A;border-top:3px solid #0F172A;border-radius:12px;padding:16px;text-align:center;background:#0F172A;text-decoration:none;transition:opacity .15s;display:block" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Get this module</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#F8FAFC;margin-bottom:4px">NexQuote standalone →</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,0.55);font-weight:600">R6,999 setup · R1,499/mo</div>
+            </a>
+            <a href="#nexos" style="border:1px solid #E2E8F0;border-radius:12px;padding:16px;text-align:center;background:#F8FAFC;text-decoration:none;display:block;transition:border-color .15s" onmouseover="this.style.borderColor='#94A3B8'" onmouseout="this.style.borderColor='#E2E8F0'">
+              <div style="font-size:.7rem;color:#475569;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace">Complete system</div>
+              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:1rem;color:#0F172A;margin-bottom:4px">Get NexOS ↑</div>
+              <div style="font-size:.72rem;color:#475569;font-weight:600">R14,999 · All 7 modules</div>
+            </a>
           </div>
-          <a href="#contact" class="btn btn-green" style="width:100%;text-align:center;display:block">Request this app →</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section id="lexi">
-  <div class="container">
-    <div class="lexi-grid">
-      <div class="lexi-copy">
-        <div class="label">// NexAgent AI · Lexi</div>
-        <h2>Your leads message at night. <em>Lexi answers.</em></h2>
-        <p>Every enquiry that lands after hours goes to whoever replies first — usually your competitor. Lexi replies in seconds, in natural conversation, qualifies the lead, and logs everything before you've even seen the message.</p>
-        <div style="margin:24px 0 8px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:18px 20px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-          </div>
-          <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;">
-            <div>
-              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:#0F172A;">R2,999</div>
-              <div style="font-size:0.8rem;color:var(--muted);">Once-off setup</div>
-            </div>
-            <div style="width:1px;background:rgba(247,245,240,0.1);align-self:stretch;"></div>
-            <div>
-              <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:2rem;color:#0F172A;">R699<span style="font-size:1rem">/mo</span></div>
-              <div style="font-size:0.8rem;color:var(--muted);">Fully managed retainer</div>
-            </div>
-          </div>
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(247,245,240,0.08);font-size:0.8rem;color:rgba(247,245,240,0.55);">R2,999 setup + R699/month — our standard rate.</div>
-        </div>
-        <div class="stats">
-          <div class="stat"><div class="num">78%</div><div class="cap">of SA customers prefer WhatsApp</div></div>
-          <div class="stat"><div class="num">21×</div><div class="cap">more likely to close when you reply in 5 min</div></div>
-          <div class="stat"><div class="num">24/7</div><div class="cap">Lexi never sleeps</div></div>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="phone-head">
-          <div class="avatar">L</div>
-          <div><div class="who">Lexi · Coastal Properties</div><div class="status">online</div></div>
-        </div>
-        <div class="chat" id="chat">
-          <div class="msg in" id="m1">Hi, I saw the 3-bed in Lorraine on Property24, is it still available?<span class="time">21:47</span></div>
-          <div class="typing" id="t1"><span></span><span></span><span></span></div>
-          <div class="msg out" id="m2">Hi! 👋 Yes, the 3-bed in Lorraine is still available — great timing. It's listed at R1.85m with a double garage and solar geyser. Would you like to view it this week?<span class="time">21:47 ✓✓</span></div>
-          <div class="msg in" id="m3">Yes please, Saturday morning?<span class="time">21:48</span></div>
-          <div class="typing" id="t2"><span></span><span></span><span></span></div>
-          <div class="msg out" id="m4">Perfect 🙌 I've noted Saturday morning. Our agent will confirm the exact time with you first thing tomorrow. May I have your name for the booking?<span class="time">21:48 ✓✓</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="roi">
-      <h3>What is one missed lead costing you?</h3>
-      <p>Move the sliders. Numbers are estimates based on your inputs.</p>
-      <div class="roi-grid">
-        <div>
-          <div class="slider-row">
-            <label>Enquiries per month <b id="v1">60</b></label>
-            <input type="range" id="s1" min="10" max="300" value="60">
-          </div>
-          <div class="slider-row">
-            <label>% missed / answered late <b id="v2">30%</b></label>
-            <input type="range" id="s2" min="5" max="80" value="30">
-          </div>
-          <div class="slider-row">
-            <label>Average deal value <b id="v3">R15,000</b></label>
-            <input type="range" id="s3" min="500" max="100000" step="500" value="15000">
-          </div>
-        </div>
-        <div class="roi-result">
-          <div class="cap">Estimated revenue at risk / month</div>
-          <div class="big" id="roiOut">R54,000</div>
-          <div class="sub">Lexi costs <b>R699/month</b>. If she saves even one of those leads, she's paid for herself many times over.</div>
         </div>
       </div>
     </div>
@@ -452,7 +445,7 @@ details.policy-item[open] summary{color:var(--text)}
   <div class="container">
     <div class="label">// Contact</div>
     <h2 class="sec-title">Let's talk</h2>
-    <p class="sec-sub">Get in touch — whether you need Lexi, a custom web app, or just want to explore what's possible.</p>
+    <p class="sec-sub">Get in touch — whether you need a complete NexOS or just one module to start.</p>
     <div class="contact-grid">
       <div>
         <div class="c-item"><div class="k">Email</div><div class="v"><a href="mailto:rubendiedericks24@gmail.com">rubendiedericks24@gmail.com</a></div></div>
@@ -645,6 +638,17 @@ document.getElementById('cform').addEventListener('submit',function(ev){
   document.getElementById('fnote').style.color='#16A34A';
   window.open(gmailUrl,'_blank');
 });
+
+function triggerNexOSDemo() {
+  var btn = document.getElementById('nxBtn');
+  var notif = document.getElementById('nxNotif');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  setTimeout(function() {
+    notif.classList.add('visible');
+    btn.textContent = 'Sent ✓';
+  }, 900);
+}
 </script>
 </body>
 </html>
