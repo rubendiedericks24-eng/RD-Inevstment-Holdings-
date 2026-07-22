@@ -9,65 +9,68 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:      #0B141A;
-      --ink-soft: #1F2C33;
-      --ink-mid:  #162026;
-      --green:    #25D366;
-      --amber:    #F5B82E;
-      --text:     rgba(247,245,240,0.95);
-      --muted:    rgba(247,245,240,0.55);
-      --line:     rgba(247,245,240,0.10);
-      --card:     #1a2830;
+      --bg:      #F8FAFC;
+      --surface: #FFFFFF;
+      --surface2:#F1F5F9;
+      --border:  #E2E8F0;
+      --border-dk:#CBD5E1;
+      --green:   #25D366;
+      --navy:    #0F172A;
+      --text:    #0F172A;
+      --muted:   #475569;
+      --subtle:  #94A3B8;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--ink);
+      background: var(--bg);
       color: var(--text);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
     }
 
-    ::selection { background: var(--green); color: var(--ink); }
+    ::selection { background: var(--green); color: var(--navy); }
 
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 5%;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      background: var(--ink);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
       z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     .nav-logo {
       font-family: 'Archivo', sans-serif;
       font-weight: 900;
-      font-stretch: 110%;
       font-size: 1rem;
       letter-spacing: -0.01em;
       color: var(--text);
       text-decoration: none;
     }
 
-    .nav-logo span { color: var(--green); }
+    .nav-logo span { color: var(--navy); }
 
     nav a {
       color: var(--muted);
       text-decoration: none;
       font-size: 0.88rem;
+      font-weight: 500;
       transition: color 0.2s;
     }
 
     nav a:hover { color: var(--text); }
 
     .page-header {
-      background: var(--ink-mid);
-      border-bottom: 1px solid var(--line);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
       padding: 4rem 5% 3rem;
       text-align: center;
     }
@@ -81,17 +84,17 @@
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--green);
-      border: 1px solid rgba(37,211,102,0.3);
+      color: var(--muted);
+      border: 1px solid var(--border);
       padding: 0.35rem 1rem;
       border-radius: 999px;
       margin-bottom: 1.25rem;
+      background: var(--bg);
     }
 
     .page-header h1 {
       font-family: 'Archivo', sans-serif;
       font-weight: 900;
-      font-stretch: 112%;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
       letter-spacing: -0.03em;
       color: var(--text);
@@ -111,14 +114,13 @@
 
     .content h2 {
       font-family: 'Archivo', sans-serif;
-      font-weight: 800;
-      font-stretch: 108%;
+      font-weight: 900;
       font-size: 1.05rem;
       letter-spacing: -0.01em;
       color: var(--text);
       margin: 2.5rem 0 0.75rem;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--green);
+      border-bottom: 2px solid var(--navy);
       display: inline-block;
     }
 
@@ -140,9 +142,9 @@
     .content strong { color: var(--text); }
 
     .info-box {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-left: 3px solid var(--green);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--navy);
       border-radius: 8px;
       padding: 1.25rem 1.5rem;
       margin: 1.5rem 0;
@@ -161,10 +163,13 @@
       border-collapse: collapse;
       margin: 1.25rem 0;
       font-size: 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     th {
-      background: var(--ink-soft);
+      background: var(--surface2);
       color: var(--text);
       font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
@@ -172,25 +177,27 @@
       letter-spacing: 0.04em;
       text-align: left;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--border);
     }
 
     td {
       color: var(--muted);
       padding: 0.65rem 1rem;
-      border-bottom: 1px solid rgba(247,245,240,0.04);
+      border-bottom: 1px solid var(--border);
       vertical-align: top;
       font-size: 0.9rem;
+      background: var(--surface);
     }
 
     tr:last-child td { border-bottom: none; }
 
     footer {
-      border-top: 1px solid var(--line);
+      border-top: 1px solid var(--border);
       padding: 2rem 5%;
       text-align: center;
       color: var(--muted);
       font-size: 0.83rem;
+      background: var(--surface2);
     }
 
     footer strong { color: var(--text); }
@@ -200,7 +207,7 @@
       text-decoration: none;
     }
 
-    footer a:hover { color: var(--green); }
+    footer a:hover { color: var(--navy); }
   </style>
 </head>
 <body>
@@ -213,7 +220,7 @@
   <div class="page-header">
     <div class="label">Legal</div>
     <h1>Privacy Policy</h1>
-    <p>NexAgent AI &mdash; operated by RD Investment Holdings (Pty) Ltd &nbsp;|&nbsp; Last updated: 6 July 2026</p>
+    <p>NexAgent AI &mdash; operated by RD Investment Holdings (Pty) Ltd &nbsp;|&nbsp; Last updated: 22 July 2026</p>
   </div>
 
   <div class="content">
@@ -227,23 +234,68 @@
     </div>
 
     <h2>1. Introduction</h2>
-    <p>This Privacy Policy explains how RD Investment Holdings (Pty) Ltd, trading as NexAgent AI ("we", "us", "our"), collects, uses, stores, and protects personal information in the course of providing our WhatsApp AI agent service ("Lexi"). We are committed to complying with the Protection of Personal Information Act 4 of 2013 ("POPIA") and all applicable South African data protection legislation.</p>
+    <p>This Privacy Policy explains how RD Investment Holdings (Pty) Ltd, trading as NexAgent AI ("we", "us", "our"), collects, uses, stores, and protects personal information in the course of providing our services. We are committed to complying with the Protection of Personal Information Act 4 of 2013 ("POPIA") and all applicable South African data protection legislation.</p>
+    <p>This policy covers all three NexAgent AI product lines:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Description</th>
+          <th>Pricing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>WhatsApp AI Agent</strong></td>
+          <td>Standalone AI-powered WhatsApp agent for a single business niche and dedicated WhatsApp number</td>
+          <td>R2,499 setup + R499/month</td>
+        </tr>
+        <tr>
+          <td><strong>Individual Modules</strong><br><em>(NexTracker / NexQuote)</em></td>
+          <td>Standalone NexAgent OS module — job card tracker or quote generator</td>
+          <td>R4,999 setup + R999/month</td>
+        </tr>
+        <tr>
+          <td><strong>NexAgent OS</strong><br><em>(Full System)</em></td>
+          <td>Complete automated business system — all 7 modules connected (CRM, NexQuote, NexTracker, Stock, Payroll, Invoice, Dashboard)</td>
+          <td>R14,999 setup + R2,499/month</td>
+        </tr>
+      </tbody>
+    </table>
 
     <h2>2. What Personal Information We Collect</h2>
-    <p>We collect the following categories of personal information:</p>
-    <ul>
-      <li>WhatsApp messages sent to Lexi, including the sender's WhatsApp number</li>
-      <li>Business data provided by our clients (listings, inventory, service descriptions)</li>
-      <li>Contact details of client businesses (name, email address, physical address)</li>
-      <li>Enquiry and booking data generated through interactions with Lexi</li>
-    </ul>
+    <p>The personal information we collect depends on which NexAgent AI product or service is in use. The following table sets out the data collected per product line:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Data Collected</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>WhatsApp AI Agent</strong></td>
+          <td>Inbound WhatsApp messages; sender phone numbers; conversation history; business data supplied by the client (listings, inventory, service descriptions, pricing)</td>
+        </tr>
+        <tr>
+          <td><strong>Individual Modules (NexTracker / NexQuote)</strong></td>
+          <td>Job card records (client name, phone, email, job description, technician, status); quote records (client name, phone, email, quoted items, totals); staff details entered during setup</td>
+        </tr>
+        <tr>
+          <td><strong>NexAgent OS (Full System)</strong></td>
+          <td>All of the above, plus: lead and enquiry data from the CRM module; stock and inventory data; staff timesheet and payroll data; invoice and payment records; operational dashboard data</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>We also collect contact details of client businesses (name, trading name, email address, physical address) for the purposes of administering the service agreement.</p>
 
     <h2>3. Purpose of Processing</h2>
     <p>We process personal information solely for the following purposes:</p>
     <ul>
-      <li>To operate and deliver the Lexi WhatsApp AI agent service to our clients</li>
-      <li>To respond automatically to customer enquiries on behalf of our clients</li>
-      <li>To generate lead notifications and booking confirmations for our clients</li>
+      <li>To operate and deliver whichever NexAgent AI product(s) the client has subscribed to</li>
+      <li>To respond automatically to customer enquiries on behalf of our clients (WhatsApp AI Agent)</li>
+      <li>To generate, store, and surface job cards, quotes, leads, invoices, stock records, payroll records, and operational data for our clients (NexAgent OS modules)</li>
+      <li>To deliver WhatsApp notifications to clients and their customers (job completion alerts, quote confirmations, lead notifications)</li>
       <li>To maintain service performance, diagnose issues, and improve the system</li>
     </ul>
 
@@ -252,9 +304,9 @@
     <ul>
       <li><strong>Legitimate interest:</strong> delivering contracted services to our business clients</li>
       <li><strong>Contract performance:</strong> processing necessary to fulfil our service agreement with clients</li>
-      <li><strong>Consent:</strong> where end users interact with a Lexi-powered WhatsApp number, they do so voluntarily</li>
+      <li><strong>Consent:</strong> where end users interact with a NexAgent AI-powered WhatsApp number or application, they do so voluntarily</li>
     </ul>
-    <p>Note: Our clients (businesses that use Lexi) are the "responsible party" in respect of their end-customers' data. NexAgent AI acts solely as an "operator" under POPIA and processes data only on behalf of and under the instruction of each client.</p>
+    <p>Note: Our clients (businesses that use the Service) are the "responsible party" in respect of their end-customers' data. NexAgent AI acts solely as an "operator" under POPIA and processes data only on behalf of and under the instruction of each client.</p>
 
     <h2>5. Third-Party Processors</h2>
     <p>In delivering our service, we share data with the following third-party processors. All processors are bound by appropriate data processing terms.</p>
@@ -292,7 +344,29 @@
     <p>Where data is transferred to processors outside South Africa, we rely on appropriate safeguards including the processors' own standard contractual clauses, privacy frameworks, and certifications.</p>
 
     <h2>6. Data Retention</h2>
-    <p>Conversation data (WhatsApp message history stored for Lexi's contextual memory) is retained for a maximum of 6 months from the date of the relevant interaction, after which it is permanently deleted. Client business data is retained for the duration of the service agreement and deleted within 30 days of contract termination.</p>
+    <p>Retention periods vary by data type:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Data Type</th>
+          <th>Retention Period</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>WhatsApp conversation history (message content)</td>
+          <td>Maximum 6 months from date of interaction, then permanently deleted</td>
+        </tr>
+        <tr>
+          <td>Job card, quote, lead, invoice, stock, and payroll records (NexAgent OS modules)</td>
+          <td>Duration of the service agreement + 30 days after termination, then deleted</td>
+        </tr>
+        <tr>
+          <td>Client business contact details</td>
+          <td>Duration of the service agreement + 30 days after termination, then deleted</td>
+        </tr>
+      </tbody>
+    </table>
 
     <h2>7. Your Rights Under POPIA</h2>
     <p>As a data subject, you have the following rights under POPIA:</p>
