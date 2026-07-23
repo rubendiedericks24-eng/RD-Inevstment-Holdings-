@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NexTrack — Job Card Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F0F4F8;--surface:#FFFFFF;--surface2:#F8FAFC;
@@ -103,6 +104,49 @@ table.tbl tbody tr.clickable:hover{background:var(--blue-lt)}
 .toast-el.show{opacity:1;transform:translateY(0)}
 .toast-el.success{background:var(--text);color:#fff}
 .toast-el.error{background:var(--red);color:#fff}
+
+/* ── WEBSITE DESIGN SYSTEM ── */
+body{font-family:'Inter',sans-serif;background:#F8FAFC}
+:root{
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
+  --blue:#0F172A;--blue-dk:#1E293B;--blue-lt:#F1F5F9;--blue-border:#E2E8F0;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+}
+/* Sidebar — clean white, website style */
+.sidebar{background:#FFFFFF;border-right:1px solid #E2E8F0;box-shadow:none}
+.sidebar .sidebar-brand{border-bottom:1px solid #E2E8F0}
+.brand-mark{display:flex!important;background:transparent!important;padding:0!important;font-size:0;width:auto!important;height:auto!important;border-radius:0!important}
+.brand-name{color:#0F172A!important;font-family:'Archivo',sans-serif!important;font-size:.95rem!important}
+.brand-name em{color:#0F172A!important}
+.brand-sub{color:#94A3B8!important;font-family:'IBM Plex Mono',monospace!important;font-size:.65rem!important;letter-spacing:.06em!important}
+.biz-chip{background:#F1F5F9!important;border-color:#E2E8F0!important;color:#475569!important;font-family:'IBM Plex Mono',monospace!important}
+.nav-item{color:#64748B!important;border:none!important;border-left:3px solid transparent!important;border-radius:0!important;padding-left:13px!important}
+.nav-item:hover{background:#F8FAFC!important;color:#0F172A!important}
+.nav-item.active{background:#F1F5F9!important;color:#0F172A!important;border-left-color:#0F172A!important;font-weight:600!important}
+.sidebar-footer{border-top:1px solid #E2E8F0!important;color:#94A3B8!important;font-family:'IBM Plex Mono',monospace!important;font-size:.65rem!important}
+/* Primary buttons → navy */
+.btn-primary{background:#0F172A!important;color:#F8FAFC!important}
+.btn-primary:hover{background:#1E293B!important}
+/* Filter chips active → navy */
+.chip.active{background:#0F172A!important;border-color:#0F172A!important;color:#F8FAFC!important}
+.chip:hover{border-color:#0F172A!important;color:#0F172A!important}
+/* Card & table headers — IBM Plex Mono */
+.card-title,.section-label{font-family:'IBM Plex Mono',monospace!important}
+/* Stat values — Archivo */
+.stat-val{font-family:'Archivo',sans-serif!important;font-size:1.9rem!important}
+/* Job number */
+.job-num{color:#0F172A!important;font-family:'IBM Plex Mono',monospace!important}
+/* Focus ring → navy */
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#0F172A!important;box-shadow:0 0 0 3px rgba(15,23,42,.08)!important}
+/* Search focus */
+.search-input:focus{border-color:#0F172A!important}
+/* Badge pending → navy instead of blue */
+.badge-pending{background:#F1F5F9!important;color:#0F172A!important;border-color:#CBD5E1!important}
+/* Alert success */
+.alert-success{background:#F0FDF4!important;border-color:#BBF7D0!important;color:#16A34A!important}
 </style>
 </head>
 <body>
@@ -147,7 +191,7 @@ function render(){document.getElementById('app').innerHTML=layout();bind();}
 function layout(){
   const navs=[{id:'dashboard',label:'Dashboard',icon:IC.grid},{id:'new-job',label:'New Job Card',icon:IC.plus},{id:'all-jobs',label:'All Jobs',icon:IC.list},{id:'settings',label:'Settings',icon:IC.cog}];
   const active=S.page==='job-detail'?'all-jobs':S.page;
-  const sidebar=`<div class="sidebar"><div class="sidebar-brand"><div style="display:flex;align-items:center;gap:10px"><div class="brand-mark">NT</div><div><div class="brand-name">Nex<em>Track</em></div><div class="brand-sub">Job Card Tracker</div></div></div></div><div class="biz-chip">${esc(S.config.businessName)}</div><nav class="sidebar-nav">${navs.map(n=>`<div class="nav-item${n.id===active?' active':''}" data-nav="${n.id}">${n.icon} ${n.label}</div>`).join('')}</nav><div class="sidebar-footer">Powered by NexAgent AI App Division</div></div>`;
+  const sidebar=`<div class="sidebar"><div class="sidebar-brand"><div style="display:flex;align-items:center;gap:10px"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><defs><linearGradient id="ntg" x1="3" y1="3" x2="31" y2="31" gradientUnits="userSpaceOnUse"><stop stop-color="#4ADE80"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><line x1="8" y1="27" x2="8" y2="7" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="7" x2="26" y2="27" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><line x1="26" y1="27" x2="26" y2="7" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><circle cx="8" cy="7" r="3.2" fill="#0F172A"/><circle cx="26" cy="27" r="3.2" fill="#0F172A"/></svg><div><div class="brand-name">Nex<em>Track</em></div><div class="brand-sub">Job Card Tracker</div></div></div></div><div class="biz-chip">${esc(S.config.businessName)}</div><nav class="sidebar-nav">${navs.map(n=>`<div class="nav-item${n.id===active?' active':''}" data-nav="${n.id}">${n.icon} ${n.label}</div>`).join('')}</nav><div class="sidebar-footer">Powered by NexAgent AI App Division</div></div>`;
   let pg;switch(S.page){case'dashboard':pg=pgDash();break;case'new-job':pg=pgNew();break;case'all-jobs':pg=pgAll();break;case'job-detail':pg=pgDetail();break;case'settings':pg=pgSettings();break;default:pg=pgDash();}
   return sidebar+`<div class="main">${pg}</div>`;
 }

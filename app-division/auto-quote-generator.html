@@ -25,7 +25,7 @@ input,select,textarea,button{font-family:inherit;font-size:inherit}
 
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
 .topbar-left{display:flex;align-items:center;gap:14px}
-.app-mark{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;letter-spacing:-.5px}
+.app-mark{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .app-name{font-weight:700;font-size:1.05rem;color:var(--text)}
 .app-name em{font-style:normal;color:var(--text)}
 .topbar-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
@@ -72,6 +72,12 @@ table.items .td-del{width:8%;text-align:center}
 .row-del:hover{background:var(--red-lt);color:var(--red)}
 .add-row-btn{display:flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:var(--blue-lt);border:1px dashed var(--border-dk);border-radius:7px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;width:100%}
 .add-row-btn:hover{background:var(--blue);color:#fff;border-style:solid;border-color:var(--blue)}
+
+.presets-bar{margin-bottom:14px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+.presets-label{font-size:.68rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.presets-grid{display:flex;flex-wrap:wrap;gap:6px}
+.preset-btn{padding:5px 13px;font-size:.78rem;font-weight:600;border:1.5px solid var(--border-dk);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+.preset-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
 .totals-box{margin-top:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
 .tot-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.88rem}
@@ -161,7 +167,7 @@ details[open] .setup-block summary::before{content:'▾'}
 
 <div class="topbar">
   <div class="topbar-left">
-    <div class="app-mark">NQ</div>
+    <div class="app-mark"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="nqg" x1="3" y1="3" x2="31" y2="31" gradientUnits="userSpaceOnUse"><stop stop-color="#4ADE80"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><line x1="8" y1="27" x2="8" y2="7" stroke="url(#nqg)" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="7" x2="26" y2="27" stroke="url(#nqg)" stroke-width="4" stroke-linecap="round"/><line x1="26" y1="27" x2="26" y2="7" stroke="url(#nqg)" stroke-width="4" stroke-linecap="round"/><circle cx="8" cy="7" r="3.2" fill="#0F172A"/><circle cx="26" cy="27" r="3.2" fill="#0F172A"/></svg></div>
     <span class="app-name">Nex<em>Quote</em></span>
     <div class="topbar-divider"></div>
     <span class="biz-label">Logged in as <strong id="topBizName">Auto Workshop PE</strong></span>
@@ -257,6 +263,24 @@ details[open] .setup-block summary::before{content:'▾'}
         <span style="font-size:.75rem;color:var(--muted)" id="itemCount">0 items</span>
       </div>
       <div class="section-body" style="padding-bottom:0">
+
+        <!-- Quick Add Presets -->
+        <div class="presets-bar">
+          <div class="presets-label">Quick Add — Auto Workshop PE</div>
+          <div class="presets-grid">
+            <button class="preset-btn" onclick="addPreset('full_service')">Full Service</button>
+            <button class="preset-btn" onclick="addPreset('minor_service')">Minor Service</button>
+            <button class="preset-btn" onclick="addPreset('major_service')">Major Service</button>
+            <button class="preset-btn" onclick="addPreset('brake_front')">Brake Pads (Front)</button>
+            <button class="preset-btn" onclick="addPreset('brake_rear')">Brake Pads (Rear)</button>
+            <button class="preset-btn" onclick="addPreset('roadworthy')">Roadworthy</button>
+            <button class="preset-btn" onclick="addPreset('wheel_align')">Wheel Alignment</button>
+            <button class="preset-btn" onclick="addItem('Tyre (each)', 1, 950)">+ Tyre</button>
+            <button class="preset-btn" onclick="addItem('Diagnostic Fee', 1, 350)">+ Diagnostic</button>
+            <button class="preset-btn" onclick="addItem('Labour (per hour)', 1, 450)">+ Labour (1hr)</button>
+          </div>
+        </div>
+
         <div class="items-wrap">
           <table class="items">
             <thead>
@@ -423,10 +447,8 @@ window.onload = () => {
   const defaultWebhook = 'https://hook.us2.make.com/rxat8rcnbnvi77y8rjlsnaf1a58tppet';
   document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl || defaultWebhook;
 
-  // Start with demo items
-  addItem('Oil Filter', 1, 120);
-  addItem('Engine Oil — 5L', 1, 480);
-  addItem('Full Service Labour', 1, 650);
+  // Start with a blank slate — use Quick Add presets above
+  addItem();
 
   renderHistory();
   sync();
@@ -447,6 +469,54 @@ function saveBiz() {
 
 function saveSettings() {
   DB.saveSettings({ sheetsScriptUrl: v('sheetsScriptUrl') });
+}
+
+// ── PRESETS ───────────────────────────────────────────────────────────────────
+const PRESETS = {
+  full_service: [
+    ['Engine Oil 5W-40 (5L)',     1,   480],
+    ['Oil Filter',                1,   125],
+    ['Air Filter',                1,   180],
+    ['Spark Plugs (set of 4)',    1,   380],
+    ['Labour — Full Service',     3,   450],
+  ],
+  minor_service: [
+    ['Engine Oil 5W-40 (5L)',     1,   480],
+    ['Oil Filter',                1,   125],
+    ['Labour — Minor Service',    1.5, 450],
+  ],
+  major_service: [
+    ['Engine Oil 5W-40 (5L)',     1,   480],
+    ['Oil Filter',                1,   125],
+    ['Air Filter',                1,   180],
+    ['Fuel Filter',               1,   220],
+    ['Spark Plugs (set of 4)',    1,   380],
+    ['Brake Fluid (top-up)',      1,   150],
+    ['Coolant (top-up)',          1,   130],
+    ['Labour — Major Service',    4,   450],
+  ],
+  brake_front: [
+    ['Brake Pads — Front Axle (pair)', 1, 650],
+    ['Labour — Brake Replacement',     1, 450],
+  ],
+  brake_rear: [
+    ['Brake Pads — Rear Axle (pair)', 1, 550],
+    ['Labour — Brake Replacement',    1, 450],
+  ],
+  roadworthy: [
+    ['Roadworthy Inspection Fee', 1, 600],
+  ],
+  wheel_align: [
+    ['Wheel Alignment (4-wheel)', 1, 350],
+  ],
+};
+
+function addPreset(key) {
+  const items = PRESETS[key];
+  if (!items) return;
+  items.forEach(([desc, qty, price]) => addItem(desc, qty, price));
+  const label = key.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  toast(label + ' added', 'success');
 }
 
 // ── LINE ITEMS ────────────────────────────────────────────────────────────────

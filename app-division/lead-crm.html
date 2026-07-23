@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead CRM — NexAgent AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --navy:#0F172A;--navy2:#1E293B;
+  --text:#0F172A;--muted:#475569;--subtle:#94A3B8;
+  --green:#16A34A;--green-lt:#F0FDF4;--green-border:#BBF7D0;
+  --amber:#D97706;--amber-lt:#FFFBEB;--amber-border:#FDE68A;
+  --red:#DC2626;--red-lt:#FEF2F2;--red-border:#FECACA;
+  --blue:#2563EB;--blue-lt:#EFF6FF;--blue-border:#BFDBFE;
+  --purple:#7C3AED;--purple-lt:#F5F3FF;--purple-border:#DDD6FE;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 60px rgba(0,0,0,0.14);
+  --radius:12px;--sidebar:230px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;line-height:1.5}
+input,select,textarea,button{font-family:'Inter',sans-serif;font-size:inherit;color:inherit}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;
+  background:var(--surface);border-right:1px solid var(--border);
+  z-index:100;display:flex;flex-direction:column
+}
+.sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.brand-row{display:flex;align-items:center;gap:10px}
+.brand-icon{width:28px;height:28px;background:var(--navy);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon svg{width:14px;height:14px}
+.brand-name{font-family:'Archivo',sans-serif;font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
+.brand-sub{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
+.biz-chip{
+  margin:12px 14px 0;padding:7px 12px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;color:var(--muted)
+}
+.sidebar-nav{padding:10px 0;flex:1}
+.nav-section{padding:16px 18px 6px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle)}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 18px 9px 15px;
+  cursor:pointer;font-size:.85rem;font-weight:500;
+  color:var(--muted);margin-bottom:1px;transition:all .1s;
+  border-left:3px solid transparent
+}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--surface2);color:var(--navy);border-left-color:var(--navy);font-weight:600}
+.nav-item .count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:.65rem;background:var(--surface2);border:1px solid var(--border);padding:1px 7px;border-radius:12px;color:var(--muted)}
+.nav-item.active .count{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
+@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+
+/* PAGE HEADER */
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+.pg-label{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:6px}
+.pg-title{font-family:'Archivo',sans-serif;font-size:1.45rem;font-weight:900;color:var(--text);letter-spacing:-.3px;line-height:1.1}
+.pg-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy2)}
+.btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--bg);border-color:var(--border-dk)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#15803D}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#B91C1C}
+.btn-sm{padding:6px 11px;font-size:.78rem}
+.btn-wa{background:#25D366;color:#fff}
+.btn-wa:hover{background:#1fb855}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:24px;overflow:hidden}
+.stat-cell{padding:18px 20px;border-right:1px solid var(--border);text-align:center}
+.stat-cell:last-child{border-right:none}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:6px}
+.stat-val{font-family:'Archivo',sans-serif;font-size:1.75rem;font-weight:900;line-height:1;letter-spacing:-.5px}
+.stat-val.v-blue{color:var(--blue)}
+.stat-val.v-amber{color:var(--amber)}
+.stat-val.v-purple{color:var(--purple)}
+.stat-val.v-green{color:var(--green)}
+.stat-val.v-navy{color:var(--navy)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all .1s}
+.filter-btn:hover{border-color:var(--border-dk);color:var(--text)}
+.filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.search-wrap{margin-left:auto;position:relative}
+.search-wrap input{padding:6px 12px 6px 32px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.82rem;width:200px;outline:none}
+.search-wrap input:focus{border-color:var(--border-dk);box-shadow:0 0 0 3px rgba(15,23,42,.06)}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--subtle);width:14px;height:14px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:var(--surface)}
+.card-title{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl thead tr{background:var(--bg)}
+table.tbl th{padding:10px 16px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);border-bottom:1px solid var(--border);white-space:nowrap}
+table.tbl td{padding:13px 16px;font-size:.875rem;border-bottom:1px solid var(--border);vertical-align:middle}
+table.tbl tbody tr:last-child td{border-bottom:none}
+table.tbl tbody tr.clickable{cursor:pointer;transition:background .08s}
+table.tbl tbody tr.clickable:hover{background:var(--bg)}
+.lead-id{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--navy);font-size:.82rem}
+.lead-name{font-weight:600;color:var(--text)}
+.lead-detail{font-size:.75rem;color:var(--subtle);margin-top:2px}
+.date-cell{font-family:'IBM Plex Mono',monospace;color:var(--subtle);font-size:.78rem;white-space:nowrap}
+.enquiry-cell{font-size:.82rem;color:var(--muted)}
+.vehicle-cell{font-size:.82rem;color:var(--muted);font-style:italic}
+.action-cell{display:flex;gap:6px;align-items:center}
+
+/* BADGES */
+.badge{padding:3px 10px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:500;letter-spacing:.04em;display:inline-block;text-transform:uppercase;white-space:nowrap}
+.badge-new{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-contacted{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-quoted{background:var(--purple-lt);color:var(--purple);border:1px solid var(--purple-border)}
+.badge-won{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+.badge-lost{background:var(--surface2);color:var(--subtle);border:1px solid var(--border)}
+.source-badge{padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:500;text-transform:uppercase}
+.source-lexi{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
+.source-manual{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+
+/* EMPTY STATE */
+.empty{padding:64px 24px;text-align:center}
+.empty-icon{font-size:2.5rem;margin-bottom:16px;opacity:.25}
+.empty-title{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.1rem;color:var(--navy);margin-bottom:8px}
+.empty-sub{font-size:.85rem;color:var(--muted);max-width:320px;margin:0 auto}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.overlay.hidden{display:none}
+.modal{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.05rem;color:var(--navy)}
+.modal-close{background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);flex-shrink:0}
+.modal-close:hover{background:var(--bg);color:var(--text)}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--surface)}
+
+/* FORM */
+.form-row{margin-bottom:16px}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+label.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:6px}
+label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:9px 12px;
+  border:1px solid var(--border);border-radius:8px;
+  background:var(--surface);font-size:.875rem;
+  outline:none;transition:border .15s,box-shadow .15s;
+  -webkit-appearance:none
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--border-dk);box-shadow:0 0 0 3px rgba(15,23,42,.07)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+
+/* DETAIL PANEL */
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-field{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.detail-field-label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);margin-bottom:4px}
+.detail-field-val{font-size:.85rem;font-weight:500;color:var(--text)}
+.detail-field.full{grid-column:1/-1}
+.notes-area{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.85rem;resize:vertical;min-height:80px;outline:none;font-family:'Inter',sans-serif;line-height:1.5}
+.notes-area:focus{border-color:var(--border-dk);box-shadow:0 0 0 3px rgba(15,23,42,.07)}
+.status-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.875rem;outline:none;-webkit-appearance:none}
+.status-select:focus{border-color:var(--border-dk);box-shadow:0 0 0 3px rgba(15,23,42,.07)}
+
+/* LEXI BANNER */
+.lexi-banner{
+  background:linear-gradient(135deg,#ECFDF5 0%,#F0FDF4 100%);
+  border:1px solid #A7F3D0;border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:24px;
+  display:flex;align-items:center;gap:14px
+}
+.lexi-dot{width:8px;height:8px;background:#22C55E;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.15)}}
+.lexi-text{font-size:.82rem;color:#065F46}
+.lexi-text strong{font-weight:600}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--navy);color:#fff;
+  padding:10px 16px;border-radius:8px;
+  font-size:.82rem;font-weight:500;
+  z-index:999;box-shadow:var(--shadow-md);
+  opacity:0;transform:translateY(6px);
+  transition:all .2s;pointer-events:none
+}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-row">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Lead CRM</div>
+        <div class="brand-sub">NEXAGENT AI</div>
+      </div>
+    </div>
+    <div class="biz-chip">Auto Workshop PE</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Pipeline</div>
+    <div class="nav-item active" onclick="setFilter('all')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      All Leads <span class="count" id="cnt-all">0</span>
+    </div>
+    <div class="nav-item" onclick="setFilter('New')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      New <span class="count" id="cnt-new">0</span>
+    </div>
+    <div class="nav-item" onclick="setFilter('Contacted')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.08l1.96-1.96a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Contacted <span class="count" id="cnt-contacted">0</span>
+    </div>
+    <div class="nav-item" onclick="setFilter('Quoted')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Quoted <span class="count" id="cnt-quoted">0</span>
+    </div>
+    <div class="nav-item" onclick="setFilter('Won')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Won <span class="count" id="cnt-won">0</span>
+    </div>
+    <div class="nav-item" onclick="setFilter('Lost')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Lost <span class="count" id="cnt-lost">0</span>
+    </div>
+  </div>
+  <div class="sidebar-footer">NexOS v1.0 · Module 1</div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="pg-header">
+    <div>
+      <div class="pg-label">NexOS — Module 1</div>
+      <div class="pg-title">Lead Follow-Up CRM</div>
+      <div class="pg-sub">Track, follow up, and close every inbound lead</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Lead
+    </button>
+  </div>
+
+  <!-- LEXI BANNER -->
+  <div class="lexi-banner">
+    <div class="lexi-dot"></div>
+    <div class="lexi-text"><strong>WhatsApp AI active</strong> — Leads from inbound WhatsApp messages are captured automatically via NexAgent AI and appear here in real time.</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-grid">
+    <div class="stat-cell">
+      <div class="stat-label">Total Leads</div>
+      <div class="stat-val v-navy" id="s-total">0</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">New</div>
+      <div class="stat-val v-blue" id="s-new">0</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Contacted</div>
+      <div class="stat-val v-amber" id="s-contacted">0</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Quoted</div>
+      <div class="stat-val v-purple" id="s-quoted">0</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Won</div>
+      <div class="stat-val v-green" id="s-won">0</div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active" id="fb-all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" id="fb-New" onclick="setFilter('New')">New</button>
+    <button class="filter-btn" id="fb-Contacted" onclick="setFilter('Contacted')">Contacted</button>
+    <button class="filter-btn" id="fb-Quoted" onclick="setFilter('Quoted')">Quoted</button>
+    <button class="filter-btn" id="fb-Won" onclick="setFilter('Won')">Won</button>
+    <button class="filter-btn" id="fb-Lost" onclick="setFilter('Lost')">Lost</button>
+    <div class="search-wrap">
+      <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search leads…" id="search-input" oninput="renderTable()">
+    </div>
+  </div>
+
+  <!-- LEADS TABLE -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Leads</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--subtle)" id="table-count"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="leads-table">
+        <thead>
+          <tr>
+            <th>Lead</th>
+            <th>Contact</th>
+            <th>Enquiry</th>
+            <th>Vehicle</th>
+            <th>Source</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="leads-tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty hidden" id="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No leads yet</div>
+      <div class="empty-sub">Add a lead manually or wait for WhatsApp AI to capture one automatically.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div class="overlay hidden" id="add-overlay" onclick="closeAddModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title">Add Lead</div>
+      <button class="modal-close" onclick="closeAddModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">Customer Name <span>*</span></label>
+          <input type="text" class="form-input" id="f-name" placeholder="John Smith">
+        </div>
+        <div>
+          <label class="form-label">Contact Number <span>*</span></label>
+          <input type="tel" class="form-input" id="f-phone" placeholder="0821234567">
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">Enquiry Type</label>
+          <select class="form-select" id="f-enquiry">
+            <option value="">Select type…</option>
+            <option>Service Booking</option>
+            <option>Repair Quote</option>
+            <option>Parts Enquiry</option>
+            <option>Insurance Repair</option>
+            <option>Roadworthy Test</option>
+            <option>General Enquiry</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Vehicle <span>optional</span></label>
+          <input type="text" class="form-input" id="f-vehicle" placeholder="VW Polo 1.4 TSI 2021">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Details <span>optional</span></label>
+        <textarea class="form-textarea" id="f-details" placeholder="What does the customer need? Any specifics about the job?"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">Source</label>
+          <select class="form-select" id="f-source">
+            <option value="Manual">Manual Entry</option>
+            <option value="WhatsApp AI">WhatsApp AI (Lexi)</option>
+            <option value="Walk-in">Walk-in</option>
+            <option value="Referral">Referral</option>
+            <option value="Phone Call">Phone Call</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Initial Status</label>
+          <select class="form-select" id="f-status">
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEAD DETAIL MODAL -->
+<div class="overlay hidden" id="detail-overlay" onclick="closeDetailModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--subtle);margin-bottom:4px" id="d-id-label">LD-0001</div>
+        <div class="modal-title" id="d-name">Customer Name</div>
+      </div>
+      <button class="modal-close" onclick="closeDetailModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Contact -->
+      <div class="detail-section">
+        <div class="detail-section-title">Contact Info</div>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field-label">Phone</div>
+            <div class="detail-field-val" id="d-phone">—</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">Date Added</div>
+            <div class="detail-field-val" id="d-date">—</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">Enquiry Type</div>
+            <div class="detail-field-val" id="d-enquiry">—</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">Vehicle</div>
+            <div class="detail-field-val" id="d-vehicle">—</div>
+          </div>
+          <div class="detail-field full">
+            <div class="detail-field-label">Details</div>
+            <div class="detail-field-val" id="d-details" style="white-space:pre-wrap">—</div>
+          </div>
+        </div>
+      </div>
+      <!-- Status -->
+      <div class="detail-section">
+        <div class="detail-section-title">Pipeline Status</div>
+        <select class="status-select" id="d-status-select" onchange="handleStatusChange(this.value)">
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Quoted">Quoted</option>
+          <option value="Won">Won</option>
+          <option value="Lost">Lost</option>
+        </select>
+      </div>
+      <!-- Notes -->
+      <div class="detail-section">
+        <div class="detail-section-title">Notes</div>
+        <textarea class="notes-area" id="d-notes" placeholder="Add follow-up notes, quote refs, next steps…"></textarea>
+      </div>
+      <!-- WhatsApp -->
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-wa btn-sm" id="d-wa-btn" onclick="openWhatsApp()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          WhatsApp Follow-Up
+        </button>
+        <button class="btn btn-red btn-sm" onclick="deleteLead()">Delete Lead</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeDetailModal()">Close</button>
+      <button class="btn btn-primary" onclick="updateLead()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── WEBHOOK URLS (fill after Make.com scenarios created) ──
+const WEBHOOK_ADD    = 'https://hook.us2.make.com/5pvo9kq93lubiokehk39wiv3ybfaz95z';  // LeadCRM-Add
+const WEBHOOK_UPDATE = 'https://hook.us2.make.com/ym5ytt8bfzujzz93fo6824oe79dx6oj5';  // LeadCRM-UpdateStatus
+
+// ── STATE ──
+let leads = JSON.parse(localStorage.getItem('leads') || '[]');
+let currentFilter = 'all';
+let currentLeadId = null;
+
+// ── LEAD ID ──
+function nextLeadId() {
+  const nums = leads.map(l => parseInt(l.id.replace('LD-','')) || 0);
+  const next = nums.length ? Math.max(...nums) + 1 : 1;
+  return 'LD-' + String(next).padStart(4,'0');
+}
+
+// ── SAVE TO LOCALSTORAGE ──
+function persist() {
+  localStorage.setItem('leads', JSON.stringify(leads));
+}
+
+// ── WEBHOOK ──
+async function fireWebhook(url, payload) {
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {}
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── STATS ──
+function renderStats() {
+  const total = leads.length;
+  const byStatus = s => leads.filter(l => l.status === s).length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-new').textContent = byStatus('New');
+  document.getElementById('s-contacted').textContent = byStatus('Contacted');
+  document.getElementById('s-quoted').textContent = byStatus('Quoted');
+  document.getElementById('s-won').textContent = byStatus('Won');
+
+  document.getElementById('cnt-all').textContent = total;
+  document.getElementById('cnt-new').textContent = byStatus('New');
+  document.getElementById('cnt-contacted').textContent = byStatus('Contacted');
+  document.getElementById('cnt-quoted').textContent = byStatus('Quoted');
+  document.getElementById('cnt-won').textContent = byStatus('Won');
+  document.getElementById('cnt-lost').textContent = byStatus('Lost');
+}
+
+// ── FILTER ──
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const fb = document.getElementById('fb-' + (f === 'all' ? 'all' : f));
+  if (fb) fb.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  renderTable();
+}
+
+// ── BADGE ──
+function badgeHtml(status) {
+  const map = {
+    'New': 'new', 'Contacted': 'contacted',
+    'Quoted': 'quoted', 'Won': 'won', 'Lost': 'lost'
+  };
+  return `<span class="badge badge-${map[status]||'new'}">${status}</span>`;
+}
+function sourceBadge(source) {
+  const isLexi = source === 'WhatsApp AI';
+  return `<span class="source-badge ${isLexi ? 'source-lexi' : 'source-manual'}">${source || 'Manual'}</span>`;
+}
+
+// ── TABLE ──
+function renderTable() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  let filtered = leads.filter(l => {
+    const matchFilter = currentFilter === 'all' || l.status === currentFilter;
+    const matchSearch = !q ||
+      l.name.toLowerCase().includes(q) ||
+      l.phone.includes(q) ||
+      (l.enquiry||'').toLowerCase().includes(q) ||
+      (l.vehicle||'').toLowerCase().includes(q) ||
+      (l.details||'').toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+
+  // Sort: newest first
+  filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const tbody = document.getElementById('leads-tbody');
+  const empty = document.getElementById('empty-state');
+  const countEl = document.getElementById('table-count');
+  countEl.textContent = filtered.length + ' lead' + (filtered.length !== 1 ? 's' : '');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = filtered.map(l => `
+    <tr class="clickable" onclick="openDetail('${l.id}')">
+      <td>
+        <div class="lead-id">${l.id}</div>
+        <div class="lead-name" style="margin-top:2px">${esc(l.name)}</div>
+      </td>
+      <td>
+        <div style="font-weight:500">${esc(l.phone)}</div>
+      </td>
+      <td class="enquiry-cell">${esc(l.enquiry||'—')}</td>
+      <td class="vehicle-cell">${esc(l.vehicle||'—')}</td>
+      <td>${sourceBadge(l.source)}</td>
+      <td class="date-cell">${l.date}</td>
+      <td>${badgeHtml(l.status)}</td>
+      <td>
+        <div class="action-cell" onclick="event.stopPropagation()">
+          <button class="btn btn-wa btn-sm" onclick="openWhatsAppFor('${l.phone}')" title="WhatsApp">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── ESCAPE ──
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ADD MODAL ──
+function openAddModal() {
+  ['f-name','f-phone','f-details','f-vehicle'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-enquiry').value = '';
+  document.getElementById('f-source').value = 'Manual';
+  document.getElementById('f-status').value = 'New';
+  document.getElementById('add-overlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('f-name').focus(), 100);
+}
+function closeAddModal(e) {
+  if (e && e.target !== document.getElementById('add-overlay')) return;
+  document.getElementById('add-overlay').classList.add('hidden');
+}
+
+function saveLead() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if (!name || !phone) { toast('Name and phone are required'); return; }
+
+  const today = new Date().toISOString().slice(0,10);
+  const lead = {
+    id: nextLeadId(),
+    name, phone,
+    enquiry: document.getElementById('f-enquiry').value,
+    vehicle: document.getElementById('f-vehicle').value.trim(),
+    details: document.getElementById('f-details').value.trim(),
+    source: document.getElementById('f-source').value,
+    status: document.getElementById('f-status').value,
+    notes: '',
+    date: today
+  };
+
+  leads.push(lead);
+  persist();
+  renderStats();
+  renderTable();
+  closeAddModal();
+  toast('Lead ' + lead.id + ' added');
+
+  // Fire to Sheets
+  fireWebhook(WEBHOOK_ADD, {
+    action: 'add',
+    leadId: lead.id,
+    date: lead.date,
+    name: lead.name,
+    phone: lead.phone,
+    enquiry: lead.enquiry,
+    vehicle: lead.vehicle,
+    details: lead.details,
+    source: lead.source,
+    status: lead.status
+  });
+}
+
+// ── DETAIL MODAL ──
+function openDetail(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  currentLeadId = id;
+
+  document.getElementById('d-id-label').textContent = lead.id;
+  document.getElementById('d-name').textContent = lead.name;
+  document.getElementById('d-phone').textContent = lead.phone;
+  document.getElementById('d-date').textContent = lead.date;
+  document.getElementById('d-enquiry').textContent = lead.enquiry || '—';
+  document.getElementById('d-vehicle').textContent = lead.vehicle || '—';
+  document.getElementById('d-details').textContent = lead.details || '—';
+  document.getElementById('d-status-select').value = lead.status;
+  document.getElementById('d-notes').value = lead.notes || '';
+
+  document.getElementById('detail-overlay').classList.remove('hidden');
+}
+function closeDetailModal(e) {
+  if (e && e.target !== document.getElementById('detail-overlay')) return;
+  document.getElementById('detail-overlay').classList.add('hidden');
+  currentLeadId = null;
+}
+
+function handleStatusChange(newStatus) {
+  // Visual feedback only — actual save happens on "Save Changes"
+}
+
+function updateLead() {
+  const lead = leads.find(l => l.id === currentLeadId);
+  if (!lead) return;
+
+  const prevStatus = lead.status;
+  lead.status = document.getElementById('d-status-select').value;
+  lead.notes = document.getElementById('d-notes').value.trim();
+
+  persist();
+  renderStats();
+  renderTable();
+  closeDetailModal();
+  toast(lead.id + ' updated');
+
+  // Fire to Sheets
+  fireWebhook(WEBHOOK_UPDATE, {
+    action: 'update_status',
+    leadId: lead.id,
+    name: lead.name,
+    phone: lead.phone,
+    status: lead.status,
+    notes: lead.notes,
+    previousStatus: prevStatus
+  });
+}
+
+function deleteLead() {
+  if (!currentLeadId) return;
+  if (!confirm('Delete this lead? This cannot be undone.')) return;
+  leads = leads.filter(l => l.id !== currentLeadId);
+  persist();
+  renderStats();
+  renderTable();
+  closeDetailModal();
+  toast('Lead deleted');
+}
+
+// ── WHATSAPP ──
+function openWhatsApp() {
+  const lead = leads.find(l => l.id === currentLeadId);
+  if (!lead) return;
+  openWhatsAppFor(lead.phone);
+}
+function openWhatsAppFor(phone) {
+  const clean = phone.replace(/\D/g,'');
+  const wa = clean.startsWith('27') ? clean : '27' + clean.replace(/^0/,'');
+  window.open('https://wa.me/' + wa, '_blank');
+}
+
+// ── INIT ──
+renderStats();
+renderTable();
+</script>
+</body>
+</html>
