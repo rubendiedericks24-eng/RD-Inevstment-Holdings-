@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexTrack — Job Card Tracker</title>
+<title>Auto Workshop — Job Card Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -156,7 +156,7 @@ body{font-family:'Inter',sans-serif;background:#F8FAFC}
 const DB={
   getJobs:()=>JSON.parse(localStorage.getItem('jct_jobs')||'[]'),
   saveJobs:j=>localStorage.setItem('jct_jobs',JSON.stringify(j)),
-  getConfig:()=>JSON.parse(localStorage.getItem('jct_config')||JSON.stringify({businessName:'Auto Workshop',technicianList:['Andile','Sipho','James'],makeWebhookUrl:'',sheetsScriptUrl:''})),
+  getConfig:()=>JSON.parse(localStorage.getItem('jct_config')||JSON.stringify({businessName:'Auto Workshop PE',technicianList:['Andile','Sipho','James'],makeWebhookUrl:'',sheetsScriptUrl:''})),
   saveConfig:c=>localStorage.setItem('jct_config',JSON.stringify(c)),
   nextId:()=>{const jobs=JSON.parse(localStorage.getItem('jct_jobs')||'[]');const max=jobs.reduce((m,j)=>Math.max(m,parseInt(j.id.replace('JOB-',''))||0),0);return 'JOB-'+String(max+1).padStart(3,'0');}
 };
@@ -191,7 +191,7 @@ function render(){document.getElementById('app').innerHTML=layout();bind();}
 function layout(){
   const navs=[{id:'dashboard',label:'Dashboard',icon:IC.grid},{id:'new-job',label:'New Job Card',icon:IC.plus},{id:'all-jobs',label:'All Jobs',icon:IC.list},{id:'settings',label:'Settings',icon:IC.cog}];
   const active=S.page==='job-detail'?'all-jobs':S.page;
-  const sidebar=`<div class="sidebar"><div class="sidebar-brand"><div style="display:flex;align-items:center;gap:10px"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><defs><linearGradient id="ntg" x1="3" y1="3" x2="31" y2="31" gradientUnits="userSpaceOnUse"><stop stop-color="#4ADE80"/><stop offset="1" stop-color="#22C55E"/></linearGradient></defs><line x1="8" y1="27" x2="8" y2="7" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="7" x2="26" y2="27" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><line x1="26" y1="27" x2="26" y2="7" stroke="url(#ntg)" stroke-width="4" stroke-linecap="round"/><circle cx="8" cy="7" r="3.2" fill="#0F172A"/><circle cx="26" cy="27" r="3.2" fill="#0F172A"/></svg><div><div class="brand-name">Nex<em>Track</em></div><div class="brand-sub">Job Card Tracker</div></div></div></div><div class="biz-chip">${esc(S.config.businessName)}</div><nav class="sidebar-nav">${navs.map(n=>`<div class="nav-item${n.id===active?' active':''}" data-nav="${n.id}">${n.icon} ${n.label}</div>`).join('')}</nav><div class="sidebar-footer">Powered by NexAgent AI App Division</div></div>`;
+  const sidebar=`<div class="sidebar"><div class="sidebar-brand"><div style="display:flex;align-items:center;gap:10px"><div><div class="brand-name">${esc(S.config.businessName)}</div><div class="brand-sub">Job Card Tracker</div></div></div></div><div class="biz-chip" style="font-size:10px;color:#94A3B8;font-family:monospace;background:none;border:none;padding:8px 14px 0">Powered by NexTrack &middot; NexAgent AI</div><nav class="sidebar-nav">${navs.map(n=>`<div class="nav-item${n.id===active?' active':''}" data-nav="${n.id}">${n.icon} ${n.label}</div>`).join('')}</nav><div class="sidebar-footer">Powered by NexAgent AI App Division</div></div>`;
   let pg;switch(S.page){case'dashboard':pg=pgDash();break;case'new-job':pg=pgNew();break;case'all-jobs':pg=pgAll();break;case'job-detail':pg=pgDetail();break;case'settings':pg=pgSettings();break;default:pg=pgDash();}
   return sidebar+`<div class="main">${pg}</div>`;
 }
