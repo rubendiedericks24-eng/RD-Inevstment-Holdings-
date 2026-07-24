@@ -48,11 +48,10 @@ function doGet(e) {
 
     const headers = data[0].map(h => String(h).trim());
     const rows    = data.slice(1)
-      .filter(row => row.some(cell => cell !== '' && cell !== null))  // skip blank rows
-      .map(row => {
-        const obj = {};
-        headers.forEach((h, i) => {
-          const val = row[i];
+      .map((row, i) => {
+        const obj = { __row: i + 2 };  // physical sheet row number (1-based, +1 for header)
+        headers.forEach((h, j) => {
+          const val = row[j];
           // Convert dates to readable strings, keep numbers as numbers
           if (val instanceof Date) {
             obj[h] = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
@@ -61,7 +60,8 @@ function doGet(e) {
           }
         });
         return obj;
-      });
+      })
+      .filter(obj => headers.some(h => h && obj[h] !== '' && obj[h] !== null && obj[h] !== undefined));  // skip blank rows
 
     return jsonResponse(rows);
 
