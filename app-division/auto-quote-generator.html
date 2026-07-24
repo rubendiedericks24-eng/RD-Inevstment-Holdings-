@@ -773,6 +773,7 @@ async function sendEmail() {
 async function syncToSheets(q, action='upsert') {
   const url = v('sheetsScriptUrl');
   if(!url || !q) return;
+  if(!q.clientPhone) return; // Skip sync if no phone — prevents empty 'to' error in WhatsApp HTTP module
   try {
     await fetch(url, {
       method:'POST',
