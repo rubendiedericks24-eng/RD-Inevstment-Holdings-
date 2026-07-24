@@ -299,14 +299,14 @@ details.policy-item[open] summary{color:var(--text)}
             <div class="app-feature"><span class="app-feature-tick">→</span> WhatsApp AI inbound handler (M1)</div>
             <div class="app-feature"><span class="app-feature-tick">→</span> Auto-Quote Generator (M2)</div>
             <div class="app-feature"><span class="app-feature-tick">→</span> Job Card Tracker (M3)</div>
-            <div class="app-feature"><span class="app-feature-tick">→</span> Inventory &amp; Stock Manager (M4)</div>
-            <div class="app-feature"><span class="app-feature-tick">→</span> Staff Timesheet &amp; Payroll (M5)</div>
+            <div class="app-feature" style="display:flex;align-items:center;gap:8px"><span class="app-feature-tick">→</span> Inventory &amp; Stock Manager (M4) <span style="background:#0F172A;color:#F8FAFC;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap">OS ONLY</span></div>
+            <div class="app-feature" style="display:flex;align-items:center;gap:8px"><span class="app-feature-tick">→</span> Staff Timesheet &amp; Payroll (M5) <span style="background:#0F172A;color:#F8FAFC;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap">OS ONLY</span></div>
             <div class="app-feature"><span class="app-feature-tick">→</span> Invoice &amp; Payment Tracker (M6)</div>
-            <div class="app-feature"><span class="app-feature-tick">→</span> Operations Dashboard — daily 07:00 briefing (M7)</div>
+            <div class="app-feature" style="display:flex;align-items:center;gap:8px"><span class="app-feature-tick">→</span> Operations Dashboard — daily briefing (M7) <span style="background:#0F172A;color:#F8FAFC;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap">OS ONLY</span></div>
             <div class="app-feature"><span class="app-feature-tick">→</span> Lead Follow-Up CRM (M8)</div>
           </div>
           <div style="margin-top:14px;font-size:.78rem;color:#94A3B8;line-height:1.7">
-            M2, M3, M6 &amp; M8 also available as single modules · M4, M5 &amp; M7 are NexOS-only · M1 available as a single WhatsApp AI agent
+            M2, M3, M6 &amp; M8 available as individual modules · M4, M5 &amp; M7 are NexAgent OS-only
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;margin-top:24px">
             <a href="#contact" style="border:2px solid #0F172A;border-top:3px solid #0F172A;border-radius:12px;padding:16px;text-align:center;background:#0F172A;text-decoration:none;transition:opacity .15s;display:block" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -827,20 +827,37 @@ function triggerQuoteDemo(){
   }
 }
 
-// Contact form — opens Gmail compose pre-filled
-document.getElementById('cform').addEventListener('submit',function(ev){
+// Contact form — fires Make.com webhook
+const CONTACT_WEBHOOK = 'https://hook.us2.make.com/1jwaheml9625nibctelkwe4ahs42pcgp';
+document.getElementById('cform').addEventListener('submit', async function(ev){
   ev.preventDefault();
-  const n=document.getElementById('fn').value.trim();
-  const e=document.getElementById('fe').value.trim();
-  const b=document.getElementById('fb').value.trim();
-  const m=document.getElementById('fm').value.trim();
-  if(!n||!e||!m){document.getElementById('fnote').textContent='Please fill in your name, email and message.';return;}
-  const subject=encodeURIComponent('Enquiry from '+n+(b?' — '+b:''));
-  const body=encodeURIComponent('Name: '+n+'\nEmail: '+e+'\nBusiness: '+(b||'—')+'\n\n'+m);
-  const gmailUrl='https://mail.google.com/mail/?view=cm&to=rubendiedericks24%40gmail.com&su='+subject+'&body='+body;
-  document.getElementById('fnote').textContent='Opening Gmail with your message pre-filled — just hit Send.';
-  document.getElementById('fnote').style.color='#16A34A';
-  window.open(gmailUrl,'_blank');
+  const note = document.getElementById('fnote');
+  const btn  = ev.target.querySelector('button[type=submit]');
+  const n = document.getElementById('fn').value.trim();
+  const e = document.getElementById('fe').value.trim();
+  const b = document.getElementById('fb').value.trim();
+  const m = document.getElementById('fm').value.trim();
+  if(!n||!e||!m){ note.textContent='Please fill in your name, email and message.'; note.style.color='#DC2626'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  note.textContent = '';
+  try {
+    await fetch(CONTACT_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: n, email: e, business: b || '—', message: m, source: 'nexagent.co.za contact form', submitted: new Date().toISOString() })
+    });
+    btn.textContent = 'Message sent';
+    btn.style.background = '#16A34A';
+    note.textContent = "We'll be in touch within 24 hours.";
+    note.style.color = '#16A34A';
+    ev.target.reset();
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'Send message';
+    note.textContent = 'Something went wrong — email us directly at rubendiedericks24@gmail.com';
+    note.style.color = '#DC2626';
+  }
 });
 
 function triggerNexAgent OSDemo() {

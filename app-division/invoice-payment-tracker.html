@@ -172,190 +172,16 @@ textarea{resize:vertical;min-height:70px}
 .toast.show{display:block}
 </style>
 </head>
-<body>
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-row">
-      <div>
-        <div class="brand-name">Auto Workshop PE</div>
-        <div class="brand-sub">Invoice Tracker</div>
-      </div>
-    </div>
-    <div style="margin:10px 14px 0;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexInvoice &middot; NexAgent AI</div>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-item active" onclick="showView('all',this)">
-      <span>📋</span> All Invoices
-    </div>
-    <div class="nav-item" onclick="showView('Outstanding',this)">
-      <span>⏳</span> Outstanding
-    </div>
-    <div class="nav-item" onclick="showView('Overdue',this)">
-      <span>⚠</span> Overdue
-    </div>
-    <div class="nav-item" onclick="showView('Paid',this)">
-      <span>✓</span> Paid
-    </div>
-  </nav>
-  <div class="sidebar-footer">NexAgent AI · App Division</div>
-</aside>
-
-<!-- MAIN -->
-<main class="main">
-  <div class="pg-header">
-    <div>
-      <div class="pg-label">App Division</div>
-      <div class="pg-title">Invoice & Payment Tracker</div>
-      <div class="pg-sub" id="viewLabel">All invoices · <span id="invCount">0</span> records</div>
-    </div>
-    <button class="btn btn-primary" onclick="openNewInvoice()">+ New Invoice</button>
-  </div>
-
-  <!-- STATS -->
-  <div class="stat-grid">
-    <div class="stat-cell">
-      <div class="stat-label">Outstanding</div>
-      <div class="stat-val v-amber" id="statOutstanding">R0</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Overdue</div>
-      <div class="stat-val v-red" id="statOverdue">R0</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Paid This Month</div>
-      <div class="stat-val v-green" id="statPaid">R0</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Total Invoices</div>
-      <div class="stat-val v-navy" id="statTotal">0</div>
-    </div>
-  </div>
-
-  <!-- TABLE -->
-  <div class="card">
-    <div class="card-head">
-      <div class="card-title">Invoices</div>
-      <div class="chips">
-        <div class="chip active" onclick="setFilter('all',this)">All</div>
-        <div class="chip" onclick="setFilter('Outstanding',this)">Outstanding</div>
-        <div class="chip" onclick="setFilter('Overdue',this)">Overdue</div>
-        <div class="chip" onclick="setFilter('Paid',this)">Paid</div>
-      </div>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>Invoice #</th>
-            <th>Client</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Due Date</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="invBody">
-          <tr><td colspan="7" style="text-align:center;padding:52px 16px;color:var(--subtle);font-family:'IBM Plex Mono',monospace;font-size:.78rem">No invoices yet — create your first one above.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</main>
-
-<!-- NEW INVOICE MODAL -->
-<div class="modal-overlay" id="newInvModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>New Invoice</h2>
-      <button class="modal-close" onclick="closeModal('newInvModal')">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Invoice No</label>
-        <input type="text" id="fInvNo" readonly>
-      </div>
-      <div class="form-group">
-        <label>Date Created</label>
-        <input type="date" id="fDate">
-      </div>
-      <div class="form-group">
-        <label>Client Name</label>
-        <input type="text" id="fClient" placeholder="e.g. John Smith">
-      </div>
-      <div class="form-group">
-        <label>Client Phone</label>
-        <input type="tel" id="fPhone" placeholder="e.g. 082 123 4567">
-      </div>
-      <div class="form-group span2">
-        <label>Client Email</label>
-        <input type="email" id="fEmail" placeholder="client@email.com">
-      </div>
-      <div class="form-group">
-        <label>Quote Ref</label>
-        <input type="text" id="fQuoteRef" placeholder="e.g. AQ-0001">
-      </div>
-      <div class="form-group">
-        <label>Job Ref</label>
-        <input type="text" id="fJobRef" placeholder="e.g. JOB-001">
-      </div>
-      <div class="form-group">
-        <label>Payment Terms</label>
-        <select id="fTerms" onchange="calcDueDate()">
-          <option value="7">7 days</option>
-          <option value="14">14 days</option>
-          <option value="30" selected>30 days</option>
-          <option value="60">60 days</option>
-          <option value="0">Due on receipt</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Due Date</label>
-        <input type="date" id="fDueDate">
-      </div>
-    </div>
-
-    <div class="li-section">
-      <div class="li-head-row">
-        <div class="li-hdr">Description</div>
-        <div class="li-hdr">Qty</div>
-        <div class="li-hdr">Unit Price</div>
-        <div></div>
-      </div>
-      <div id="lineItemsContainer"></div>
-      <button class="btn btn-outline btn-sm" onclick="addLineItem()" style="margin-top:4px">+ Line Item</button>
-    </div>
-
-    <div class="totals-box">
-      <div class="tot-row"><span>Subtotal</span><span id="tSub">R0.00</span></div>
-      <div class="tot-row"><span>VAT (15%)</span><span id="tVat">R0.00</span></div>
-      <div class="tot-row grand"><span>Total Due</span><span id="tGrand">R0.00</span></div>
-    </div>
-
-    <div class="form-footer">
-      <button class="btn btn-outline" onclick="closeModal('newInvModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveInvoice()">Create Invoice</button>
-    </div>
-  </div>
-</div>
-
-<!-- DETAIL PANEL -->
-<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
-  <div class="detail-panel" id="detailPanel">
-    <div class="detail-head">
-      <h2 id="dpTitle">Invoice</h2>
-      <button class="modal-close" onclick="closeModal('detailOverlay')">✕</button>
-    </div>
-    <div class="detail-body" id="dpBody"></div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
+<body> <!-- SIDEBAR -->
+<aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-row"> <div> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Invoice Tracker</div> </div> </div> <div style="margin:10px 14px 0;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active" onclick="showView('all',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Invoices</div> <div class="nav-item" onclick="showView('Outstanding',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Outstanding</div> <div class="nav-item" onclick="showView('Overdue',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Overdue</div> <div class="nav-item" onclick="showView('Paid',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Paid</div> <a class="nav-item" href="operations-dashboard.html" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
+</aside> <!-- MAIN -->
+<main class="main"> <div class="pg-header"> <div> <div class="pg-label">App Division</div> <div class="pg-title">Invoice & Payment Tracker</div> <div class="pg-sub" id="viewLabel">All invoices · <span id="invCount">0</span> records</div> </div> <button class="btn btn-primary" onclick="openNewInvoice()">+ New Invoice</button> </div> <!-- STATS --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Outstanding</div> <div class="stat-val v-amber" id="statOutstanding">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Overdue</div> <div class="stat-val v-red" id="statOverdue">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Paid This Month</div> <div class="stat-val v-green" id="statPaid">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Total Invoices</div> <div class="stat-val v-navy" id="statTotal">0</div> </div> </div> <!-- TABLE --> <div class="card"> <div class="card-head"> <div class="card-title">Invoices</div> <div class="chips"> <div class="chip active" onclick="setFilter('all',this)">All</div> <div class="chip" onclick="setFilter('Outstanding',this)">Outstanding</div> <div class="chip" onclick="setFilter('Overdue',this)">Overdue</div> <div class="chip" onclick="setFilter('Paid',this)">Paid</div> </div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice #</th> <th>Client</th> <th>Description</th> <th>Amount</th> <th>Due Date</th> <th>Status</th> <th></th> </tr> </thead> <tbody id="invBody"> <tr><td colspan="7" style="text-align:center;padding:52px 16px;color:var(--subtle);font-family:'IBM Plex Mono',monospace;font-size:.78rem">No invoices yet — create your first one above.</td></tr> </tbody> </table> </div> </div>
+</main> <!-- NEW INVOICE MODAL -->
+<div class="modal-overlay" id="newInvModal"> <div class="modal"> <div class="modal-head"> <h2>New Invoice</h2> <button class="modal-close" onclick="closeModal('newInvModal')"></button> </div> <div class="form-grid"> <div class="form-group"> <label>Invoice No</label> <input type="text" id="fInvNo" readonly> </div> <div class="form-group"> <label>Date Created</label> <input type="date" id="fDate"> </div> <div class="form-group"> <label>Client Name</label> <input type="text" id="fClient" placeholder="e.g. John Smith"> </div> <div class="form-group"> <label>Client Phone</label> <input type="tel" id="fPhone" placeholder="e.g. 082 123 4567"> </div> <div class="form-group span2"> <label>Client Email</label> <input type="email" id="fEmail" placeholder="client@email.com"> </div> <div class="form-group"> <label>Quote Ref</label> <input type="text" id="fQuoteRef" placeholder="e.g. AQ-0001"> </div> <div class="form-group"> <label>Job Ref</label> <input type="text" id="fJobRef" placeholder="e.g. JOB-001"> </div> <div class="form-group"> <label>Payment Terms</label> <select id="fTerms" onchange="calcDueDate()"> <option value="7">7 days</option> <option value="14">14 days</option> <option value="30" selected>30 days</option> <option value="60">60 days</option> <option value="0">Due on receipt</option> </select> </div> <div class="form-group"> <label>Due Date</label> <input type="date" id="fDueDate"> </div> </div> <div class="li-section"> <div class="li-head-row"> <div class="li-hdr">Description</div> <div class="li-hdr">Qty</div> <div class="li-hdr">Unit Price</div> <div></div> </div> <div id="lineItemsContainer"></div> <button class="btn btn-outline btn-sm" onclick="addLineItem()" style="margin-top:4px">+ Line Item</button> </div> <div class="totals-box"> <div class="tot-row"><span>Subtotal</span><span id="tSub">R0.00</span></div> <div class="tot-row"><span>VAT (15%)</span><span id="tVat">R0.00</span></div> <div class="tot-row grand"><span>Total Due</span><span id="tGrand">R0.00</span></div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal('newInvModal')">Cancel</button> <button class="btn btn-primary" onclick="saveInvoice()">Create Invoice</button> </div> </div>
+</div> <!-- DETAIL PANEL -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)"> <div class="detail-panel" id="detailPanel"> <div class="detail-head"> <h2 id="dpTitle">Invoice</h2> <button class="modal-close" onclick="closeModal('detailOverlay')"></button> </div> <div class="detail-body" id="dpBody"></div> </div>
+</div> <!-- TOAST -->
+<div class="toast" id="toast"></div> <script>
 const WEBHOOK_CREATE  = 'https://hook.us2.make.com/3kbai6k3xzd1hn41qe6y93nmdputxndd';
 const WEBHOOK_PAID    = 'https://hook.us2.make.com/utq7yl7c07xbrggrts24ek5gdc6qwg0q';
 const WEBHOOK_REMINDER= 'https://hook.us2.make.com/7narvwpeddf6dt2j1ts30h7u6b5le25u';
@@ -392,10 +218,7 @@ function addLineItem(desc='',qty=1,price='') {
   const c = document.getElementById('lineItemsContainer');
   const row = document.createElement('div'); row.className = 'li-row';
   row.innerHTML = `
-    <input type="text" placeholder="Description" value="${desc}" oninput="calcTotals()">
-    <input type="number" value="${qty}" min="1" oninput="calcTotals()">
-    <input type="number" value="${price}" placeholder="0.00" min="0" step="0.01" oninput="calcTotals()">
-    <button class="li-del" onclick="this.parentElement.remove();calcTotals()">✕</button>`;
+    <input type="text" placeholder="Description" value="${desc}" oninput="calcTotals()"> <input type="number" value="${qty}" min="1" oninput="calcTotals()"> <input type="number" value="${price}" placeholder="0.00" min="0" step="0.01" oninput="calcTotals()"> <button class="li-del" onclick="this.parentElement.remove();calcTotals()"></button>`;
   c.appendChild(row); calcTotals();
 }
 
@@ -479,20 +302,9 @@ function render() {
   tbody.innerHTML = filtered.map(inv => {
     const bc = inv.status==='Paid'?'badge-paid':inv.status==='Overdue'?'badge-overdue':'badge-outstanding';
     const btns = inv.status!=='Paid'
-      ? `<button class="btn btn-sm btn-pay" onclick="markPaid('${inv.invNo}');event.stopPropagation()">Mark Paid</button>
-         <button class="btn btn-sm btn-remind" onclick="sendReminder('${inv.invNo}');event.stopPropagation()" style="margin-left:6px">Remind</button>
-         <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:6px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`
-      : `<span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--green)">✓ ${inv.paidDate}</span>
-         <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:8px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`;
-    return `<tr onclick="openDetail('${inv.invNo}')">
-      <td><span class="inv-num">${inv.invNo}</span></td>
-      <td><div class="client-name">${inv.client}</div><div class="client-detail">${inv.phone}</div></td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem">${inv.itemsSummary}</td>
-      <td class="amount-cell">${fmt(inv.total)}</td>
-      <td class="date-cell">${inv.dueDate||'—'}</td>
-      <td><span class="badge ${bc}">${inv.status}</span></td>
-      <td>${btns}</td>
-    </tr>`;
+      ? `<button class="btn btn-sm btn-pay" onclick="markPaid('${inv.invNo}');event.stopPropagation()">Mark Paid</button> <button class="btn btn-sm btn-remind" onclick="sendReminder('${inv.invNo}');event.stopPropagation()" style="margin-left:6px">Remind</button> <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:6px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`
+      : `<span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--green)"> ${inv.paidDate}</span> <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:8px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`;
+    return `<tr onclick="openDetail('${inv.invNo}')"> <td><span class="inv-num">${inv.invNo}</span></td> <td><div class="client-name">${inv.client}</div><div class="client-detail">${inv.phone}</div></td> <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem">${inv.itemsSummary}</td> <td class="amount-cell">${fmt(inv.total)}</td> <td class="date-cell">${inv.dueDate||'—'}</td> <td><span class="badge ${bc}">${inv.status}</span></td> <td>${btns}</td> </tr>`;
   }).join('');
 }
 
@@ -502,38 +314,15 @@ function openDetail(invNo) {
   const bc = inv.status==='Paid'?'badge-paid':inv.status==='Overdue'?'badge-overdue':'badge-outstanding';
   const itemsHtml = inv.items.map(li=>`<div class="d-row"><span class="d-label">${li.desc} ×${li.qty}</span><span class="d-val">R${(li.qty*li.price).toFixed(2)}</span></div>`).join('');
   const actions = inv.status!=='Paid'
-    ? `<button class="btn btn-primary" onclick="markPaid('${inv.invNo}')">Mark as Paid</button>
-       <button class="btn btn-outline" onclick="sendReminder('${inv.invNo}')">Send Payment Reminder</button>`
-    : `<div style="background:var(--green-lt);border:1px solid var(--green-border);border-radius:10px;padding:14px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--green)">✓ PAID · ${inv.paidDate}</div>`;
+    ? `<button class="btn btn-primary" onclick="markPaid('${inv.invNo}')">Mark as Paid</button> <button class="btn btn-outline" onclick="sendReminder('${inv.invNo}')">Send Payment Reminder</button>`
+    : `<div style="background:var(--green-lt);border:1px solid var(--green-border);border-radius:10px;padding:14px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--green)"> PAID · ${inv.paidDate}</div>`;
   document.getElementById('dpBody').innerHTML = `
-    <div class="d-section">
-      <div class="d-amount">${fmt(inv.total)}</div>
-      <span class="badge ${bc}">${inv.status}</span>
-    </div>
-    <div class="d-section">
-      <div class="d-section-title">Client</div>
-      <div class="d-row"><span class="d-label">Name</span><span class="d-val">${inv.client}</span></div>
-      <div class="d-row"><span class="d-label">Phone</span><span class="d-val">${inv.phone}</span></div>
-      ${inv.email?`<div class="d-row"><span class="d-label">Email</span><span class="d-val">${inv.email}</span></div>`:''}
+    <div class="d-section"> <div class="d-amount">${fmt(inv.total)}</div> <span class="badge ${bc}">${inv.status}</span> </div> <div class="d-section"> <div class="d-section-title">Client</div> <div class="d-row"><span class="d-label">Name</span><span class="d-val">${inv.client}</span></div> <div class="d-row"><span class="d-label">Phone</span><span class="d-val">${inv.phone}</span></div> ${inv.email?`<div class="d-row"><span class="d-label">Email</span><span class="d-val">${inv.email}</span></div>`:''}
       ${inv.quoteRef?`<div class="d-row"><span class="d-label">Quote Ref</span><span class="d-val">${inv.quoteRef}</span></div>`:''}
       ${inv.jobRef?`<div class="d-row"><span class="d-label">Job Ref</span><span class="d-val">${inv.jobRef}</span></div>`:''}
-    </div>
-    <div class="d-section">
-      <div class="d-section-title">Line Items</div>
-      ${itemsHtml}
-      <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:10px">
-        <div class="d-row"><span class="d-label">Subtotal</span><span class="d-val">R${inv.subtotal.toFixed(2)}</span></div>
-        <div class="d-row"><span class="d-label">VAT (15%)</span><span class="d-val">R${inv.vat.toFixed(2)}</span></div>
-        <div class="d-row" style="font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;padding-top:4px"><span>Total Due</span><span>${fmt(inv.total)}</span></div>
-      </div>
-    </div>
-    <div class="d-section">
-      <div class="d-section-title">Dates</div>
-      <div class="d-row"><span class="d-label">Created</span><span class="d-val">${inv.dateCreated}</span></div>
-      <div class="d-row"><span class="d-label">Due Date</span><span class="d-val">${inv.dueDate||'—'}</span></div>
-      ${inv.paidDate?`<div class="d-row"><span class="d-label">Paid On</span><span class="d-val">${inv.paidDate}</span></div>`:''}
-    </div>
-    <div class="action-stack">${actions}</div>`;
+    </div> <div class="d-section"> <div class="d-section-title">Line Items</div> ${itemsHtml}
+      <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:10px"> <div class="d-row"><span class="d-label">Subtotal</span><span class="d-val">R${inv.subtotal.toFixed(2)}</span></div> <div class="d-row"><span class="d-label">VAT (15%)</span><span class="d-val">R${inv.vat.toFixed(2)}</span></div> <div class="d-row" style="font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;padding-top:4px"><span>Total Due</span><span>${fmt(inv.total)}</span></div> </div> </div> <div class="d-section"> <div class="d-section-title">Dates</div> <div class="d-row"><span class="d-label">Created</span><span class="d-val">${inv.dateCreated}</span></div> <div class="d-row"><span class="d-label">Due Date</span><span class="d-val">${inv.dueDate||'—'}</span></div> ${inv.paidDate?`<div class="d-row"><span class="d-label">Paid On</span><span class="d-val">${inv.paidDate}</span></div>`:''}
+    </div> <div class="action-stack">${actions}</div>`;
   document.getElementById('detailOverlay').classList.add('open');
 }
 

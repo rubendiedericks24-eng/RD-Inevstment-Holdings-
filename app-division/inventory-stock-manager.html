@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory & Stock Manager — Auto Workshop PE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --navy:#0F172A;--navy2:#1E293B;
+  --text:#0F172A;--muted:#475569;--subtle:#94A3B8;
+  --green:#16A34A;--green-lt:#F0FDF4;--green-border:#BBF7D0;
+  --amber:#D97706;--amber-lt:#FFFBEB;--amber-border:#FDE68A;
+  --red:#DC2626;--red-lt:#FEF2F2;--red-border:#FECACA;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 60px rgba(0,0,0,0.14);
+  --radius:12px;--sidebar:230px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;line-height:1.5}
+input,select,textarea,button{font-family:'Inter',sans-serif;font-size:inherit;color:inherit}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.brand-name{font-family:'Archivo',sans-serif;font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
+.brand-sub{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
+.sidebar-nav{padding:10px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px 9px 15px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:1px;transition:all .1s;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--surface2);color:var(--navy);border-left-color:var(--navy);font-weight:600}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
+@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+
+/* ── PAGE HEADER ── */
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+.pg-label{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:6px}
+.pg-title{font-family:'Archivo',sans-serif;font-size:1.45rem;font-weight:900;color:var(--text);letter-spacing:-.3px;line-height:1.1}
+.pg-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.stat-cell{padding:18px 20px;border-right:1px solid var(--border);text-align:center}
+.stat-cell:last-child{border-right:none}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:6px}
+.stat-val{font-family:'Archivo',sans-serif;font-size:1.75rem;font-weight:900;line-height:1;letter-spacing:-.5px}
+.v-amber{color:var(--amber)}
+.v-red{color:var(--red)}
+.v-green{color:var(--green)}
+.v-navy{color:var(--navy)}
+
+/* ── ALERT BANNER ── */
+.reorder-banner{background:var(--amber-lt);border:1px solid var(--amber-border);border-radius:var(--radius);padding:12px 18px;margin-bottom:20px;display:none;align-items:center;gap:10px}
+.reorder-banner.show{display:flex}
+.reorder-banner-icon{font-size:1.1rem}
+.reorder-banner-text{font-size:.85rem;color:var(--amber);font-weight:500}
+.reorder-banner-text strong{font-weight:700}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle)}
+
+/* ── SEARCH + FILTER ── */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-input{padding:7px 12px;border:1px solid var(--border-dk);border-radius:8px;font-size:.85rem;width:220px;outline:none;background:var(--surface)}
+.search-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,23,42,.06)}
+.filter-select{padding:7px 10px;border:1px solid var(--border-dk);border-radius:8px;font-size:.82rem;outline:none;background:var(--surface);cursor:pointer;color:var(--muted)}
+.filter-select:focus{border-color:var(--navy)}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl thead tr{background:var(--bg)}
+table.tbl th{padding:10px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);border-bottom:1px solid var(--border);white-space:nowrap}
+table.tbl td{padding:12px 14px;font-size:.875rem;border-bottom:1px solid var(--border);vertical-align:middle}
+table.tbl tbody tr:last-child td{border-bottom:none}
+table.tbl tbody tr{transition:background .08s}
+table.tbl tbody tr:hover{background:var(--bg)}
+table.tbl tbody tr.row-low{background:var(--amber-lt)}
+table.tbl tbody tr.row-out{background:var(--red-lt)}
+.empty-row{text-align:center;padding:48px 16px;color:var(--subtle);font-family:'IBM Plex Mono',monospace;font-size:.78rem}
+
+/* ── BADGES ── */
+.badge{padding:3px 9px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:500;letter-spacing:.04em;display:inline-block;text-transform:uppercase}
+.badge-ok{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+.badge-low{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-out{background:var(--red-lt);color:var(--red);border:1px solid var(--red-border)}
+
+/* ── STOCK CONTROLS ── */
+.stock-ctrl{display:flex;align-items:center;gap:6px}
+.stock-num{font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;min-width:32px;text-align:center}
+.stock-num.low{color:var(--amber)}
+.stock-num.out{color:var(--red)}
+.stock-num.ok{color:var(--navy)}
+.btn-adj{width:26px;height:26px;border-radius:6px;border:1px solid var(--border-dk);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:var(--muted);transition:all .12s;line-height:1}
+.btn-adj:hover{border-color:var(--navy);color:var(--navy);background:var(--surface2)}
+
+/* ── PART NAME CELL ── */
+.part-name{font-weight:600;color:var(--text)}
+.part-desc{font-size:.75rem;color:var(--subtle);margin-top:2px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#F8FAFC}
+.btn-primary:hover{background:var(--navy2);transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,23,42,.2)}
+.btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--border-dk)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-sm{padding:5px 12px;font-size:.78rem;border-radius:7px}
+.btn-danger{background:var(--red-lt);color:var(--red);border:1px solid var(--red-border)}
+.btn-danger:hover{background:var(--red);color:#fff}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:200;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:540px;box-shadow:var(--shadow-lg);overflow:hidden}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-head h2{font-family:'Archivo',sans-serif;font-size:1rem;font-weight:800;color:var(--text)}
+.modal-close{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:.9rem;padding:5px 9px;border-radius:6px;transition:all .15s}
+.modal-close:hover{background:var(--bg);color:var(--text)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.span2{grid-column:span 2}
+label{font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:500;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em}
+input[type=text],input[type=number],select,textarea{padding:9px 12px;border:1px solid var(--border-dk);border-radius:8px;font-family:'Inter',sans-serif;font-size:.875rem;background:var(--surface);color:var(--text);transition:border .15s,box-shadow .15s;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,23,42,.08)}
+textarea{resize:vertical;min-height:60px}
+.form-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--bg)}
+
+/* ── ADJUST MODAL ── */
+.adj-body{padding:20px}
+.adj-part-name{font-family:'Archivo',sans-serif;font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:4px}
+.adj-current{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--muted);margin-bottom:16px}
+.adj-tabs{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.adj-tab{flex:1;padding:8px;text-align:center;font-size:.82rem;font-weight:600;cursor:pointer;background:var(--surface);color:var(--muted);border:none;transition:all .12s}
+.adj-tab.active{background:var(--navy);color:#fff}
+.adj-input-row{display:flex;align-items:center;gap:10px}
+.adj-input-row input{flex:1}
+.adj-input-row span{font-size:.82rem;color:var(--muted);white-space:nowrap}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#F8FAFC;padding:11px 22px;border-radius:10px;font-size:.85rem;font-weight:500;z-index:999;display:none;box-shadow:var(--shadow-md);white-space:nowrap}
+.toast.show{display:block}
+</style>
+</head>
+<body> <!-- SIDEBAR -->
+<aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Inventory & Stock</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active" onclick="setView('all')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Parts</div> <div class="nav-item" onclick="setView('low')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Low Stock</div> <div class="nav-item" onclick="setView('out')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Out of Stock</div> <a class="nav-item" href="operations-dashboard.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
+</aside> <!-- MAIN -->
+<main class="main"> <div class="pg-header"> <div> <div class="pg-label">App Division</div> <div class="pg-title">Inventory &amp; Stock Manager</div> <div class="pg-sub" id="pgSub">Loading stock…</div> </div> <button class="btn btn-primary" onclick="openAdd()">+ Add Part</button> </div> <!-- STATS --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Parts</div> <div class="stat-val v-navy" id="statTotal">0</div> </div> <div class="stat-cell"> <div class="stat-label">Low Stock</div> <div class="stat-val v-amber" id="statLow">0</div> </div> <div class="stat-cell"> <div class="stat-label">Out of Stock</div> <div class="stat-val v-red" id="statOut">0</div> </div> <div class="stat-cell"> <div class="stat-label">Stock Value</div> <div class="stat-val v-green" id="statValue">R0</div> </div> </div> <!-- REORDER ALERT --> <div class="reorder-banner" id="reorderBanner"> <span class="reorder-banner-icon"></span> <span class="reorder-banner-text" id="reorderText">Items need reordering</span> </div> <!-- PARTS TABLE --> <div class="card"> <div class="card-head"> <div class="card-title">Parts &amp; Stock</div> <div class="toolbar"> <input class="search-input" type="text" id="searchInput" placeholder="Search parts…" oninput="render()"> <select class="filter-select" id="catFilter" onchange="render()"> <option value="">All Categories</option> </select> </div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part</th> <th>Category</th> <th>Stock</th> <th>Reorder At</th> <th>Supplier</th> <th>Cost Price</th> <th>Status</th> <th></th> </tr> </thead> <tbody id="partsBody"></tbody> </table> </div> </div>
+</main> <!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="partModal"> <div class="modal"> <div class="modal-head"> <h2 id="modalTitle">Add Part</h2> <button class="modal-close" onclick="closeModal('partModal')"></button> </div> <div class="form-grid"> <div class="form-group span2"> <label>Part Name *</label> <input type="text" id="fName" placeholder="e.g. Brake Pads (Front)"> </div> <div class="form-group"> <label>Category *</label> <input type="text" id="fCategory" placeholder="e.g. Brakes" list="catList"> <datalist id="catList"></datalist> </div> <div class="form-group"> <label>Supplier</label> <input type="text" id="fSupplier" placeholder="e.g. AutoZone"> </div> <div class="form-group"> <label>Stock Level *</label> <input type="number" id="fStock" min="0" placeholder="0"> </div> <div class="form-group"> <label>Reorder Level *</label> <input type="number" id="fReorder" min="0" placeholder="5"> </div> <div class="form-group"> <label>Cost Price (R)</label> <input type="number" id="fCost" min="0" step="0.01" placeholder="0.00"> </div> <div class="form-group"> <label>Selling Price Range</label> <input type="text" id="fPriceRange" placeholder="e.g. R350–R800"> </div> <div class="form-group span2"> <label>Description / Notes</label> <textarea id="fDesc" placeholder="Optional notes about this part"></textarea> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal('partModal')">Cancel</button> <button class="btn btn-primary" onclick="savePart()">Save Part</button> </div> </div>
+</div> <!-- ADJUST STOCK MODAL -->
+<div class="modal-overlay" id="adjModal"> <div class="modal" style="max-width:400px"> <div class="modal-head"> <h2>Adjust Stock</h2> <button class="modal-close" onclick="closeModal('adjModal')"></button> </div> <div class="adj-body"> <div class="adj-part-name" id="adjPartName"></div> <div class="adj-current" id="adjCurrent"></div> <div class="adj-tabs"> <button class="adj-tab active" id="tabReceive" onclick="setAdjMode('receive')">+ Receive Stock</button> <button class="adj-tab" id="tabUse" onclick="setAdjMode('use')">− Use Stock</button> </div> <div class="adj-input-row"> <input type="number" id="adjQty" min="1" value="1" placeholder="Quantity"> <span id="adjLabel">units to add</span> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal('adjModal')">Cancel</button> <button class="btn btn-primary" onclick="confirmAdj()">Confirm</button> </div> </div>
+</div> <div class="toast" id="toast"></div> <script>
+// ── CONFIG — paste URLs here once Make.com scenarios + Apps Script are deployed ──
+const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
+const WEBHOOK_ADD    = 'https://hook.us2.make.com/kmeplsfj71oxbdrdr3hh9ehprnwtpiui';
+const WEBHOOK_EDIT   = 'https://hook.us2.make.com/v84g3iwkdkl0q4g1qmwffnd3l9yial88';
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/db51w9e8gegt5883x7mihpcfj66gctqj';
+const WEBHOOK_ADJUST = 'https://hook.us2.make.com/v6hpwidgig4qdnbr2j4t3pvy28mbq1y7';
+
+let parts = [];
+
+// ── VIEW STATE ──
+let currentView = 'all';
+let editingId   = null;
+let adjId       = null;
+let adjMode     = 'receive';
+
+// ── HELPERS ──
+function ts(){ return new Date().toISOString(); }
+function nextId(){
+  if (!parts.length) return 'PART-001';
+  const max = parts.reduce((m,p) => Math.max(m, parseInt((p.id||'').replace('PART-',''))||0), 0);
+  return 'PART-' + String(max+1).padStart(3,'0');
+}
+function fmt(n){ return 'R' + Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function stockStatus(p){
+  if (p.stockLevel <= 0) return 'out';
+  if (p.stockLevel <= p.reorderLevel) return 'low';
+  return 'ok';
+}
+function badge(st){
+  if (st==='out') return '<span class="badge badge-out">Out of stock</span>';
+  if (st==='low') return '<span class="badge badge-low">Low stock</span>';
+  return '<span class="badge badge-ok">In stock</span>';
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ── LOAD FROM GOOGLE SHEETS (via Apps Script) ──
+async function loadParts(){
+  document.getElementById('pgSub').textContent = 'Loading stock…';
+  try {
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Parts%20%26%20Stock`);
+    const rows = await res.json();
+    parts = rows
+      .filter(r => r['Part Name'])
+      .map(r => ({
+        id:           String(r['Part ID'] || '').trim() || nextId(),
+        __row:        r.__row || null,
+        name:         String(r['Part Name']    || ''),
+        category:     String(r['Category']     || ''),
+        description:  String(r['Description']  || ''),
+        priceRange:   String(r['Price Range']  || ''),
+        stockLevel:   Number(r['Stock Level'])  || 0,
+        reorderLevel: Number(r['Reorder Level'])|| 0,
+        supplier:     String(r['Supplier']     || ''),
+        costPrice:    Number(String(r['Cost Price']||'').replace(/R/gi,'').replace(/,/g,'')) || 0,
+      }));
+    render();
+  } catch(e){
+    document.getElementById('pgSub').textContent = 'Error loading data — check Apps Script URL';
+    console.error('loadParts error:', e);
+  }
+}
+
+// ── FIRE MAKE.COM WEBHOOK ──
+async function fireWebhook(url, payload){
+  if (!url || url.startsWith('PASTE')){
+    console.warn('Webhook not configured yet:', url);
+    return;
+  }
+  try {
+    await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+  } catch(e){
+    console.error('Webhook error:', e);
+    toast('Webhook error — check Make.com');
+  }
+}
+
+// ── SIDEBAR VIEW ──
+function setView(v){
+  currentView = v;
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    el.classList.toggle('active', ['all','low','out'][i] === v);
+  });
+  render();
+}
+
+// ── RENDER ──
+function render(){
+  const q   = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+
+  const cats   = [...new Set(parts.map(p=>p.category).filter(Boolean))].sort();
+  const catSel = document.getElementById('catFilter');
+  const curCat = catSel.value;
+  catSel.innerHTML = '<option value="">All Categories</option>' +
+    cats.map(c=>`<option value="${esc(c)}" ${c===curCat?'selected':''}>${esc(c)}</option>`).join('');
+  document.getElementById('catList').innerHTML = cats.map(c=>`<option value="${esc(c)}">`).join('');
+
+  const filtered = parts.filter(p => {
+    const matchQ   = !q || p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q) || (p.supplier||'').toLowerCase().includes(q);
+    const matchCat = !cat || p.category === cat;
+    const st       = stockStatus(p);
+    const matchView = currentView==='all' || (currentView==='low' && st==='low') || (currentView==='out' && st==='out');
+    return matchQ && matchCat && matchView;
+  });
+
+  const low = parts.filter(p=>p.stockLevel>0 && p.stockLevel<=p.reorderLevel).length;
+  const out = parts.filter(p=>p.stockLevel<=0).length;
+  const val = parts.reduce((s,p)=>s+(p.stockLevel*(p.costPrice||0)),0);
+  document.getElementById('statTotal').textContent = parts.length;
+  document.getElementById('statLow').textContent   = low;
+  document.getElementById('statOut').textContent   = out;
+  document.getElementById('statValue').textContent = fmt(val);
+  document.getElementById('pgSub').textContent     = `${parts.length} part${parts.length!==1?'s':''} · ${low+out} need${low+out===1?'s':''} attention`;
+
+  const needReorder = low + out;
+  const banner = document.getElementById('reorderBanner');
+  if (needReorder > 0){
+    const names = parts.filter(p=>p.stockLevel<=p.reorderLevel).slice(0,3).map(p=>p.name).join(', ');
+    document.getElementById('reorderText').innerHTML =
+      `<strong>${needReorder} item${needReorder!==1?'s':''} need reordering:</strong> ${esc(names)}${needReorder>3?` +${needReorder-3} more`:''}`;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+
+  const tbody = document.getElementById('partsBody');
+  if (!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-row">No parts found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(p => {
+    const st     = stockStatus(p);
+    const rowCls = st==='out'?'row-out':st==='low'?'row-low':'';
+    const numCls = st==='out'?'out':st==='low'?'low':'ok';
+    return `<tr class="${rowCls}"> <td> <div class="part-name">${esc(p.name)}</div> ${p.description?`<div class="part-desc">${esc(p.description)}</div>`:''}
+      </td> <td style="color:var(--muted);font-size:.82rem">${esc(p.category)||'—'}</td> <td> <div class="stock-ctrl"> <button class="btn-adj" onclick="quickAdj('${p.id}',-1)" title="Use 1">−</button> <span class="stock-num ${numCls}">${p.stockLevel}</span> <button class="btn-adj" onclick="quickAdj('${p.id}',1)" title="Receive 1">+</button> </div> </td> <td style="font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--muted)">${p.reorderLevel}</td> <td style="font-size:.82rem;color:var(--muted)">${esc(p.supplier)||'—'}</td> <td style="font-family:'Archivo',sans-serif;font-weight:700">${p.costPrice?fmt(p.costPrice):'—'}</td> <td>${badge(st)}</td> <td> <button class="btn btn-sm btn-outline" onclick="openAdj('${p.id}')" style="margin-right:4px">Adjust</button> <button class="btn btn-sm btn-outline" onclick="openEdit('${p.id}')">Edit</button> <button class="btn btn-sm btn-danger" onclick="deletePart('${p.id}')" style="margin-left:4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button> </td> </tr>`;
+  }).join('');
+}
+
+// ── ADD / EDIT MODAL ──
+function openAdd(){
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add Part';
+  ['fName','fCategory','fSupplier','fPriceRange','fDesc'].forEach(id=>document.getElementById(id).value='');
+  ['fStock','fCost'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fReorder').value = 5;
+  document.getElementById('partModal').classList.add('open');
+  document.getElementById('fName').focus();
+}
+
+function openEdit(id){
+  const p = parts.find(x=>x.id===id); if(!p) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent  = 'Edit Part';
+  document.getElementById('fName').value             = p.name;
+  document.getElementById('fCategory').value         = p.category||'';
+  document.getElementById('fSupplier').value         = p.supplier||'';
+  document.getElementById('fStock').value            = p.stockLevel;
+  document.getElementById('fReorder').value          = p.reorderLevel;
+  document.getElementById('fCost').value             = p.costPrice||'';
+  document.getElementById('fPriceRange').value       = p.priceRange||'';
+  document.getElementById('fDesc').value             = p.description||'';
+  document.getElementById('partModal').classList.add('open');
+}
+
+async function savePart(){
+  const name    = document.getElementById('fName').value.trim();
+  const cat     = document.getElementById('fCategory').value.trim();
+  const stock   = parseInt(document.getElementById('fStock').value)||0;
+  const reorder = parseInt(document.getElementById('fReorder').value)||0;
+  if (!name){ toast('Part name required'); return; }
+  if (!cat){  toast('Category required');  return; }
+
+  const data = {
+    name, category: cat,
+    supplier:     document.getElementById('fSupplier').value.trim(),
+    stockLevel:   stock,
+    reorderLevel: reorder,
+    costPrice:    parseFloat(document.getElementById('fCost').value)||0,
+    priceRange:   document.getElementById('fPriceRange').value.trim(),
+    description:  document.getElementById('fDesc').value.trim(),
+  };
+
+  if (editingId){
+    const existing = parts.find(p => p.id===editingId);
+    parts = parts.map(p => p.id===editingId ? {...p,...data} : p);
+    closeModal('partModal'); render(); toast('Part updated — syncing to sheet…');
+    await fireWebhook(WEBHOOK_EDIT, { action:'edit', id:editingId, rowNumber: existing?.__row, ...data });
+  } else {
+    const newPart = { id:nextId(), ...data };
+    parts.unshift(newPart);
+    closeModal('partModal'); render(); toast('Part added — syncing to sheet…');
+    await fireWebhook(WEBHOOK_ADD, { action:'add', ...newPart });
+  }
+  setTimeout(loadParts, 4000); // refresh from sheet after Make.com writes
+}
+
+async function deletePart(id){
+  const p = parts.find(x=>x.id===id); if(!p) return;
+  if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
+  parts = parts.filter(x=>x.id!==id);
+  render(); toast('Part deleted — syncing to sheet…');
+  await fireWebhook(WEBHOOK_DELETE, { action:'delete', id, rowNumber: p.__row, name:p.name });
+  setTimeout(loadParts, 4000);
+}
+
+// ── QUICK ADJUST (+/−) ──
+async function quickAdj(id, delta){
+  const part = parts.find(p=>p.id===id); if(!part) return;
+  const newLevel = Math.max(0, part.stockLevel + delta);
+  parts = parts.map(p => p.id===id ? {...p, stockLevel:newLevel} : p);
+  render();
+  const p = parts.find(x=>x.id===id);
+  toast(delta>0 ? `+1 received — ${p.name}: ${p.stockLevel} in stock` : `−1 used — ${p.name}: ${p.stockLevel} remaining`);
+  await fireWebhook(WEBHOOK_ADJUST, { action:'adjust', id, rowNumber: part.__row, name:p.name, newStock:newLevel, delta, mode:delta>0?'receive':'use' });
+  setTimeout(loadParts, 4000);
+}
+
+// ── ADJUST MODAL ──
+function openAdj(id){
+  const p = parts.find(x=>x.id===id); if(!p) return;
+  adjId   = id;
+  adjMode = 'receive';
+  document.getElementById('adjPartName').textContent = p.name;
+  document.getElementById('adjCurrent').textContent  = `Current stock: ${p.stockLevel} units (reorder at ${p.reorderLevel})`;
+  document.getElementById('adjQty').value = 1;
+  setAdjMode('receive');
+  document.getElementById('adjModal').classList.add('open');
+}
+
+function setAdjMode(mode){
+  adjMode = mode;
+  document.getElementById('tabReceive').classList.toggle('active', mode==='receive');
+  document.getElementById('tabUse').classList.toggle('active', mode==='use');
+  document.getElementById('adjLabel').textContent = mode==='receive' ? 'units to add' : 'units to use';
+}
+
+async function confirmAdj(){
+  const qty = parseInt(document.getElementById('adjQty').value)||0;
+  if (qty <= 0){ toast('Enter a valid quantity'); return; }
+  const delta    = adjMode==='receive' ? qty : -qty;
+  const part     = parts.find(p=>p.id===adjId); if(!part) return;
+  const newLevel = Math.max(0, part.stockLevel + delta);
+  parts = parts.map(p => p.id===adjId ? {...p, stockLevel:newLevel} : p);
+  closeModal('adjModal'); render();
+  const p = parts.find(x=>x.id===adjId);
+  toast(adjMode==='receive' ? `+${qty} received — ${p.name}: ${p.stockLevel} in stock` : `${qty} used — ${p.name}: ${p.stockLevel} remaining`);
+  await fireWebhook(WEBHOOK_ADJUST, { action:'adjust', id:adjId, rowNumber: part.__row, name:p.name, newStock:newLevel, delta, mode:adjMode });
+  setTimeout(loadParts, 4000);
+}
+
+// ── MODAL CLOSE ──
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── INIT ──
+window.onload = loadParts;
+</script>
+</body>
+</html>

@@ -163,258 +163,15 @@ details[open] .setup-block summary::before{content:'▾'}
 }
 </style>
 </head>
-<body>
-
-<div class="topbar">
-  <div class="topbar-left">
-    <span class="app-name" id="topBizName">Auto Workshop PE</span>
-    <span class="biz-label" style="font-size:11px;color:var(--subtle);margin-left:6px">Quote Generator</span>
-  </div>
-  <div class="topbar-right">
-    <span class="top-status"><span class="status-dot"></span>Live</span>
-  </div>
-</div>
-
-<div class="page">
-  <div class="left-col">
-
-    <!-- Business Settings -->
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title">Business Settings</span>
-        <span style="font-size:.75rem;color:var(--muted)">Auto-saved</span>
-      </div>
-      <div class="section-body">
-        <div class="grid2">
-          <div class="field">
-            <label>Business Name</label>
-            <input id="bizName" value="Auto Workshop PE" oninput="saveBiz();sync()">
-          </div>
-          <div class="field">
-            <label>Phone</label>
-            <input id="bizPhone" placeholder="072 000 0000" oninput="saveBiz();sync()">
-          </div>
-          <div class="field">
-            <label>Email</label>
-            <input id="bizEmail" placeholder="info@yourbusiness.co.za" oninput="saveBiz();sync()">
-          </div>
-          <div class="field">
-            <label>VAT Number</label>
-            <input id="bizVat" placeholder="Optional" oninput="saveBiz();sync()">
-          </div>
-        </div>
-        <div class="field" style="margin-top:4px">
-          <label>Validity Statement</label>
-          <input id="validNote" value="This quote is valid for 7 days from the date of issue." oninput="saveBiz();sync()">
-        </div>
-      </div>
-    </div>
-
-    <!-- Client -->
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title">Client &amp; Job Details</span>
-      </div>
-      <div class="section-body">
-        <div class="grid2">
-          <div class="field">
-            <label>Client Name</label>
-            <input id="clientName" placeholder="John Smith" oninput="sync()">
-          </div>
-          <div class="field">
-            <label>Client Phone</label>
-            <input id="clientPhone" placeholder="083 000 0000" oninput="sync()">
-          </div>
-          <div class="field">
-            <label>Client Email</label>
-            <input id="clientEmail" placeholder="client@email.com" oninput="sync()">
-          </div>
-          <div class="field">
-            <label>Vehicle / Reference</label>
-            <input id="reference" placeholder="Toyota Hilux — CA 123-456" oninput="sync()">
-          </div>
-          <div class="field">
-            <label>Job Category</label>
-            <select id="jobType" onchange="sync()">
-              <option>Service &amp; Maintenance</option>
-              <option>Brake Repair</option>
-              <option>Engine Work</option>
-              <option>Electrical</option>
-              <option>Tyres</option>
-              <option>Body Work</option>
-              <option>Suspension</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Notes / Scope of Work</label>
-          <textarea id="scopeNotes" placeholder="Describe the job…" oninput="sync()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- Line Items -->
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title">Line Items</span>
-        <span style="font-size:.75rem;color:var(--muted)" id="itemCount">0 items</span>
-      </div>
-      <div class="section-body" style="padding-bottom:0">
-
-        <!-- Quick Add Presets -->
-        <div class="presets-bar">
-          <div class="presets-label">Quick Add — Auto Workshop PE</div>
-          <div class="presets-grid">
-            <button class="preset-btn" onclick="addPreset('full_service')">Full Service</button>
-            <button class="preset-btn" onclick="addPreset('minor_service')">Minor Service</button>
-            <button class="preset-btn" onclick="addPreset('major_service')">Major Service</button>
-            <button class="preset-btn" onclick="addPreset('brake_front')">Brake Pads (Front)</button>
-            <button class="preset-btn" onclick="addPreset('brake_rear')">Brake Pads (Rear)</button>
-            <button class="preset-btn" onclick="addPreset('roadworthy')">Roadworthy</button>
-            <button class="preset-btn" onclick="addPreset('wheel_align')">Wheel Alignment</button>
-            <button class="preset-btn" onclick="addItem('Tyre (each)', 1, 950)">+ Tyre</button>
-            <button class="preset-btn" onclick="addItem('Diagnostic Fee', 1, 350)">+ Diagnostic</button>
-            <button class="preset-btn" onclick="addItem('Labour (per hour)', 1, 450)">+ Labour (1hr)</button>
-          </div>
-        </div>
-
-        <div class="items-wrap">
-          <table class="items">
-            <thead>
-              <tr>
-                <th class="td-desc">Description</th>
-                <th class="td-qty" style="text-align:center">Qty</th>
-                <th class="td-unit">Unit Price (R)</th>
-                <th class="td-total r">Total</th>
-                <th class="td-del"></th>
-              </tr>
-            </thead>
-            <tbody id="itemsBody"></tbody>
-          </table>
-        </div>
-        <button class="add-row-btn" onclick="addItem()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Line Item
-        </button>
-        <div class="totals-box" style="margin-top:14px">
-          <div class="tot-row"><span>Subtotal (excl. VAT)</span><span id="subTot">R 0.00</span></div>
-          <div class="tot-row"><span>VAT @ 15%</span><span id="vatTot">R 0.00</span></div>
-          <div class="tot-row grand"><span>Total (incl. VAT)</span><span id="grandTot">R 0.00</span></div>
-        </div>
-      </div>
-      <div class="btn-row print-hide">
-        <button class="btn btn-primary" onclick="saveQuote()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Quote
-        </button>
-        <button class="btn btn-ghost" onclick="sendEmail()" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Email to Client
-        </button>
-        <button class="btn btn-ghost" onclick="window.print()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></rect></svg>
-          Print / PDF
-        </button>
-        <button class="btn btn-danger" onclick="clearForm()">Clear</button>
-      </div>
-    </div>
-
-    <!-- Saved Quotes -->
-    <div class="section print-hide">
-      <div class="section-head">
-        <span class="section-title">Saved Quotes</span>
-        <button class="btn btn-ghost" style="padding:5px 12px;font-size:.75rem" onclick="clearHistory()">Clear all</button>
-      </div>
-      <div class="section-body" id="histWrap">
-        <div class="hist-empty">No quotes saved yet.</div>
-      </div>
-    </div>
-
-    <!-- Google Sheets Sync -->
-    <div class="section print-hide">
-      <div class="section-head">
-        <span class="section-title">Google Sheets Sync</span>
-        <span style="font-size:.75rem;color:var(--muted)">Optional</span>
-      </div>
-      <div class="section-body">
-        <div class="field">
-          <label>Webhook URL (Make.com)</label>
-          <input id="sheetsScriptUrl" placeholder="https://hook.us2.make.com/…" oninput="saveSettings()">
-        </div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="syncAll()">Sync All Quotes Now</button>
-        </div>
-        <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7">
-          Powered by Make.com. The webhook URL above is pre-configured — quotes sync automatically when saved or sent.
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- RIGHT COLUMN — PREVIEW -->
-  <div class="right-col">
-    <div class="preview-header print-hide">
-      <span class="preview-label">Quote Preview</span>
-      <span style="font-size:.75rem;color:var(--muted)">Updates live</span>
-    </div>
-    <div class="quote-doc" id="quoteDoc">
-      <div class="doc-header">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-          <div>
-            <div class="doc-biz" id="pvBizName">Auto Workshop PE</div>
-            <div class="doc-contact" id="pvContact">—</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:1.4rem;font-weight:900;color:var(--text);letter-spacing:-.5px">QUOTE</div>
-            <div class="doc-vat-badge" id="pvVatBadge" style="display:none"></div>
-          </div>
-        </div>
-        <div class="doc-meta">
-          <div>
-            <div class="doc-quote-num" id="pvQuoteNum">AQ-0001</div>
-            <div class="doc-date" id="pvDate"></div>
-          </div>
-        </div>
-      </div>
-      <div class="doc-body">
-        <div class="doc-bill-to">
-          <div class="doc-bill-label">Prepared For</div>
-          <div class="doc-bill-name" id="pvClientName">—</div>
-          <div class="doc-bill-sub" id="pvClientPhone"></div>
-          <div class="doc-bill-sub" id="pvRef" style="font-weight:600;margin-top:3px"></div>
-          <div class="doc-bill-sub" id="pvJobType"></div>
-        </div>
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th style="text-align:center">Qty</th>
-              <th style="text-align:center">Unit Price</th>
-              <th style="text-align:right">Total</th>
-            </tr>
-          </thead>
-          <tbody id="pvItems"></tbody>
-        </table>
-        <div class="doc-totals">
-          <div class="dt-row"><span>Subtotal (excl. VAT)</span><span id="pvSub">R 0.00</span></div>
-          <div class="dt-row"><span>VAT (15%)</span><span id="pvVat">R 0.00</span></div>
-          <div class="dt-row grand"><span>TOTAL DUE</span><span id="pvGrand">R 0.00</span></div>
-        </div>
-        <div class="doc-validity" id="pvValidity"></div>
-        <div class="doc-notes" id="pvNotes"></div>
-      </div>
-      <div class="doc-footer" id="pvFooter">
-        Powered by NexQuote · a provision of NexAgent AI
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
+<body> <div class="topbar"> <div class="topbar-left"> <span class="app-name" id="topBizName">Auto Workshop PE</span> <span class="biz-label" style="font-size:11px;color:var(--subtle);margin-left:6px">Quote Generator</span> </div> <div class="topbar-right"> <span class="top-status"><span class="status-dot"></span>Live</span> </div>
+</div> <div class="page"> <div class="left-col"> <!-- Business Settings --> <div class="section"> <div class="section-head"> <span class="section-title">Business Settings</span> <span style="font-size:.75rem;color:var(--muted)">Auto-saved</span> </div> <div class="section-body"> <div class="grid2"> <div class="field"> <label>Business Name</label> <input id="bizName" value="Auto Workshop PE" oninput="saveBiz();sync()"> </div> <div class="field"> <label>Phone</label> <input id="bizPhone" placeholder="072 000 0000" oninput="saveBiz();sync()"> </div> <div class="field"> <label>Email</label> <input id="bizEmail" placeholder="info@yourbusiness.co.za" oninput="saveBiz();sync()"> </div> <div class="field"> <label>VAT Number</label> <input id="bizVat" placeholder="Optional" oninput="saveBiz();sync()"> </div> </div> <div class="field" style="margin-top:4px"> <label>Validity Statement</label> <input id="validNote" value="This quote is valid for 7 days from the date of issue." oninput="saveBiz();sync()"> </div> </div> </div> <!-- Client --> <div class="section"> <div class="section-head"> <span class="section-title">Client &amp; Job Details</span> </div> <div class="section-body"> <div class="grid2"> <div class="field"> <label>Client Name</label> <input id="clientName" placeholder="John Smith" oninput="sync()"> </div> <div class="field"> <label>Client Phone</label> <input id="clientPhone" placeholder="083 000 0000" oninput="sync()"> </div> <div class="field"> <label>Client Email</label> <input id="clientEmail" placeholder="client@email.com" oninput="sync()"> </div> <div class="field"> <label>Vehicle / Reference</label> <input id="reference" placeholder="Toyota Hilux — CA 123-456" oninput="sync()"> </div> <div class="field"> <label>Job Category</label> <select id="jobType" onchange="sync()"> <option>Service &amp; Maintenance</option> <option>Brake Repair</option> <option>Engine Work</option> <option>Electrical</option> <option>Tyres</option> <option>Body Work</option> <option>Suspension</option> <option>Other</option> </select> </div> </div> <div class="field"> <label>Notes / Scope of Work</label> <textarea id="scopeNotes" placeholder="Describe the job…" oninput="sync()"></textarea> </div> </div> </div> <!-- Line Items --> <div class="section"> <div class="section-head"> <span class="section-title">Line Items</span> <span style="font-size:.75rem;color:var(--muted)" id="itemCount">0 items</span> </div> <div class="section-body" style="padding-bottom:0"> <!-- Quick Add Presets --> <div class="presets-bar"> <div class="presets-label">Quick Add — Auto Workshop PE</div> <div class="presets-grid"> <button class="preset-btn" onclick="addPreset('full_service')">Full Service</button> <button class="preset-btn" onclick="addPreset('minor_service')">Minor Service</button> <button class="preset-btn" onclick="addPreset('major_service')">Major Service</button> <button class="preset-btn" onclick="addPreset('brake_front')">Brake Pads (Front)</button> <button class="preset-btn" onclick="addPreset('brake_rear')">Brake Pads (Rear)</button> <button class="preset-btn" onclick="addPreset('roadworthy')">Roadworthy</button> <button class="preset-btn" onclick="addPreset('wheel_align')">Wheel Alignment</button> <button class="preset-btn" onclick="addItem('Tyre (each)', 1, 950)">+ Tyre</button> <button class="preset-btn" onclick="addItem('Diagnostic Fee', 1, 350)">+ Diagnostic</button> <button class="preset-btn" onclick="addItem('Labour (per hour)', 1, 450)">+ Labour (1hr)</button> </div> </div> <div class="items-wrap"> <table class="items"> <thead> <tr> <th class="td-desc">Description</th> <th class="td-qty" style="text-align:center">Qty</th> <th class="td-unit">Unit Price (R)</th> <th class="td-total r">Total</th> <th class="td-del"></th> </tr> </thead> <tbody id="itemsBody"></tbody> </table> </div> <button class="add-row-btn" onclick="addItem()"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Line Item
+        </button> <div class="totals-box" style="margin-top:14px"> <div class="tot-row"><span>Subtotal (excl. VAT)</span><span id="subTot">R 0.00</span></div> <div class="tot-row"><span>VAT @ 15%</span><span id="vatTot">R 0.00</span></div> <div class="tot-row grand"><span>Total (incl. VAT)</span><span id="grandTot">R 0.00</span></div> </div> </div> <div class="btn-row print-hide"> <button class="btn btn-primary" onclick="saveQuote()"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Quote
+        </button> <button class="btn btn-ghost" onclick="sendEmail()" style="background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Email to Client
+        </button> <button class="btn btn-ghost" onclick="window.print()"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></rect></svg> Print / PDF
+        </button> <button class="btn btn-danger" onclick="clearForm()">Clear</button> </div> </div> <!-- Saved Quotes --> <div class="section print-hide"> <div class="section-head"> <span class="section-title">Saved Quotes</span> <button class="btn btn-ghost" style="padding:5px 12px;font-size:.75rem" onclick="clearHistory()">Clear all</button> </div> <div class="section-body" id="histWrap"> <div class="hist-empty">No quotes saved yet.</div> </div> </div> <!-- Google Sheets Sync --> <div class="section print-hide"> <div class="section-head"> <span class="section-title">Google Sheets Sync</span> <span style="font-size:.75rem;color:var(--muted)">Optional</span> </div> <div class="section-body"> <div class="field"> <label>Webhook URL (Make.com)</label> <input id="sheetsScriptUrl" placeholder="https://hook.us2.make.com/…" oninput="saveSettings()"> </div> <div style="display:flex;gap:8px;margin-top:10px"> <button class="btn btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="syncAll()">Sync All Quotes Now</button> </div> <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7"> Powered by Make.com. The webhook URL above is pre-configured — quotes sync automatically when saved or sent.
+        </div> </div> </div> </div> <!-- RIGHT COLUMN — PREVIEW --> <div class="right-col"> <div class="preview-header print-hide"> <span class="preview-label">Quote Preview</span> <span style="font-size:.75rem;color:var(--muted)">Updates live</span> </div> <div class="quote-doc" id="quoteDoc"> <div class="doc-header"> <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px"> <div> <div class="doc-biz" id="pvBizName">Auto Workshop PE</div> <div class="doc-contact" id="pvContact">—</div> </div> <div style="text-align:right"> <div style="font-size:1.4rem;font-weight:900;color:var(--text);letter-spacing:-.5px">QUOTE</div> <div class="doc-vat-badge" id="pvVatBadge" style="display:none"></div> </div> </div> <div class="doc-meta"> <div> <div class="doc-quote-num" id="pvQuoteNum">AQ-0001</div> <div class="doc-date" id="pvDate"></div> </div> </div> </div> <div class="doc-body"> <div class="doc-bill-to"> <div class="doc-bill-label">Prepared For</div> <div class="doc-bill-name" id="pvClientName">—</div> <div class="doc-bill-sub" id="pvClientPhone"></div> <div class="doc-bill-sub" id="pvRef" style="font-weight:600;margin-top:3px"></div> <div class="doc-bill-sub" id="pvJobType"></div> </div> <table class="doc-table"> <thead> <tr> <th>Description</th> <th style="text-align:center">Qty</th> <th style="text-align:center">Unit Price</th> <th style="text-align:right">Total</th> </tr> </thead> <tbody id="pvItems"></tbody> </table> <div class="doc-totals"> <div class="dt-row"><span>Subtotal (excl. VAT)</span><span id="pvSub">R 0.00</span></div> <div class="dt-row"><span>VAT (15%)</span><span id="pvVat">R 0.00</span></div> <div class="dt-row grand"><span>TOTAL DUE</span><span id="pvGrand">R 0.00</span></div> </div> <div class="doc-validity" id="pvValidity"></div> <div class="doc-notes" id="pvNotes"></div> </div> <div class="doc-footer" id="pvFooter"> Powered by NexAgent AI
+      </div> </div> </div>
+</div> <div class="toast" id="toast"></div> <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const DB = {
   load(){ return JSON.parse(localStorage.getItem('nq_data')||'{"qNum":1,"quotes":[]}'); },
@@ -524,12 +281,7 @@ function addItem(desc='', qty=1, price='') {
   const tr = document.createElement('tr');
   tr.id = 'row'+id;
   tr.innerHTML = `
-    <td class="td-desc"><input placeholder="Item or service" value="${desc}" oninput="rowCalc(${id});sync()"></td>
-    <td class="td-qty"><input type="number" min="0" step="0.5" value="${qty}" style="text-align:center" oninput="rowCalc(${id});sync()"></td>
-    <td class="td-unit"><input type="number" min="0" step="0.01" value="${price}" placeholder="0.00" oninput="rowCalc(${id});sync()"></td>
-    <td class="td-total" id="rt${id}">R 0.00</td>
-    <td class="td-del"><button class="row-del" onclick="delRow(${id})" title="Remove">✕</button></td>
-  `;
+    <td class="td-desc"><input placeholder="Item or service" value="${desc}" oninput="rowCalc(${id});sync()"></td> <td class="td-qty"><input type="number" min="0" step="0.5" value="${qty}" style="text-align:center" oninput="rowCalc(${id});sync()"></td> <td class="td-unit"><input type="number" min="0" step="0.01" value="${price}" placeholder="0.00" oninput="rowCalc(${id});sync()"></td> <td class="td-total" id="rt${id}">R 0.00</td> <td class="td-del"><button class="row-del" onclick="delRow(${id})" title="Remove"></button></td> `;
   document.getElementById('itemsBody').appendChild(tr);
   rowCalc(id); sync();
 }
@@ -696,22 +448,8 @@ function renderHistory() {
     return;
   }
   el.innerHTML = S.quotes.map((q,i) => `
-    <div class="hist-item" onclick="loadQuote(${i})">
-      <div style="flex:1;min-width:0">
-        <div class="h-num">${q.num}</div>
-        <div class="h-name">${q.clientName}</div>
-        <div class="h-date">${q.date}${q.reference?' · '+q.reference:''}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;margin-left:12px">
-        <div class="h-total">${R(q.grand)}</div>
-        <div style="margin-top:4px"><span class="badge badge-${q.status}">${q.status}</span></div>
-        <div class="h-actions">
-          ${q.status!=='accepted'?`<button class="h-act-btn h-act-accept" onclick="markAccepted(${i},event)">✓ Accept</button>`:''}
-          <button class="h-act-btn h-act-del" onclick="deleteQuote(${i},event)">Delete</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+    <div class="hist-item" onclick="loadQuote(${i})"> <div style="flex:1;min-width:0"> <div class="h-num">${q.num}</div> <div class="h-name">${q.clientName}</div> <div class="h-date">${q.date}${q.reference?' · '+q.reference:''}</div> </div> <div style="text-align:right;flex-shrink:0;margin-left:12px"> <div class="h-total">${R(q.grand)}</div> <div style="margin-top:4px"><span class="badge badge-${q.status}">${q.status}</span></div> <div class="h-actions"> ${q.status!=='accepted'?`<button class="h-act-btn h-act-accept" onclick="markAccepted(${i},event)"> Accept</button>`:''}
+          <button class="h-act-btn h-act-del" onclick="deleteQuote(${i},event)">Delete</button> </div> </div> </div> `).join('');
 }
 
 // ── WHATSAPP ──────────────────────────────────────────────────────────────────
