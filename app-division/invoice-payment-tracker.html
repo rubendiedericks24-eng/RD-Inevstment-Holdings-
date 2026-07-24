@@ -298,6 +298,7 @@ function saveInvoice() {
 
 function markPaid(invNo) {
   const inv = invoices.find(i=>i.invNo===invNo); if (!inv) return;
+  if (!inv.__row) { toast('Invoice still syncing — wait a moment then try again'); return; }
   inv.status='Paid'; inv.paidDate=new Date().toISOString().slice(0,10);
   fireWebhook(WEBHOOK_PAID, { action:'mark_paid', invNo:inv.invNo, rowNumber:inv.__row, client:inv.client, phone:inv.phone, total:inv.total, paidDate:inv.paidDate });
   setTimeout(loadInvoices, 5000);
