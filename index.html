@@ -730,7 +730,7 @@ function calc(){
   v3.textContent='R'+Number(s3.value).toLocaleString('en-ZA');
   roiOut.textContent=fmt(Math.round(leads*missed*deal));
 }
-[s1,s2,s3].forEach(s=>s.addEventListener('input',calc));calc();
+if(s1&&s2&&s3){[s1,s2,s3].forEach(s=>s.addEventListener('input',calc));calc();}
 
 // Chat animation
 (function(){
