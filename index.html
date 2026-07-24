@@ -283,7 +283,7 @@ details.policy-item[open] summary{color:var(--text)}
             </div>
             <div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
               <span style="font-size:.8rem;color:#64748B">Owner briefing</span>
-              <button class="demo-mark-btn" id="nxBtn" onclick="triggerNexAgent OSDemo()">Send to WhatsApp</button>
+              <button class="demo-mark-btn" id="nxBtn" onclick="triggerNexAgentOSDemo()">Send to WhatsApp</button>
             </div>
             <div class="demo-wa-notif" id="nxNotif">
               <div class="wa-notif-icon" style="background:#25D366;color:#fff;font-size:.7rem;font-weight:900">NX</div>
@@ -860,7 +860,7 @@ document.getElementById('cform').addEventListener('submit', async function(ev){
   }
 });
 
-function triggerNexAgent OSDemo() {
+function triggerNexAgentOSDemo() {
   var btn = document.getElementById('nxBtn');
   var notif = document.getElementById('nxNotif');
   btn.disabled = true;
