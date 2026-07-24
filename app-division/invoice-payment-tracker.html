@@ -308,7 +308,9 @@ function markPaid(invNo) {
 
 function sendReminder(invNo) {
   const inv = invoices.find(i=>i.invNo===invNo); if (!inv) return;
-  if (!inv.phone) { toast('No phone number — reminder skipped'); return; } // Guard: prevents empty 'to' error in WhatsApp HTTP module
+  if (!inv.phone) { toast('No phone number — reminder skipped'); return; }
+  if (!inv.email) { toast('No email address — add one to this invoice first'); return; }
+  if (!inv.__row) { toast('Invoice still syncing — wait a moment then try again'); return; }
   fireWebhook(WEBHOOK_REMINDER, { action:'reminder', invNo:inv.invNo, client:inv.client, phone:inv.phone, email:inv.email, total:inv.total, dueDate:inv.dueDate, status:inv.status });
   toast('Reminder sent for ' + invNo);
 }
