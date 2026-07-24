@@ -220,13 +220,41 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
 </div> <!-- TOAST -->
 <div class="toast" id="toast"></div> <script>
 // ── WEBHOOK URLS (fill after Make.com scenarios created) ──
+const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 const WEBHOOK_ADD    = 'https://hook.us2.make.com/5pvo9kq93lubiokehk39wiv3ybfaz95z';  // LeadCRM-Add
 const WEBHOOK_UPDATE = 'https://hook.us2.make.com/ym5ytt8bfzujzz93fo6824oe79dx6oj5';  // LeadCRM-UpdateStatus
 
 // ── STATE ──
-let leads = JSON.parse(localStorage.getItem('leads') || '[]');
+let leads = [];
 let currentFilter = 'all';
 let currentLeadId = null;
+
+async function loadLeads() {
+  try {
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Leads`);
+    const rows = await res.json();
+    leads = rows
+      .map((r, i) => ({...r, __rowFallback: i + 2}))
+      .filter(r => r['Customer Name'])
+      .map(r => ({
+        id:       String(r['Lead ID']        || '').trim(),
+        __row:    r.__row != null ? Number(r.__row) : r.__rowFallback,
+        date:     String(r['Date']           || ''),
+        name:     String(r['Customer Name']  || ''),
+        phone:    String(r['Contact Number'] || ''),
+        enquiry:  String(r['Enquiry Type']   || ''),
+        vehicle:  String(r['Vehicle']        || ''),
+        details:  String(r['Details']        || ''),
+        status:   String(r['Status']         || 'New'),
+        notes:    '',
+        source:   '',
+      }));
+    renderStats();
+    renderTable();
+  } catch(e) {
+    console.error('loadLeads error:', e);
+  }
+}
 
 // ── LEAD ID ──
 function nextLeadId() {
@@ -372,11 +400,10 @@ function saveLead() {
   };
 
   leads.push(lead);
-  persist();
   renderStats();
   renderTable();
   closeAddModal();
-  toast('Lead ' + lead.id + ' added');
+  toast('Lead ' + lead.id + ' added — syncing…');
 
   // Fire to Sheets
   fireWebhook(WEBHOOK_ADD, {
@@ -391,6 +418,7 @@ function saveLead() {
     source: lead.source,
     status: lead.status
   });
+  setTimeout(loadLeads, 5000);
 }
 
 // ── DETAIL MODAL ──
@@ -439,6 +467,7 @@ function updateLead() {
   fireWebhook(WEBHOOK_UPDATE, {
     action: 'update_status',
     leadId: lead.id,
+    rowNumber: lead.__row,
     name: lead.name,
     phone: lead.phone,
     status: lead.status,
@@ -471,8 +500,7 @@ function openWhatsAppFor(phone) {
 }
 
 // ── INIT ──
-renderStats();
-renderTable();
+loadLeads();
 </script>
 </body>
 </html>

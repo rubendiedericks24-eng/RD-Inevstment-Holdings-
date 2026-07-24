@@ -182,13 +182,46 @@ textarea{resize:vertical;min-height:70px}
 <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)"> <div class="detail-panel" id="detailPanel"> <div class="detail-head"> <h2 id="dpTitle">Invoice</h2> <button class="modal-close" onclick="closeModal('detailOverlay')"></button> </div> <div class="detail-body" id="dpBody"></div> </div>
 </div> <!-- TOAST -->
 <div class="toast" id="toast"></div> <script>
+const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 const WEBHOOK_CREATE  = 'https://hook.us2.make.com/3kbai6k3xzd1hn41qe6y93nmdputxndd';
 const WEBHOOK_PAID    = 'https://hook.us2.make.com/utq7yl7c07xbrggrts24ek5gdc6qwg0q';
 const WEBHOOK_REMINDER= 'https://hook.us2.make.com/7narvwpeddf6dt2j1ts30h7u6b5le25u';
-let invoices = JSON.parse(localStorage.getItem('nexinvoices') || '[]');
+let invoices = [];
 let currentFilter = 'all';
 
-window.onload = () => { checkOverdue(); setDefaultDates(); nextInvNo(); addLineItem(); render(); };
+async function loadInvoices() {
+  try {
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Invoices`);
+    const rows = await res.json();
+    invoices = rows
+      .map((r, i) => ({...r, __rowFallback: i + 2}))
+      .filter(r => r['Invoice No'])
+      .map(r => ({
+        invNo:       String(r['Invoice No'] || '').trim(),
+        __row:       r.__row != null ? Number(r.__row) : r.__rowFallback,
+        client:      String(r['Client']    || ''),
+        phone:       String(r['Phone']     || ''),
+        email:       String(r['Email']     || ''),
+        quoteRef:    String(r['Quote Ref'] || ''),
+        jobRef:      String(r['Job Ref']   || ''),
+        itemsSummary:String(r['Description']|| ''),
+        subtotal:    Number(String(r['Subtotal']||'').replace(/[R,]/g,'')) || 0,
+        vat:         Number(String(r['VAT']     ||'').replace(/[R,]/g,'')) || 0,
+        total:       Number(String(r['Total']   ||'').replace(/[R,]/g,'')) || 0,
+        dueDate:     String(r['Due Date']  || ''),
+        dateCreated: String(r['Date']      || ''),
+        status:      String(r['Status']    || 'Outstanding'),
+        paidDate:    String(r['Paid Date'] || '') || null,
+        items:       [],
+      }));
+    checkOverdue();
+    render();
+  } catch(e) {
+    console.error('loadInvoices error:', e);
+  }
+}
+
+window.onload = () => { setDefaultDates(); nextInvNo(); addLineItem(); loadInvoices(); };
 
 function checkOverdue() {
   const today = new Date().toISOString().slice(0,10);
@@ -196,7 +229,7 @@ function checkOverdue() {
   invoices.forEach(inv => {
     if (inv.status === 'Outstanding' && inv.dueDate && inv.dueDate < today) { inv.status = 'Overdue'; changed = true; }
   });
-  if (changed) save();
+  // overdue status updated locally — sheet reflects on next reload
 }
 
 function setDefaultDates() {
@@ -256,16 +289,18 @@ function saveInvoice() {
     subtotal:    +sub.toFixed(2), vat:+vat.toFixed(2), total:+(sub+vat).toFixed(2),
     status:'Outstanding', paidDate:null
   };
-  invoices.unshift(inv); save();
+  invoices.unshift(inv);
   fireWebhook(WEBHOOK_CREATE, { action:'create', ...inv });
   closeModal('newInvModal'); render();
-  toast('Invoice ' + inv.invNo + ' created');
+  toast('Invoice ' + inv.invNo + ' created — syncing…');
+  setTimeout(loadInvoices, 5000);
 }
 
 function markPaid(invNo) {
   const inv = invoices.find(i=>i.invNo===invNo); if (!inv) return;
-  inv.status='Paid'; inv.paidDate=new Date().toISOString().slice(0,10); save();
-  fireWebhook(WEBHOOK_PAID, { action:'mark_paid', invNo:inv.invNo, client:inv.client, phone:inv.phone, total:inv.total, paidDate:inv.paidDate });
+  inv.status='Paid'; inv.paidDate=new Date().toISOString().slice(0,10);
+  fireWebhook(WEBHOOK_PAID, { action:'mark_paid', invNo:inv.invNo, rowNumber:inv.__row, client:inv.client, phone:inv.phone, total:inv.total, paidDate:inv.paidDate });
+  setTimeout(loadInvoices, 5000);
   if (document.getElementById('detailOverlay').classList.contains('open')) openDetail(invNo);
   render(); toast('Invoice ' + invNo + ' marked Paid');
 }
@@ -280,7 +315,6 @@ function sendReminder(invNo) {
 function deleteInvoice(invNo) {
   if (!confirm('Delete ' + invNo + '? This cannot be undone.')) return;
   invoices = invoices.filter(i=>i.invNo!==invNo);
-  save();
   if (document.getElementById('detailOverlay').classList.contains('open')) closeModal('detailOverlay');
   render(); toast('Invoice ' + invNo + ' deleted');
 }

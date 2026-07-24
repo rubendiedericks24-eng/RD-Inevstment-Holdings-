@@ -156,10 +156,11 @@ async function loadEntries(){
     const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Timesheet`);
     const rows = await res.json();
     entries = rows
+      .map((r, i) => ({...r, __rowFallback: i + 2}))
       .filter(r => r['Staff Name'])
       .map(r => ({
         id:         String(r['Entry ID'] || '').trim() || nextId(),
-        __row:      r.__row || null,
+        __row:      r.__row != null ? Number(r.__row) : r.__rowFallback,
         date:       parseSheetDate(r['Date']),
         staffName:  String(r['Staff Name']   || ''),
         clockIn:    parseSheetTime(r['Clock In']),

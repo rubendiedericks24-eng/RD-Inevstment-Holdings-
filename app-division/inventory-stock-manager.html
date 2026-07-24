@@ -207,10 +207,11 @@ async function loadParts(){
     const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Parts%20%26%20Stock`);
     const rows = await res.json();
     parts = rows
+      .map((r, i) => ({...r, __rowFallback: i + 2}))
       .filter(r => r['Part Name'])
       .map(r => ({
         id:           String(r['Part ID'] || '').trim() || nextId(),
-        __row:        r.__row || null,
+        __row:        r.__row != null ? Number(r.__row) : r.__rowFallback,
         name:         String(r['Part Name']    || ''),
         category:     String(r['Category']     || ''),
         description:  String(r['Description']  || ''),
