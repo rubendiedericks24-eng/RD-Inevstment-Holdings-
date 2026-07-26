@@ -423,6 +423,23 @@ const DB = {
 let S = DB.load();
 let iCount = 0;
 
+// ── APPS SCRIPT (read-only — gets __row after save) ───────────────────────────
+const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
+
+async function fetchQuoteRow(num) {
+  try {
+    const res = await fetch(`${SHEETS_SCRIPT_URL}?tab=Quotes`);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return null;
+    // Find by quote number — handles leading-tab artifacts from Make.com Add a Row
+    const found = rows.find(r => {
+      const v = String(r['Quote No'] || r['num'] || r['Quote Number'] || r['Num'] || '').trim();
+      return v === num.trim();
+    });
+    return found ? found.__row : null;
+  } catch { return null; }
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.onload = () => {
   document.getElementById('pvDate').textContent = 'Date: ' + fmtDate(new Date());
@@ -608,6 +625,7 @@ function saveQuote() {
   const {sub, vat, grand} = calcTotals();
   const q = {
     num: 'AQ-'+String(S.qNum).padStart(4,'0'),
+    __row: null,
     clientName: v('clientName'), clientPhone: v('clientPhone'),
     reference: v('reference'), bizName: v('bizName'),
     jobType: v('jobType'), scopeNotes: v('scopeNotes'),
@@ -621,6 +639,13 @@ function saveQuote() {
   renderHistory();
   syncToSheets(q, 'upsert');
   toast('Quote '+q.num+' saved.', 'success');
+  // Background: resolve sheet row number so Accept can send __row to Make.com
+  fetchQuoteRow(q.num).then(row => {
+    if (row) {
+      const idx = S.quotes.findIndex(x => x.num === q.num);
+      if (idx >= 0) { S.quotes[idx].__row = row; DB.save(S); }
+    }
+  });
 }
 
 function loadQuote(idx) {
@@ -759,13 +784,17 @@ async function syncToSheets(q, action='upsert') {
   const url = v('sheetsScriptUrl');
   if(!url || !q) return;
   if(!q.clientPhone) return;
+  // Format phone for Meta WhatsApp API (must be 27XXXXXXXXX — no +, no leading 0)
+  let phone = q.clientPhone.replace(/\D/g, '');
+  if(phone.startsWith('0')) phone = '27' + phone.slice(1);
   try {
     await fetch(url, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        action, num:q.num, clientName:q.clientName,
-        clientEmail:q.clientEmail||'', clientPhone:q.clientPhone, reference:q.reference||'',
+        action, __row: q.__row || null,
+        num:q.num, clientName:q.clientName,
+        clientEmail:q.clientEmail||'', clientPhone:phone, reference:q.reference||'',
         itemsSummary:q.items.map(i=>`${i.d}×${i.q}`).join(', '),
         sub:q.sub.toFixed(2), vat:q.vat.toFixed(2), grand:q.grand.toFixed(2),
         status:q.status, date:q.date

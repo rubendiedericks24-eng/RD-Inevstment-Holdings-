@@ -133,6 +133,22 @@ const TABS = {
 // Status values that mean "closed / done"
 const CLOSED_STATUSES = ['done','complete','completed','cancelled','canceled','closed','paid'];
 
+// ── CACHE — stale-while-revalidate ───────────────────────────────────────────
+const CACHE_KEY = 'nexdash_cache';
+const CACHE_TTL = 10 * 60 * 1000; // 10 min — show cached data, refresh silently
+
+function saveCache(data) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    return { data, age: Date.now() - ts };
+  } catch { return null; }
+}
+
 // ── FETCH ── (Apps Script middleware — sheet stays private, no API key needed)
 async function fetchTab(tab) {
   const url = `${SHEETS_SCRIPT_URL}?tab=${encodeURIComponent(tab)}`;
@@ -185,20 +201,8 @@ function badge(status) {
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── LOAD ──
-async function loadDashboard() {
-  document.getElementById('loadingOverlay').classList.add('show');
-  document.getElementById('errorBanner').classList.remove('show');
-  document.getElementById('lastRefresh').textContent = 'Loading live data…';
-
-  try {
-    // Sequential fetches — Apps Script rate-limits on parallel requests
-    const jobs      = await fetchTab(TABS.jobs);
-    const quotes    = await fetchTab(TABS.quotes);
-    const invoices  = await fetchTab(TABS.invoices);
-    const leads     = await fetchTab(TABS.leads);
-    const stock     = await fetchTab(TABS.stock);
-    const timesheet = await fetchTab(TABS.timesheet);
+// ── RENDER — called with cached or fresh data ─────────────────────────────────
+function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
 
     // ── COMPUTE STATS ──
 
@@ -345,14 +349,38 @@ async function loadDashboard() {
     document.getElementById('statTimesheetPay').textContent = fmt(weekPay);
     document.getElementById('subTimesheetPay').textContent = `week-to-date payroll`;
 
-    document.getElementById('lastRefresh').textContent = `Live data · Last refreshed ${new Date().toLocaleTimeString('en-ZA', {hour:'2-digit', minute:'2-digit'})}`;
+}
+
+// ── LOAD — fetches fresh data, saves cache, then renders ─────────────────────
+async function loadDashboard(silent = false) {
+  if (!silent) {
+    document.getElementById('loadingOverlay').classList.add('show');
+    document.getElementById('lastRefresh').textContent = 'Loading live data…';
+  }
+  document.getElementById('errorBanner').classList.remove('show');
+
+  try {
+    // Sequential fetches — Apps Script rate-limits on parallel requests
+    const jobs      = await fetchTab(TABS.jobs);
+    const quotes    = await fetchTab(TABS.quotes);
+    const invoices  = await fetchTab(TABS.invoices);
+    const leads     = await fetchTab(TABS.leads);
+    const stock     = await fetchTab(TABS.stock);
+    const timesheet = await fetchTab(TABS.timesheet);
+
+    const freshData = { jobs, quotes, invoices, leads, stock, timesheet };
+    saveCache(freshData);
+    renderDashboard(freshData);
+    document.getElementById('lastRefresh').textContent = `Live data · Refreshed ${new Date().toLocaleTimeString('en-ZA', {hour:'2-digit', minute:'2-digit'})}`;
 
   } catch(err) {
-    console.error(err);
-    const banner = document.getElementById('errorBanner');
-    banner.textContent = `Could not load data: ${err.message}`;
-    banner.classList.add('show');
-    document.getElementById('lastRefresh').textContent = 'Error loading data — click Refresh to retry';
+    if (!silent) {
+      console.error(err);
+      const banner = document.getElementById('errorBanner');
+      banner.textContent = `Could not load data: ${err.message}`;
+      banner.classList.add('show');
+      document.getElementById('lastRefresh').textContent = 'Error — click Refresh to retry';
+    }
   } finally {
     document.getElementById('loadingOverlay').classList.remove('show');
   }
@@ -376,7 +404,22 @@ function loadInventoryPanel() {
   }).join('');
 }
 
-window.onload = () => { loadDashboard(); loadInventoryPanel(); };
+window.onload = () => {
+  loadInventoryPanel();
+  const cached = loadCache();
+  if (cached) {
+    // Render cached data instantly — no spinner
+    renderDashboard(cached.data);
+    const ageMin = Math.round(cached.age / 60000);
+    document.getElementById('lastRefresh').textContent =
+      ageMin < 1 ? 'Cached · Refreshing in background…' : `Cached ${ageMin}m ago · Refreshing…`;
+    // Silent background refresh — updates UI when done, no loading overlay
+    loadDashboard(true);
+  } else {
+    // First load ever — show spinner
+    loadDashboard(false);
+  }
+};
 </script>
 </body>
 </html>
