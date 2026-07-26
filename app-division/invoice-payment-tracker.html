@@ -183,6 +183,16 @@ textarea{resize:vertical;min-height:70px}
 </div> <!-- TOAST -->
 <div class="toast" id="toast"></div> <script>
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
+
+function sheetDate(val) {
+  if (!val && val !== 0) return '';
+  const n = Number(val);
+  // Excel/Sheets serial number (days since 1900-01-01, with leap-year bug)
+  if (!isNaN(n) && n > 10000) {
+    return new Date((n - 25569) * 86400000).toISOString().slice(0, 10);
+  }
+  return String(val).trim().slice(0, 10);
+}
 const WEBHOOK_CREATE  = 'https://hook.us2.make.com/3kbai6k3xzd1hn41qe6y93nmdputxndd';
 const WEBHOOK_PAID    = 'https://hook.us2.make.com/utq7yl7c07xbrggrts24ek5gdc6qwg0q';
 const WEBHOOK_REMINDER= 'https://hook.us2.make.com/7narvwpeddf6dt2j1ts30h7u6b5le25u';
@@ -208,8 +218,8 @@ async function loadInvoices() {
         subtotal:    Number(String(r['Subtotal']||'').replace(/[R,]/g,'')) || 0,
         vat:         Number(String(r['VAT']     ||'').replace(/[R,]/g,'')) || 0,
         total:       Number(String(r['Total']   ||'').replace(/[R,]/g,'')) || 0,
-        dueDate:     String(r['Due Date']  || ''),
-        dateCreated: String(r['Date']      || ''),
+        dueDate:     sheetDate(r['Due Date']),
+        dateCreated: sheetDate(r['Date']),
         status:      String(r['Status']    || 'Outstanding'),
         paidDate:    String(r['Paid Date'] || '') || null,
         items:       [],
@@ -340,7 +350,7 @@ function render() {
     const bc = inv.status==='Paid'?'badge-paid':inv.status==='Overdue'?'badge-overdue':'badge-outstanding';
     const btns = inv.status!=='Paid'
       ? `<button class="btn btn-sm btn-pay" onclick="markPaid('${inv.invNo}');event.stopPropagation()">Mark Paid</button> <button class="btn btn-sm btn-remind" onclick="sendReminder('${inv.invNo}');event.stopPropagation()" style="margin-left:6px">Remind</button> <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:6px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`
-      : `<span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--green)"> ${inv.paidDate}</span> <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:8px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`;
+      : `${inv.paidDate ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--green)">${inv.paidDate}</span>` : ''} <button class="btn btn-sm" onclick="deleteInvoice('${inv.invNo}');event.stopPropagation()" style="margin-left:8px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`;
     return `<tr onclick="openDetail('${inv.invNo}')"> <td><span class="inv-num">${inv.invNo}</span></td> <td><div class="client-name">${inv.client}</div><div class="client-detail">${inv.phone}</div></td> <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem">${inv.itemsSummary}</td> <td class="amount-cell">${fmt(inv.total)}</td> <td class="date-cell">${inv.dueDate||'—'}</td> <td><span class="badge ${bc}">${inv.status}</span></td> <td>${btns}</td> </tr>`;
   }).join('');
 }
