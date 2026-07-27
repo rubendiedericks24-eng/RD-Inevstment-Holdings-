@@ -426,6 +426,9 @@ let iCount = 0;
 // ── APPS SCRIPT (read-only — gets __row after save) ───────────────────────────
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
+// ── DELETE WEBHOOK — paste NexQuote-DeleteQuote URL here after building Make.com scenario ──
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/zvguu9svuyll817wwf6lj544lp9mn7x2';
+
 async function fetchQuoteRow(num) {
   try {
     const res = await fetch(`${SHEETS_SCRIPT_URL}?tab=Quotes`);
@@ -438,6 +441,33 @@ async function fetchQuoteRow(num) {
     });
     return found ? found.__row : null;
   } catch { return null; }
+}
+
+// Sync status + __row from Google Sheets back into localStorage (silent, runs on page load)
+async function syncStatusFromSheet() {
+  try {
+    const res = await fetch(`${SHEETS_SCRIPT_URL}?tab=Quotes`);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return;
+    let changed = false;
+    rows.forEach(r => {
+      const sheetNum = String(r['Quote No'] || '').trim();
+      const sheetStatus = String(r['Status'] || '').trim().toLowerCase();
+      const sheetRow = r.__row || null;
+      if (!sheetNum) return;
+      const idx = S.quotes.findIndex(q => q.num === sheetNum);
+      if (idx < 0) return;
+      if (sheetStatus && S.quotes[idx].status !== sheetStatus) {
+        S.quotes[idx].status = sheetStatus;
+        changed = true;
+      }
+      if (sheetRow && !S.quotes[idx].__row) {
+        S.quotes[idx].__row = sheetRow;
+        changed = true;
+      }
+    });
+    if (changed) { DB.save(S); renderHistory(); }
+  } catch { /* silent — never block UI */ }
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
@@ -458,6 +488,8 @@ window.onload = () => {
   addItem();
   renderHistory();
   sync();
+  // Silently sync statuses from Google Sheets (catches WhatsApp YES → Accepted, etc.)
+  syncStatusFromSheet();
 };
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -664,13 +696,29 @@ function loadQuote(idx) {
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function deleteQuote(idx, e) {
+async function deleteQuote(idx, e) {
   e.stopPropagation();
   if(!confirm('Delete this quote?')) return;
+  const q = S.quotes[idx];
+  if (WEBHOOK_DELETE) {
+    if (!q.__row) {
+      toast('Row number missing — delete from sheet manually.', 'error');
+    } else {
+      try {
+        await fetch(WEBHOOK_DELETE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', quoteNum: q.num, rowNumber: q.__row })
+        });
+        toast('Quote deleted.', 'success');
+      } catch(err) { toast('Sheet delete failed — check Make.com.', 'error'); }
+    }
+  } else {
+    toast('Quote deleted.');
+  }
   S.quotes.splice(idx, 1);
   DB.save(S);
   renderHistory();
-  toast('Quote deleted.');
 }
 
 function markAccepted(idx, e) {
