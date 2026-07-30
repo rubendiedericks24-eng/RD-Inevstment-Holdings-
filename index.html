@@ -48,7 +48,7 @@ a{color:inherit;text-decoration:none}
 .btn-solid:hover{background:transparent;border-color:var(--white);color:var(--white)}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s ease,border-color .3s ease;border-bottom:1px solid transparent;background:transparent}
 nav.scrolled{background:rgba(0,0,0,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-color:var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:76px}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:76px;padding:0 28px}
 .brand{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.24em;font-size:16px}
 .brand b{color:var(--green);font-weight:700}
 .nav-links{display:flex;gap:34px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
@@ -154,7 +154,7 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
 </head>
 <body>
 <nav id="nav">
-  <div class="wrap nav-in">
+  <div class="nav-in">
     <a class="brand" href="#top">NexAgent<b>·AI</b></a>
     <div class="nav-links">
       <a href="#os">System</a>
@@ -381,12 +381,13 @@ addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passi
   document.getElementById('replay').addEventListener('click',play);
 })();
 (function(){
-  const WEBHOOK_URL='';/* TODO: paste Make.com webhook URL */
+  const WEBHOOK_URL='https://hook.us2.make.com/1jwaheml9625nibctelkwe4ahs42pcgp';
   const form=document.getElementById('leadform'),ok=document.getElementById('formok');
   form.addEventListener('submit',async e=>{
     e.preventDefault();
     const data=Object.fromEntries(new FormData(form));
     if(!data.name||!data.email){form.reportValidity();return}
+    data.source='website';data.submitted=new Date().toISOString();
     if(WEBHOOK_URL){
       try{await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})}
       catch(err){location.href='https://wa.me/27728400352?text='+encodeURIComponent('Demo request: '+data.name+' ('+(data.business||'')+')');return}
