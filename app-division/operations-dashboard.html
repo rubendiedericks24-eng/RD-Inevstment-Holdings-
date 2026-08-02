@@ -4,35 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Operations Dashboard — Auto Workshop PE</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Saira:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
-  --border:#E2E8F0;--border-dk:#CBD5E1;
-  --navy:#0F172A;--navy2:#1E293B;
-  --text:#0F172A;--muted:#475569;--subtle:#94A3B8;
-  --green:#16A34A;--green-lt:#F0FDF4;--green-border:#BBF7D0;
-  --amber:#D97706;--amber-lt:#FFFBEB;--amber-border:#FDE68A;
-  --red:#DC2626;--red-lt:#FEF2F2;--red-border:#FECACA;
-  --blue:#2563EB;--blue-lt:#EFF6FF;--blue-border:#BFDBFE;
-  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
-  --radius:12px;--sidebar:230px;
+  --bg:#000000;--surface:#0A0A0A;--surface2:#111111;
+  --border:rgba(255,255,255,.12);--border-dk:rgba(255,255,255,.22);
+  --text:#FFFFFF;--muted:rgba(255,255,255,.5);--subtle:rgba(255,255,255,.35);
+  --navy:#FFFFFF;--navy2:rgba(255,255,255,.85);--accent:#FFFFFF;
+  --green:#FFFFFF;--green-lt:rgba(255,255,255,.05);--green-border:rgba(255,255,255,.2);
+  --yellow:#FFB800;--amber:#FFB800;
+  --amber-lt:rgba(255,184,0,.06);--amber-border:rgba(255,184,0,.2);
+  --red:#FF3B3B;--red-lt:rgba(255,59,59,.04);--red-border:rgba(255,59,59,.25);
+  --blue:#4B9EFF;--blue-lt:rgba(75,158,255,.04);--blue-border:rgba(75,158,255,.2);
+  --purple:#A855F7;--purple-lt:rgba(168,85,247,.06);--purple-border:rgba(168,85,247,.2);
+  --wa:#25D366;
+  --shadow:none;--shadow-md:0 4px 24px rgba(0,0,0,.6);--shadow-lg:0 8px 48px rgba(0,0,0,.8);
+  --disp:'Saira Condensed',sans-serif;--body:'Saira',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --radius:4px;--sidebar:230px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:14px}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;line-height:1.5}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;line-height:1.5}
 
 /* ── SIDEBAR ── */
-.sidebar{position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column}
+.sidebar{position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;background:var(--bg);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column}
 .sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
-.brand-name{font-family:'Archivo',sans-serif;font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
-.brand-sub{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
+.brand-name{font-family:var(--disp);font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
+.brand-sub{font-family:var(--mono);font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
 .sidebar-nav{padding:10px 0;flex:1}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px 9px 15px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:1px;transition:all .1s;border-left:3px solid transparent;text-decoration:none}
 .nav-item:hover{background:var(--bg);color:var(--text)}
 .nav-item.active{background:var(--surface2);color:var(--navy);border-left-color:var(--navy);font-weight:600}
-.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
@@ -40,8 +43,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── PAGE HEADER ── */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
-.pg-label{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:6px}
-.pg-title{font-family:'Archivo',sans-serif;font-size:1.45rem;font-weight:900;color:var(--text);letter-spacing:-.3px;line-height:1.1}
+.pg-label{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:6px}
+.pg-title{font-family:var(--disp);font-size:1.45rem;font-weight:900;color:var(--text);letter-spacing:-.3px;line-height:1.1}
 .pg-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
 
 /* ── STAT GRID ── */
@@ -50,9 +53,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 @media(max-width:700px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 .stat-cell{padding:20px 22px;border-right:1px solid var(--border);text-align:center}
 .stat-cell:last-child{border-right:none}
-.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:8px}
-.stat-val{font-family:'Archivo',sans-serif;font-size:2rem;font-weight:900;line-height:1;letter-spacing:-.5px}
-.stat-sub{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--subtle);margin-top:5px}
+.stat-label{font-family:var(--mono);font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:8px}
+.stat-val{font-family:var(--disp);font-size:2rem;font-weight:900;line-height:1;letter-spacing:-.5px}
+.stat-sub{font-family:var(--mono);font-size:.68rem;color:var(--subtle);margin-top:5px}
 .v-amber{color:var(--amber)}
 .v-red{color:var(--red)}
 .v-green{color:var(--green)}
@@ -66,7 +69,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── CARD ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
-.card-title{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle)}
+.card-title{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle)}
 .card-link{font-size:.78rem;font-weight:500;color:var(--navy);text-decoration:none;opacity:.7;transition:opacity .1s}
 .card-link:hover{opacity:1}
 
@@ -74,15 +77,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .tbl-wrap{overflow-x:auto}
 table.tbl{width:100%;border-collapse:collapse}
 table.tbl thead tr{background:var(--bg)}
-table.tbl th{padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);border-bottom:1px solid var(--border);white-space:nowrap}
+table.tbl th{padding:9px 14px;text-align:left;font-family:var(--mono);font-size:.63rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);border-bottom:1px solid var(--border);white-space:nowrap}
 table.tbl td{padding:11px 14px;font-size:.84rem;border-bottom:1px solid var(--border);vertical-align:middle}
 table.tbl tbody tr:last-child td{border-bottom:none}
 table.tbl tbody tr{transition:background .08s}
 table.tbl tbody tr:hover{background:var(--bg)}
-.empty-row td{text-align:center;padding:28px 16px;color:var(--subtle);font-family:'IBM Plex Mono',monospace;font-size:.75rem}
+.empty-row td{text-align:center;padding:28px 16px;color:var(--subtle);font-family:var(--mono);font-size:.75rem}
 
 /* ── BADGES ── */
-.badge{padding:3px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:.63rem;font-weight:500;letter-spacing:.04em;display:inline-block;text-transform:uppercase;white-space:nowrap}
+.badge{padding:3px 8px;border-radius:4px;font-family:var(--mono);font-size:.63rem;font-weight:500;letter-spacing:.04em;display:inline-block;text-transform:uppercase;white-space:nowrap}
 .badge-outstanding{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
 .badge-overdue{background:var(--red-lt);color:var(--red);border:1px solid var(--red-border)}
 .badge-new{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-border)}
@@ -92,7 +95,7 @@ table.tbl tbody tr:hover{background:var(--bg)}
 .badge-ok{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
 
 /* ── MONO CELLS ── */
-.mono{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--navy);font-size:.82rem}
+.mono{font-family:var(--mono);font-weight:500;color:var(--navy);font-size:.82rem}
 .muted-text{color:var(--subtle);font-size:.78rem}
 
 /* ── BUTTON ── */
@@ -101,7 +104,7 @@ table.tbl tbody tr:hover{background:var(--bg)}
 .btn-outline:hover{border-color:var(--navy);color:var(--navy)}
 
 /* ── LOADING OVERLAY ── */
-.loading{display:none;position:fixed;inset:0;background:rgba(248,250,252,.8);z-index:500;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:var(--muted)}
+.loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;font-family:var(--mono);font-size:.85rem;color:var(--muted)}
 .loading.show{display:flex}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .6s linear infinite;margin-right:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -116,7 +119,7 @@ table.tbl tbody tr:hover{background:var(--bg)}
 </div> <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Operations Dashboard</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</div> <a class="nav-item" href="job-card-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Job Cards</a> <a class="nav-item" href="auto-quote-generator.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Quotes</a> <a class="nav-item" href="invoice-payment-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Invoices</a> <a class="nav-item" href="lead-crm.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Lead CRM</a> <a class="nav-item" href="inventory-stock-manager.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Inventory &amp; Stock</a> <a class="nav-item" href="staff-timesheet-payroll.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Timesheet &amp; Payroll</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </aside> <!-- MAIN -->
-<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Bookings</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts &amp; Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary (from localStorage — written by Inventory & Stock Manager) --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:'IBM Plex Mono',monospace;font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Open Bookings</div> <span class="card-link" style="cursor:default">Job Bookings tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
+<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Bookings</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts &amp; Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary (from localStorage — written by Inventory & Stock Manager) --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:var(--mono);font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Open Bookings</div> <span class="card-link" style="cursor:default">Job Bookings tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
 </main> <script>
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
@@ -264,7 +267,7 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
         const total   = gf(i,'Total','total','Grand Total','grand');
         const dueDate = gf(i,'Due Date','dueDate','due_date');
         const status  = gf(i,'Status','status');
-        return `<tr> <td><span class="mono">${esc(invNo)||'—'}</span></td> <td>${esc(client)||'—'}</td> <td style="font-family:'Archivo',sans-serif;font-weight:700">${total ? fmt(total) : '—'}</td> <td class="muted-text">${fmtDate(dueDate)}</td> <td>${badge(status)}</td> </tr>`;
+        return `<tr> <td><span class="mono">${esc(invNo)||'—'}</span></td> <td>${esc(client)||'—'}</td> <td style="font-family:var(--disp);font-weight:700">${total ? fmt(total) : '—'}</td> <td class="muted-text">${fmtDate(dueDate)}</td> <td>${badge(status)}</td> </tr>`;
       }).join('');
     }
 
@@ -341,7 +344,7 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
         const hrs   = gf(t,'Hours Worked','hoursWorked','hours');
         const pay   = gf(t,'Day Pay','dayPay','day pay');
         const jobr  = gf(t,'Job Ref','jobRef','job ref');
-        return `<tr><td class="muted-text">${fmtDate(date)}</td><td style="font-weight:600">${esc(staff)||'—'}</td><td class="mono">${esc(hrs)||'—'}</td><td style="font-family:'Archivo',sans-serif;font-weight:700">${pay ? fmt(pay) : '—'}</td><td class="muted-text">${esc(jobr)||'—'}</td></tr>`;
+        return `<tr><td class="muted-text">${fmtDate(date)}</td><td style="font-weight:600">${esc(staff)||'—'}</td><td class="mono">${esc(hrs)||'—'}</td><td style="font-family:var(--disp);font-weight:700">${pay ? fmt(pay) : '—'}</td><td class="muted-text">${esc(jobr)||'—'}</td></tr>`;
       }).join('');
     }
     document.getElementById('statTimesheetHours').textContent = weekHours.toFixed(1);
@@ -360,13 +363,18 @@ async function loadDashboard(silent = false) {
   document.getElementById('errorBanner').classList.remove('show');
 
   try {
-    // Sequential fetches — Apps Script rate-limits on parallel requests
-    const jobs      = await fetchTab(TABS.jobs);
-    const quotes    = await fetchTab(TABS.quotes);
-    const invoices  = await fetchTab(TABS.invoices);
-    const leads     = await fetchTab(TABS.leads);
-    const stock     = await fetchTab(TABS.stock);
-    const timesheet = await fetchTab(TABS.timesheet);
+    // Parallel fetches — all 6 tabs load simultaneously; individual failures fall back to []
+    const results = await Promise.allSettled([
+      fetchTab(TABS.jobs),
+      fetchTab(TABS.quotes),
+      fetchTab(TABS.invoices),
+      fetchTab(TABS.leads),
+      fetchTab(TABS.stock),
+      fetchTab(TABS.timesheet)
+    ]);
+    const [jobs, quotes, invoices, leads, stock, timesheet] = results.map(r => r.status === 'fulfilled' ? r.value : []);
+    // Log any tab failures to console without crashing the dashboard
+    results.forEach((r,i) => { if(r.status==='rejected') console.warn('Tab load failed:',Object.values(TABS)[i],r.reason?.message||r.reason); });
 
     const freshData = { jobs, quotes, invoices, leads, stock, timesheet };
     saveCache(freshData);
@@ -400,7 +408,7 @@ function loadInventoryPanel() {
     const st = p.stockLevel <= 0 ? 'out' : 'low';
     const badgeCls = st==='out' ? 'badge-overdue' : 'badge-outstanding';
     const badgeTxt = st==='out' ? 'Out of stock' : 'Low stock';
-    return `<tr style="background:${st==='out'?'var(--red-lt)':'var(--amber-lt)'}"> <td style="font-weight:600">${esc(p.name)}</td> <td style="color:var(--muted);font-size:.82rem">${esc(p.category||'—')}</td> <td style="font-family:'Archivo',sans-serif;font-weight:700;color:${st==='out'?'var(--red)':'var(--amber)'}">${p.stockLevel}</td> <td style="font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--muted)">${p.reorderLevel}</td> <td style="font-size:.82rem;color:var(--muted)">${esc(p.supplier||'—')}</td> <td><span class="badge ${badgeCls}">${badgeTxt}</span></td> </tr>`;
+    return `<tr style="background:${st==='out'?'var(--red-lt)':'var(--amber-lt)'}"> <td style="font-weight:600">${esc(p.name)}</td> <td style="color:var(--muted);font-size:.82rem">${esc(p.category||'—')}</td> <td style="font-family:var(--disp);font-weight:700;color:${st==='out'?'var(--red)':'var(--amber)'}">${p.stockLevel}</td> <td style="font-family:var(--mono);font-size:.8rem;color:var(--muted)">${p.reorderLevel}</td> <td style="font-size:.82rem;color:var(--muted)">${esc(p.supplier||'—')}</td> <td><span class="badge ${badgeCls}">${badgeTxt}</span></td> </tr>`;
   }).join('');
 }
 

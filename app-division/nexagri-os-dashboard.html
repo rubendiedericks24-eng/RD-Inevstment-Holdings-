@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<!--
+================================================================================
+NEXAGRI OS — DASHBOARD v8 · BUILD SPEC VIR CLAUDE COWORK
+================================================================================
+Hierdie lêer is die werkende voorbeeld ÉN die bouspesifikasie. Lees dit volledig
+voordat jy begin bou. Die doel: een NexAgri OS-app met TWEE gelyke koppelvlakke —
+hierdie dashboard en 'n WhatsApp-agent — wat DIESELFDE data lees en skryf.
+ARGITEKTUUR (produksie):
+  WhatsApp (Meta Cloud API, dedicated SIM per plaas)
+      → webhook (Make.com of eie server)
+      → Agent (Claude API): intent-klassifikasie, Afrikaans/Engels, foto-analise
+      → DATABASIS (bron van waarheid; begin Google Sheets, migreer na Postgres)
+      → Dashboard (hierdie lêer se UI, herbou as web-app met live sync/polling)
+      → WhatsApp uitgaande: bevestigings + geskeduleerde herinneringe (cron)
+SINCHRONISASIE-KONTRAK (albei kante skryf na dieselfde tabelle):
+  workers   {id, name, rate, week[7]}
+  herd      {id, tipe, nota, count}
+  crops     {id, gewas, plek, aantal, eenheid}
+  veeSales  {id, produk, kg, prys, datum}      → Geld: outo-inkomste
+  cropSales {id, produk, kg, prys, datum}      → Geld: outo-inkomste
+  veeTasks / cropTasks {naam, detail, freq, next, wa}  → herinnering-skeduleerder
+  income / expenses {bron, nota, bedrag}       → Lone + Diesel = outo
+  dieselEntries {datum, voertuig, liter, bedrag, bron:slip|hand}
+      → SARS diesel-joernaal + BTW-register; BTW = bedrag × 15/115
+      → gelog deur slip-FOTO op WhatsApp (vision OCR) of met die hand
+  docs      {nr, tipe:Kwotasie|Faktuur, klient, beskrywing, bedrag,
+             datum, status:konsep|gestuur} → PDF-generasie + stuur per
+             e-pos ÉN WhatsApp (backend via Make); BTW 15% outo bygereken
+  feed      {tyd, msg, tag}                    → oudit-log van ALLES
+WHATSAPP-AGENT INTENTS (die simulator hieronder demonstreer die parser):
+  1. VERKOOP:  "verkoop 500kg bees @ 110" → veeSales + feed + Geld outo
+  2. WERKER:   "petrus het vandag gewerk" → week[vandag]=1
+  3. TAAK:     "gedoen dip" → task.next = vandag + freq
+  4. LOG:      "85L diesel trekker 4 land 12" → diesel-joernaal + feed
+  5. SLIP:     boer stuur foto van brandstof-/uitgawe-strokie → Claude vision
+               OCR → {handelaar, datum, liter, bedrag, BTW} → vra voertuig as
+               dit ontbreek → bevestig → dieselEntries. Oudit- en BTW-gereed.
+  6. FOTO:     boer stuur foto (plant/dier) → Claude vision → moontlike
+               diagnose + voorgestelde stappe. ALTYD met verwysing na
+               veearts/agronoom vir bevestiging — die agent diagnoseer
+               voorlopig, dit vervang nie 'n professionele mening nie.
+  7. VRAE:     "hoeveel skape het ek?" → lees databasis, antwoord.
+  BEVESTIGINGSLUS: die agent lees ALTYD terug wat dit gaan aanteken
+  ("500kg bees teen R110/kg — reg so?") voordat dit skryf. Eers na "ja".
+REËLS (uit die NexAgri OS meesterspek — nie onderhandelbaar nie):
+  - WhatsApp is die enigste boer-koppelvlak naas hierdie dashboard.
+  - Een kodebasis, konfig per plaas. Dedicated SIM. POPIA: geen publieke sheets.
+  - Stemnotas: eers toets met 20 regte plaas-stemnotas voor dit belowe word.
+  - Herbruik die bewese stack: webhook → Claude API → Sheets → WhatsApp-reply.
+================================================================================
+-->
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NexAgri OS — Kruisrivier Boerdery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --veld:#1F3D2B; --veld-deep:#16301F; --kalk:#EFE4CC; --ink:#22261F;
+    --khaki:#8A8672; --amber:#C98A2B; --line:#E5E1D6;
+    --good:#2E7D4F; --bad:#B4552D; --card:#F7F0DE; --radius:14px;
+    --wa:#128C50;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Instrument Sans',system-ui,-apple-system,sans-serif;
+    background:var(--kalk);color:var(--ink);font-size:16px;line-height:1.45;
+    padding-bottom:calc(76px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px}
+  svg.ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  svg.ico.sm{width:18px;height:18px}
+  header{background:var(--veld);color:var(--kalk);padding:18px 0 16px}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .farm-name{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.15rem;letter-spacing:.02em;text-transform:uppercase}
+  .farm-sub{font-size:.78rem;color:#BFD0C2;margin-top:2px}
+  .sync{display:flex;align-items:center;gap:7px;font-size:.75rem;color:#BFD0C2;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;background:#6FCF97}
+  @media (prefers-reduced-motion:no-preference){
+    .dot{animation:pulse 2.4s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  }
+  .status-strip{background:var(--veld);padding:0 0 20px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .tile{background:var(--veld-deep);border-radius:var(--radius);padding:14px 12px 12px;color:var(--kalk)}
+  .tile .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#9DB8A4;margin-bottom:6px}
+  .tile .num{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.5rem;line-height:1.1}
+  .tile .unit{font-size:.8rem;font-weight:500;color:#BFD0C2;margin-left:2px}
+  .tile .note{font-size:.72rem;color:#9DB8A4;margin-top:5px}
+  main{padding-top:20px}
+  section{display:none}
+  section.active{display:block}
+  .sec-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;text-transform:uppercase;letter-spacing:.06em;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title .side{font-family:'Instrument Sans',sans-serif;font-weight:500;font-size:.75rem;color:var(--khaki);text-transform:none;letter-spacing:0;text-align:right}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+  .feed .frow{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--line)}
+  .feed .frow:last-child{border-bottom:none}
+  .feed .time{font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;color:var(--khaki);min-width:44px;padding-top:2px}
+  .feed .msg{flex:1;font-size:.92rem}
+  .feed .tag{display:inline-block;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--veld);background:#EAF0EA;padding:2px 7px;border-radius:20px;margin-top:5px}
+  .feed .tag.wa{color:#fff;background:var(--wa)}
+  .feed .check{color:var(--good);font-weight:600;padding-top:1px}
+  .item{border-bottom:1px solid var(--line)}
+  .item:last-child{border-bottom:none}
+  .item-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px;cursor:pointer;user-select:none}
+  .item-head:focus-visible{outline:2px solid var(--amber);outline-offset:-2px}
+  .item-head .k{font-weight:600;font-size:.95rem}
+  .item-head .k small{display:block;font-weight:400;color:var(--khaki);font-size:.75rem;margin-top:1px}
+  .item-head .v{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.05rem;white-space:nowrap;display:flex;align-items:center;gap:8px}
+  .item-head .v small{font-family:'Instrument Sans',sans-serif;font-weight:500;font-size:.75rem;color:var(--khaki)}
+  .item-head .chev{color:var(--khaki);font-size:.8rem;transition:transform .15s}
+  .item.open .item-head .chev{transform:rotate(180deg)}
+  .item-body{display:none;padding:0 14px 16px;background:#FBFAF6}
+  .item.open .item-body{display:block}
+  .auto-pill{font-size:.65rem;font-weight:600;background:#EFF3EE;color:var(--veld);padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+  .due-pill{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+  .due-pill.ok{background:#EFF3EE;color:var(--veld)}
+  .due-pill.due{background:#FDF1DC;color:#9A6A15}
+  .due-pill.late{background:#F7E9E2;color:var(--bad)}
+  .stepper{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px 0 12px}
+  .stepper button{
+    min-width:52px;height:52px;border-radius:26px;border:none;cursor:pointer;padding:0 14px;
+    font-family:'Archivo',sans-serif;font-weight:800;font-size:1.15rem;line-height:1;
+  }
+  .stepper .minus{background:#F3EEE4;color:var(--bad)}
+  .stepper .plus{background:var(--veld);color:#fff}
+  .stepper button:active{transform:scale(.94)}
+  .stepper button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .stepper .mid{min-width:100px;text-align:center}
+  .stepper .mid input{
+    width:100px;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.4rem;
+    border:none;background:transparent;color:var(--ink);
+  }
+  .stepper .mid input:focus{outline:2px solid var(--amber);border-radius:8px}
+  .stepper .mid .sub{font-size:.72rem;color:var(--khaki)}
+  .stepper.compact{padding:8px 0}
+  .stepper.compact button{min-width:42px;height:42px;font-size:1rem}
+  .stepper.compact .mid input{font-size:1.15rem;width:90px}
+  .item-actions{display:flex;gap:10px;margin-top:6px}
+  .item-actions button{
+    flex:1;padding:11px;border-radius:10px;border:none;cursor:pointer;
+    font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;
+  }
+  .del{background:#F7E9E2;color:var(--bad)}
+  .done-btn{background:var(--veld);color:#fff}
+  .send-btn{background:#EFF3EE;color:var(--veld)}
+  .addrow.doc{grid-template-columns:1fr 1fr}
+  .addrow.doc .go{grid-column:1/-1}
+  .del:focus-visible,.done-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .set-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0}
+  .set-line .lbl{font-size:.8rem;font-weight:600;color:var(--khaki);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+  .freq-ctl{display:flex;align-items:center;gap:10px}
+  .freq-ctl button{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.1rem}
+  .freq-ctl .minus{background:#F3EEE4;color:var(--bad)}
+  .freq-ctl .plus{background:var(--veld);color:#fff}
+  .freq-ctl .fval{font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;min-width:80px;text-align:center}
+  .switch{position:relative;width:52px;height:30px;border-radius:15px;border:none;cursor:pointer;background:#DDD8CC;transition:background .15s}
+  .switch::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch.on{background:var(--good)}
+  .switch.on::after{left:25px}
+  .switch:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .week{display:flex;gap:6px;justify-content:space-between;padding:12px 0 4px}
+  .day{
+    flex:1;aspect-ratio:1;max-width:46px;border-radius:10px;
+    border:1.5px solid var(--line);background:var(--card);cursor:pointer;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;color:var(--khaki);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .day.on{background:var(--veld);border-color:var(--veld);color:#fff}
+  .day.today{border-color:var(--amber)}
+  .day:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .week-sub{font-size:.75rem;color:var(--khaki);text-align:center;margin-bottom:4px}
+  .rate-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0}
+  .rate-line .lbl{font-size:.8rem;font-weight:600;color:var(--khaki);text-transform:uppercase;letter-spacing:.05em}
+  .rate-ctl{display:flex;align-items:center;gap:10px}
+  .rate-ctl button{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:800;font-size:1.1rem}
+  .rate-ctl .minus{background:#F3EEE4;color:var(--bad)}
+  .rate-ctl .plus{background:var(--veld);color:#fff}
+  .rate-ctl input{
+    width:84px;text-align:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:1.05rem;
+    border:1.5px solid var(--line);border-radius:8px;padding:7px 4px;background:var(--card);color:var(--ink);
+  }
+  .rate-ctl input:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+  .day.editing{outline:2px solid var(--amber);outline-offset:2px}
+  .day-edit-popup{background:#F3EEE4;border-radius:12px;padding:14px;margin:10px 0 4px;display:flex;flex-direction:column;gap:10px}
+  .day-edit-head{display:flex;align-items:center;justify-content:space-between;font-size:.85rem;font-weight:700}
+  .day-edit-close{border:none;background:transparent;font-size:1.1rem;line-height:1;cursor:pointer;color:var(--khaki);padding:0 4px}
+  .day-edit-note{font-size:.72rem;color:var(--khaki)}
+  .day-edit-clear{border:none;background:transparent;color:var(--bad);font-size:.78rem;font-weight:600;text-align:left;cursor:pointer;padding:0}
+  .rate-ctl.small{justify-content:center}
+  .rate-ctl.small button{width:30px;height:30px;font-size:.9rem}
+  .rate-ctl.small input{width:70px;padding:6px 4px;text-align:center}
+  .addrow{
+    display:grid;gap:8px;padding:12px 14px;background:#F4F6F2;border-top:1px solid var(--line);
+    grid-template-columns:1fr 92px 84px;
+  }
+  .addrow.wide{grid-template-columns:1fr 1fr 84px}
+  .addrow.four{grid-template-columns:1fr 76px 76px 84px}
+  .addrow input,.addrow select{
+    padding:11px 10px;font-size:.95rem;font-family:'Instrument Sans',sans-serif;
+    border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);min-width:0;
+  }
+  .addrow input:focus,.addrow select:focus{outline:2px solid var(--amber);border-color:var(--amber)}
+  .addrow .go{
+    border:none;border-radius:10px;background:var(--veld);color:#fff;cursor:pointer;
+    font-family:'Archivo',sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;
+  }
+  .addrow .go:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .paytotal{background:var(--veld);color:var(--kalk)}
+  .paytotal .lrow{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.12);font-size:.92rem;gap:10px}
+  .paytotal .lrow:last-child{border-bottom:none}
+  .paytotal .k small{display:block;color:#9DB8A4;font-size:.75rem;margin-top:1px}
+  .paytotal .v{font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap}
+  .netto{background:var(--veld);color:var(--kalk);padding:16px 14px;display:flex;justify-content:space-between;align-items:center}
+  .netto .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#9DB8A4}
+  .netto .amt{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.6rem}
+  .netto .amt.neg{color:#F0A98C}
+  .mailcard{padding:14px}
+  .mailcard .mc-head{display:flex;align-items:center;gap:10px;font-weight:600}
+  .mailcard .mc-sub{font-size:.8rem;color:var(--khaki);margin-top:4px}
+  .mailcard .connect{
+    display:block;width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;cursor:pointer;
+    background:var(--veld);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;
+  }
+  .mailcard .connect:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .mailrow{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line);font-size:.88rem}
+  .mailrow:first-of-type{margin-top:12px}
+  .mailrow .from{font-weight:600}
+  .mailrow .subj{color:var(--khaki);font-size:.8rem;margin-top:1px}
+  .mailrow .when{margin-left:auto;font-size:.72rem;color:var(--khaki);white-space:nowrap}
+  .bignum{font-family:'Archivo',sans-serif;font-weight:800;font-size:2.1rem}
+  .panel{padding:16px 14px}
+  .panel .sub{color:var(--khaki);font-size:.8rem;margin-top:3px}
+  .badge-ok{display:inline-flex;align-items:center;gap:6px;background:#EAF3EC;color:var(--good);font-size:.78rem;font-weight:600;padding:5px 10px;border-radius:20px;margin-top:10px}
+  /* ---------- WhatsApp-simulator ---------- */
+  .wa-fab{
+    position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:20;
+    width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--wa);color:#fff;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+  }
+  .wa-fab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .wa-sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:#EDE7DC;border-radius:18px 18px 0 0;
+    max-height:78vh;display:none;flex-direction:column;
+    box-shadow:0 -6px 30px rgba(0,0,0,.3);
+  }
+  .wa-sheet.open{display:flex}
+  .wa-head{
+    background:var(--wa);color:#fff;padding:14px 16px;border-radius:18px 18px 0 0;
+    display:flex;align-items:center;gap:10px;
+  }
+  .wa-head .t{font-weight:700}
+  .wa-head .s{font-size:.72rem;opacity:.85}
+  .wa-head .close{margin-left:auto;background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;padding:4px 8px}
+  .wa-body{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:8px}
+  .bub{max-width:82%;padding:9px 12px;border-radius:12px;font-size:.9rem;line-height:1.4;white-space:pre-line}
+  .bub.me{align-self:flex-end;background:#D7F4DE;border-bottom-right-radius:4px}
+  .bub.agent{align-self:flex-start;background:var(--card);border-bottom-left-radius:4px}
+  .bub .bt{font-size:.65rem;color:var(--khaki);margin-top:4px;text-align:right}
+  .wa-input{display:flex;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom))}
+  .wa-input input{
+    flex:1;padding:12px 14px;border-radius:22px;border:1.5px solid var(--line);
+    font-family:'Instrument Sans',sans-serif;font-size:.95rem;background:var(--card);
+  }
+  .wa-input input:focus{outline:2px solid var(--wa)}
+  .wa-input button{
+    width:46px;height:46px;border-radius:50%;border:none;background:var(--wa);color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .wa-hint{font-size:.7rem;color:var(--khaki);text-align:center;padding:0 16px 8px}
+  nav{
+    position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;z-index:10;
+  }
+  nav button{
+    flex:1;max-width:110px;background:none;border:none;cursor:pointer;
+    font-family:'Instrument Sans',sans-serif;font-size:.7rem;font-weight:600;color:var(--khaki);
+    padding:8px 2px 6px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  }
+  nav button.active{color:var(--veld);background:#EFF3EE}
+  nav button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  footer{text-align:center;color:var(--khaki);font-size:.72rem;padding:26px 16px 10px}
+  footer b{color:var(--veld)}
+  @media(min-width:760px){
+    .wrap{max-width:860px}
+    .tiles{gap:14px}
+    .tile .num{font-size:1.9rem}
+    .wa-sheet{left:auto;right:24px;width:420px;border-radius:18px;bottom:24px}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5V20h5.2v-5.8h5.6V20H20v-9.5"/><path d="M2.5 11 12 3l9.5 8"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.4 19.5c.6-3.2 2.9-5 5.6-5s5 1.8 5.6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.4c2.4.2 4.1 1.7 4.6 4.4"/></symbol>
+    <symbol id="i-cow" viewBox="0 0 24 24"><path d="M6.5 7.5C4.6 7.3 3.2 5.9 3 4"/><path d="M17.5 7.5c1.9-.2 3.3-1.6 3.5-3.5"/><path d="M7 7.5h10l1.4 5.8c.4 3.2-2.3 6.2-6.4 6.2s-6.8-3-6.4-6.2L7 7.5Z"/><path d="M9.8 15.8h.01M14.2 15.8h.01" stroke-width="2.4"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 21v-8"/><path d="M12 13c0-4.2 3.2-7.5 7.5-7.5 0 4.2-3.3 7.5-7.5 7.5Z"/><path d="M12 13c0-3.1-2.4-5.6-5.5-5.6 0 3.1 2.4 5.6 5.5 5.6Z"/></symbol>
+    <symbol id="i-rand" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.5 16.5v-9h3a2.7 2.7 0 0 1 0 5.4h-3m3 0 2.7 3.6"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.2 15.5v-5.3a5.8 5.8 0 1 1 11.6 0v5.3l1.6 2.7H4.6l1.6-2.7Z"/><path d="M10 21a2.1 2.1 0 0 0 4 0"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.8 7.2 8.2 5.8 8.2-5.8"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 4v-15Z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M3.5 11.5 20.5 4l-4.5 16-4.2-6.3L3.5 11.5Z"/><path d="m11.8 13.7 8.7-9.7"/></symbol>
+  </defs>
+</svg>
+<header>
+  <div class="wrap">
+    <div>
+      <div class="farm-name">Kruisrivier Boerdery</div>
+      <div class="farm-sub">Vrydag 31 Julie 2026 · NexAgri OS</div>
+    </div>
+    <div class="sync"><span class="dot"></span> Op datum</div>
+  </div>
+</header>
+<div class="status-strip">
+  <div class="wrap">
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Werkers vandag</div>
+        <div class="num" id="tile-workers">0</div>
+        <div class="note" id="tile-workers-note"></div>
+      </div>
+      <div class="tile">
+        <div class="label">Vee totaal</div>
+        <div class="num" id="tile-vee">0</div>
+        <div class="note" id="tile-vee-note"></div>
+      </div>
+      <div class="tile">
+        <div class="label">Netto · Julie</div>
+        <div class="num" id="tile-netto">R0</div>
+        <div class="note">inkomste − uitgawes</div>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="wrap">
+  <!-- ============ OORSIG ============ -->
+  <section id="oorsig" class="active">
+    <div class="sec-title">Take wat wag <span class="side">WhatsApp-herinneringe</span></div>
+    <div class="card" id="duetoday"></div>
+    <div class="sec-title">Vandag aangeteken</div>
+    <div class="card feed" id="mainfeed">
+      <div class="frow"><div class="time">14:32</div><div class="msg">Trekker 4 — 85L diesel — Land 12 geskoffel<br><span class="tag">Diesel-joernaal</span></div><div class="check">✓</div></div>
+      <div class="frow"><div class="time">06:30</div><div class="msg">Skape geskuif — Kamp 7 na Kamp 9 (128)<br><span class="tag">Weiding</span></div><div class="check">✓</div></div>
+    </div>
+    <div class="sec-title">E-pos</div>
+    <div class="card mailcard" id="mailcard"></div>
+  </section>
+  <!-- ============ WERKERS ============ -->
+  <section id="werkers">
+    <div class="sec-title">Werkers <span class="side">Week: Ma 27 Jul – So 2 Aug</span></div>
+    <div class="card" id="workerlist"></div>
+    <div class="sec-title">Weeklikse betaalstaat</div>
+    <div class="card paytotal" id="paylist"></div>
+  </section>
+  <!-- ============ VEE ============ -->
+  <section id="vee">
+    <div class="sec-title">Vee <span class="side">tik ’n tipe oop vir + / −</span></div>
+    <div class="card" id="herdlist"></div>
+    <div class="sec-title">Vee-verkope <span class="side">ook via WhatsApp: “verkoop 500kg bees @ 110”</span></div>
+    <div class="card" id="veesalelist"></div>
+    <div class="sec-title">Inent, Dip &amp; Kampe <span class="side">frekwensie &amp; WhatsApp</span></div>
+    <div class="card" id="veetasklist"></div>
+  </section>
+  <!-- ============ GEWASSE ============ -->
+  <section id="gewasse">
+    <div class="sec-title">Gewasse <span class="side">tik ’n gewas oop vir + / −</span></div>
+    <div class="card" id="croplist"></div>
+    <div class="sec-title">Gewas-verkope <span class="side">ook via WhatsApp: “verkoop 200kg tamaties @ 14.50”</span></div>
+    <div class="card" id="cropsalelist"></div>
+    <div class="sec-title">Water &amp; Spuit <span class="side">frekwensie &amp; WhatsApp</span></div>
+    <div class="card" id="croptasklist"></div>
+  </section>
+  <!-- ============ GELD ============ -->
+  <section id="geld">
+    <div class="card netto">
+      <div>
+        <div class="lbl">Netto · Julie</div>
+        <div class="amt" id="netto-amt">R 0</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lbl">In: <span id="netto-in">R0</span></div>
+        <div class="lbl" style="margin-top:4px">Uit: <span id="netto-uit">R0</span></div>
+      </div>
+    </div>
+    <div class="sec-title">Inkomste <span class="side">verkope vloei outomaties in</span></div>
+    <div class="card" id="incomelist"></div>
+    <div class="sec-title">Uitgawes <span class="side">Lone kom outomaties van Werkers</span></div>
+    <div class="card" id="expenselist"></div>
+    <div class="sec-title">Kwotasies &amp; Fakture <span class="side">PDF per e-pos of WhatsApp</span></div>
+    <div class="card" id="doclist"></div>
+    <div class="sec-title">Diesel &amp; BTW-joernaal <span class="side">stuur slip-foto op WhatsApp — dit log self</span></div>
+    <div class="card panel" id="dieselsummary"></div>
+    <div class="card" id="diesellist"></div>
+  </section>
+</main>
+<footer>Aangedryf deur <b>NexAgri OS</b> · NexAgent AI · Dashboard + WhatsApp, een stelsel</footer>
+<!-- WhatsApp-agent simulator -->
+<button class="wa-fab" id="wa-open" aria-label="Maak WhatsApp-agent oop"><svg class="ico"><use href="#i-chat"/></svg></button>
+<div class="wa-sheet" id="wa-sheet" role="dialog" aria-label="NexAgri OS WhatsApp-agent">
+  <div class="wa-head">
+    <svg class="ico"><use href="#i-chat"/></svg>
+    <div>
+      <div class="t">NexAgri Agent</div>
+      <div class="s">simulasie — wys hoe WhatsApp die dashboard opdateer</div>
+    </div>
+    <button class="close" id="wa-close" aria-label="Maak toe">×</button>
+  </div>
+  <div class="wa-body" id="wa-body"></div>
+  <div class="wa-hint">Probeer: “verkoop 500kg bees @ 110” · “slip” (brandstof-strokie) · “petrus het vandag gewerk” · “gedoen dip” · “foto”</div>
+  <div class="wa-input">
+    <input id="wa-text" type="text" placeholder="Tik soos op WhatsApp…" autocomplete="off">
+    <button id="wa-send" aria-label="Stuur"><svg class="ico"><use href="#i-send"/></svg></button>
+  </div>
+</div>
+<nav aria-label="Hoofnavigasie">
+  <button class="active" data-sec="oorsig"><svg class="ico"><use href="#i-home"/></svg>Oorsig</button>
+  <button data-sec="werkers"><svg class="ico"><use href="#i-users"/></svg>Werkers</button>
+  <button data-sec="vee"><svg class="ico"><use href="#i-cow"/></svg>Vee</button>
+  <button data-sec="gewasse"><svg class="ico"><use href="#i-sprout"/></svg>Gewasse</button>
+  <button data-sec="geld"><svg class="ico"><use href="#i-rand"/></svg>Geld</button>
+</nav>
+<script>
+// ============================================================================
+// STATE — bron van waarheid. In produksie lê dit in die databasis en BEIDE
+// die dashboard en die WhatsApp-agent lees/skryf dieselfde tabelle.
+// ============================================================================
+const DAE = ['Ma','Di','Wo','Do','Vr','Sa','So'];
+const DAE_VOL = ['Maandag','Dinsdag','Woensdag','Donderdag','Vrydag','Saterdag','Sondag'];
+const TODAY_IDX = 4;
+const MS_DAG = 86400000;
+let workers = [
+  {name:'Petrus',   rate:220, week:[1,1,1,1,0,0,0]},
+  {name:'Johannes', rate:220, week:[1,1,0,1,0,0,0]},
+  {name:'Maria',    rate:200, week:[1,1,1,1,0,0,0]},
+  {name:'Sipho',    rate:240, week:[0,1,1,1,0,0,0]},
+];
+let herd = [
+  {tipe:'Beeste',  nota:'Bonsmara', count:184},
+  {tipe:'Skape',   nota:'Dorper',   count:128},
+];
+let crops = [
+  {gewas:'Tamaties', plek:'Bed 3',   aantal:400, eenheid:'plante'},
+  {gewas:'Spinasie', plek:'Bed 1',   aantal:250, eenheid:'plante'},
+];
+let veeSales = [
+  {produk:'Bees',  kg:500, prys:110.00, datum:'29 Jul'},
+  {produk:'Skaap', kg:120, prys:96.50,  datum:'22 Jul'},
+];
+let cropSales = [
+  {produk:'Tamaties', kg:180, prys:14.50, datum:'28 Jul'},
+];
+let veeTasks = [
+  {naam:'Dip — Beeste',        detail:'Deltadip, hele kudde',  freq:14, next:addDays(new Date(),0), wa:true},
+  {naam:'Inent — Kalwers',     detail:'Multivax P',            freq:30, next:addDays(new Date(),6), wa:true},
+  {naam:'Skuif kampe — Skape', detail:'Kamp 9 → 11',           freq:7,  next:addDays(new Date(),2), wa:false},
+];
+let cropTasks = [
+  {naam:'Water — Tamaties', detail:'Bed 3 · 45 min drup',  freq:2,  next:addDays(new Date(),0), wa:true},
+  {naam:'Spuit — Tamaties', detail:'Koperoksichloried',    freq:10, next:addDays(new Date(),8), wa:true},
+];
+let income = [
+  {bron:'Kontrakwerk', nota:'skoffel, buurplaas', bedrag:25000},
+];
+let expenses = [
+  {bron:'Voer & lekke', nota:'', bedrag:18200},
+];
+// Diesel & BTW-joernaal — gelog deur slip-foto's op WhatsApp óf met die hand hier
+let dieselEntries = [
+  {datum:'31 Jul', voertuig:'Trekker 4', liter:85,  bedrag:1615.00, bron:'slip'},
+  {datum:'29 Jul', voertuig:'Bakkie',    liter:62,  bedrag:1178.00, bron:'slip'},
+  {datum:'26 Jul', voertuig:'Trekker 2', liter:120, bedrag:2280.00, bron:'hand'},
+];
+let openDieselE = null;
+const BTW = b => b*15/115; // BTW-komponent uit BTW-inklusiewe bedrag
+// Kwotasies & Fakture — PDF gestuur per e-pos of WhatsApp (backend via Make)
+let docs = [
+  {nr:'FK-001', tipe:'Faktuur',  klient:'Buurplaas — J. van Wyk', beskrywing:'Kontrakwerk: skoffel 12ha', bedrag:25000, datum:'22 Jul', status:'gestuur per e-pos'},
+  {nr:'KW-001', tipe:'Kwotasie', klient:'OVK',                    beskrywing:'14 speenkalwers',           bedrag:96400, datum:'29 Jul', status:'konsep'},
+];
+let docTeller = {Kwotasie:1, Faktuur:1};
+let openDoc = null;
+let mailConnected = false;
+let openWorker=null, openHerd=null, openCrop=null, openIncome=null, openExpense=null,
+    openVeeTask=null, openCropTask=null, openVeeSale=null, openCropSale=null;
+const R  = n => 'R ' + Math.round(n).toLocaleString('af-ZA').replace(/,/g,' ');
+const Rk = n => 'R' + n.toFixed(2).replace('.',',');
+const now = () => new Date().toLocaleTimeString('af-ZA',{hour:'2-digit',minute:'2-digit'});
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function fmtDate(d){ return d.toLocaleDateString('af-ZA',{day:'numeric',month:'short'}); }
+function todayStr(){ return fmtDate(new Date()); }
+function daysTo(d){ const t=new Date(); t.setHours(0,0,0,0); const x=new Date(d); x.setHours(0,0,0,0); return Math.round((x-t)/MS_DAG); }
+// ============================================================================
+// VERKOPE — kg × R/kg, redigeerbaar, vloei outomaties na Geld
+// ============================================================================
+function saleItem(arr, i, openIdx, setOpen, rerender, tagName){
+  const s = arr[i];
+  const tot = s.kg * s.prys;
+  const item = document.createElement('div');
+  item.className = 'item' + (openIdx===i ? ' open':'');
+  item.innerHTML = `
+    <div class="item-head" role="button" tabindex="0">
+      <div class="k">${s.produk}<small>${s.kg}kg × ${Rk(s.prys)}/kg · ${s.datum}</small></div>
+      <div class="v">${R(tot)}<span class="chev">▼</span></div>
+    </div>
+    <div class="item-body">
+      <div class="set-line" style="padding-bottom:0"><span class="lbl">Kilogram</span></div>
+      <div class="stepper compact">
+        <button class="minus kg-m" aria-label="Minus 50kg">−50</button>
+        <div class="mid"><input class="kg-i" type="number" inputmode="numeric" value="${s.kg}" aria-label="Kilogram"><div class="sub">kg</div></div>
+        <button class="plus kg-p" aria-label="Plus 50kg">+50</button>
+      </div>
+      <div class="set-line" style="padding-bottom:0"><span class="lbl">Prys per kg</span></div>
+      <div class="stepper compact">
+        <button class="minus pr-m" aria-label="Minus een rand">−1</button>
+        <div class="mid"><input class="pr-i" type="number" step="0.01" inputmode="decimal" value="${s.prys.toFixed(2)}" aria-label="Prys per kg"><div class="sub">R/kg</div></div>
+        <button class="plus pr-p" aria-label="Plus een rand">+1</button>
+      </div>
+      <div class="item-actions">
+        <button class="del">Verwyder verkoop</button>
+      </div>
+    </div>`;
+  const head = item.querySelector('.item-head');
+  const toggleOpen = ()=>{ setOpen(openIdx===i ? null : i); rerender(); };
+  head.addEventListener('click', toggleOpen);
+  head.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggleOpen();} });
+  item.querySelector('.kg-m').addEventListener('click', ()=>{ s.kg=Math.max(0,s.kg-50); rerender(); });
+  item.querySelector('.kg-p').addEventListener('click', ()=>{ s.kg+=50; rerender(); });
+  item.querySelector('.kg-i').addEventListener('change', e=>{ const v=parseFloat(e.target.value); if(!isNaN(v)&&v>=0){s.kg=v; logFeed(`Verkoop verander — ${s.produk} — ${s.kg}kg × ${Rk(s.prys)}/kg`, tagName);} rerender(); });
+  item.querySelector('.pr-m').addEventListener('click', ()=>{ s.prys=Math.max(0,+(s.prys-1).toFixed(2)); rerender(); });
+  item.querySelector('.pr-p').addEventListener('click', ()=>{ s.prys=+(s.prys+1).toFixed(2); rerender(); });
+  item.querySelector('.pr-i').addEventListener('change', e=>{ const v=parseFloat(e.target.value); if(!isNaN(v)&&v>=0){s.prys=+v.toFixed(2); logFeed(`Verkoop verander — ${s.produk} — ${s.kg}kg × ${Rk(s.prys)}/kg`, tagName);} rerender(); });
+  item.querySelector('.del').addEventListener('click', ()=>{
+    if(confirm(`Verwyder verkoop van ${s.produk}?`)){
+      logFeed(`Verkoop verwyder — ${s.produk} — ${s.kg}kg`, tagName);
+      arr.splice(i,1); setOpen(null); rerender();
+    }
+  });
+  return item;
+}
+function renderSales(){
+  // Vee
+  const vl = document.getElementById('veesalelist');
+  vl.innerHTML = '';
+  veeSales.forEach((s,i)=> vl.appendChild(saleItem(veeSales, i, openVeeSale, v=>openVeeSale=v, renderAll, 'Vee-verkope')));
+  vl.appendChild(saleAddRow(veeSales, 'Vee-verkope', herd.map(h=>h.tipe)));
+  // Gewasse
+  const cl = document.getElementById('cropsalelist');
+  cl.innerHTML = '';
+  cropSales.forEach((s,i)=> cl.appendChild(saleItem(cropSales, i, openCropSale, v=>openCropSale=v, renderAll, 'Gewas-verkope')));
+  cl.appendChild(saleAddRow(cropSales, 'Gewas-verkope', crops.map(c=>c.gewas)));
+}
+function saleAddRow(arr, tagName, opsies){
+  const add = document.createElement('div');
+  add.className = 'addrow four';
+  add.innerHTML = `
+    <select class="s-produk">${opsies.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>
+    <input class="s-kg" type="number" inputmode="numeric" placeholder="kg">
+    <input class="s-prys" type="number" step="0.01" inputmode="decimal" placeholder="R/kg">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const produk = add.querySelector('.s-produk').value;
+    const kg = parseFloat(add.querySelector('.s-kg').value);
+    const prys = parseFloat(add.querySelector('.s-prys').value);
+    if(!produk || isNaN(kg) || isNaN(prys)) return;
+    arr.unshift({produk, kg, prys:+prys.toFixed(2), datum:todayStr()});
+    logFeed(`Verkoop — ${kg}kg ${produk} × ${Rk(prys)}/kg = ${R(kg*prys)}`, tagName);
+    renderAll();
+  });
+  return add;
+}
+// ============================================================================
+// WHATSAPP-AGENT SIMULATOR
+// ============================================================================
+const waSheet = document.getElementById('wa-sheet');
+document.getElementById('wa-open').addEventListener('click', ()=>{ waSheet.classList.add('open'); document.getElementById('wa-text').focus(); });
+document.getElementById('wa-close').addEventListener('click', ()=> waSheet.classList.remove('open'));
+document.getElementById('wa-send').addEventListener('click', waSend);
+document.getElementById('wa-text').addEventListener('keydown', e=>{ if(e.key==='Enter') waSend(); });
+function bubble(text, who){
+  const b = document.createElement('div');
+  b.className = 'bub ' + who;
+  b.innerHTML = text.replace(/\n/g,'<br>') + `<div class="bt">${now()}</div>`;
+  const body = document.getElementById('wa-body');
+  body.appendChild(b);
+  body.scrollTop = body.scrollHeight;
+}
+let pending = null;
+function waSend(){
+  const inp = document.getElementById('wa-text');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+  bubble(text, 'me');
+  setTimeout(()=> agent(text), 350);
+}
+function agent(text){
+  const t = text.toLowerCase();
+  if(pending){
+    if(/^(ja|yes|reg|reg so|ok|okay|👍)$/.test(t)){
+      const p = pending; pending = null;
+      p.commit();
+      bubble(p.doneMsg, 'agent');
+      return;
+    }
+    if(/^(nee|no|kanselleer|cancel)$/.test(t)){
+      pending = null;
+      bubble('Reg, gekanselleer. Niks aangeteken nie.', 'agent');
+      return;
+    }
+    pending = null;
+  }
+  let m = t.match(/(?:verkoop|sold|sell)\s+(\d+(?:[.,]\d+)?)\s*kg\s+([a-zäëïöü\s]+?)\s*(?:@|teen|at|vir|x|×)\s*r?\s*(\d+(?:[.,]\d+)?)/i);
+  if(m){
+    const kg = parseFloat(m[1].replace(',','.'));
+    const produk = m[2].trim().replace(/^./,c=>c.toUpperCase());
+    const prys = parseFloat(m[3].replace(',','.'));
+    const isCrop = crops.some(c=>c.gewas.toLowerCase().includes(produk.toLowerCase())) ||
+                   cropSales.some(s=>s.produk.toLowerCase().includes(produk.toLowerCase()));
+    pending = {
+      commit(){
+        (isCrop?cropSales:veeSales).unshift({produk, kg, prys:+prys.toFixed(2), datum:todayStr()});
+        logFeedWA(`Verkoop — ${kg}kg ${produk} × ${Rk(prys)}/kg = ${R(kg*prys)}`, isCrop?'Gewas-verkope':'Vee-verkope');
+        renderAll();
+      },
+      doneMsg:`Aangeteken ✓\n${kg}kg ${produk} × ${Rk(prys)}/kg = ${R(kg*prys)}\nDit wys nou op die dashboard onder ${isCrop?'Gewas':'Vee'}-verkope en in Geld.`
+    };
+    bubble(`${kg}kg ${produk} teen ${Rk(prys)}/kg = ${R(kg*prys)} — reg so?`, 'agent');
+    return;
+  }
+  const w = workers.find(w=>t.includes(w.name.toLowerCase()));
+  if(w && /(gewerk|werk|here|hier)/.test(t)){
+    pending = {
+      commit(){ w.week[TODAY_IDX]=1; logFeedWA(`${w.name} — vandag gewerk`,'Werkers'); renderAll(); },
+      doneMsg:`Aangeteken ✓ ${w.name} werk vandag. Betaalstaat opgedateer.`
+    };
+    bubble(`${w.name} het vandag gewerk — reg so?`, 'agent');
+    return;
+  }
+  if(/gedoen|klaar|done/.test(t)){
+    const all = [...veeTasks, ...cropTasks];
+    const task = all.find(x=>t.includes(x.naam.split(' ')[0].toLowerCase().replace('—','').trim()) || x.naam.toLowerCase().split(/[\s—]+/).some(word=>word.length>3 && t.includes(word)));
+    if(task){
+      pending = {
+        commit(){
+          task.next = addDays(new Date(), task.freq);
+          logFeedWA(`Gedoen — ${task.naam} · volgende ${fmtDate(task.next)}`, 'Take');
+          renderAll();
+        },
+        doneMsg:`Aangeteken ✓ ${task.naam} gedoen. Volgende herinnering: ${fmtDate(task.next||new Date())}.`
+      };
+      bubble(`${task.naam} vandag gedoen — reg so?`, 'agent');
+      return;
+    }
+  }
+  if(/slip|strokie/.test(t)){
+    pending = {
+      commit(){
+        dieselEntries.unshift({datum:todayStr(), voertuig:'Trekker 4', liter:85, bedrag:1615.00, bron:'slip'});
+        logFeedWA(`Slip gelog — Trekker 4 — 85L — ${R(1615)} — BTW ${R(BTW(1615))}`,'Diesel-joernaal');
+        renderAll();
+      },
+      doneMsg:`Aangeteken ✓\n85L · R1 615,00 · BTW R210,65 · Trekker 4\nDit sit nou in jou Diesel & BTW-joernaal op die dashboard — oudit-gereed.`
+    };
+    bubble(`[VOORBEELD — in die regte stelsel stuur jy die foto van die slip self]\n\nEk lees van die slip:\n• BP Cradock · vandag\n• Diesel 50ppm — 85L\n• Bedrag: R1 615,00 (BTW R210,65 ingesluit)\n\nWatter voertuig? Ek neem aan Trekker 4 — reg so?`, 'agent');
+    return;
+  }
+  m = t.match(/(\d+)\s*l/i);
+  if(m && /diesel|trekker|bakkie/.test(t)){
+    const liter = parseInt(m[1],10);
+    const vm = t.match(/(trekker\s*\d+|bakkie|stroper)/i);
+    const voertuig = vm ? vm[1].replace(/^./,c=>c.toUpperCase()) : 'Onbekend';
+    pending = {
+      commit(){
+        dieselEntries.unshift({datum:todayStr(), voertuig, liter, bedrag:0, bron:'hand'});
+        logFeedWA(`Diesel — ${voertuig} — ${liter}L (bedrag: stuur die slip-foto)`,'Diesel-joernaal');
+        renderAll();
+      },
+      doneMsg:`Aangeteken ✓ ${liter}L — ${voertuig}. Stuur die slip-foto sodra jy kan, dan vul ek die bedrag en BTW in.`
+    };
+    bubble(`${liter}L diesel — ${voertuig} — reg so?`, 'agent');
+    return;
+  }
+  if(/foto|photo|prent/.test(t)){
+    bubble(`[VOORBEELD — in die regte stelsel stuur jy die foto self]\n\nEk sien geel kolle met bruin rande op die tamatieblare. Moontlik vroeë roes (early blight).\n\nVoorgestelde stappe:\n1. Verwyder aangetaste blare\n2. Spuit koperbespuiting binne 48h\n3. Moenie oorhoofs natgooi nie\n\nBelangrik: bevestig met jou agronoom of veearts voor behandeling — ek gee 'n voorlopige beoordeling, nie 'n finale diagnose nie.\n\nSal ek "Spuit — Tamaties" op jou takelys skuif na vandag?`, 'agent');
+    return;
+  }
+  if(/hoeveel|how many/.test(t)){
+    const h = herd.find(h=>t.includes(h.tipe.toLowerCase().slice(0,4)));
+    if(h){ bubble(`Jy het tans ${h.count} ${h.tipe.toLowerCase()} aangeteken.`, 'agent'); return; }
+    bubble(`Vee totaal: ${herd.reduce((s,h)=>s+h.count,0)} — ${herd.map(h=>`${h.count} ${h.tipe.toLowerCase()}`).join(', ')}.`, 'agent');
+    return;
+  }
+  bubble(`Ek het dit as 'n nota aangeteken. Jy kan ook probeer:\n• "verkoop 500kg bees @ 110"\n• "petrus het vandag gewerk"\n• "gedoen dip"`, 'agent');
+  logFeedWA(text, 'Nota');
+  renderAll();
+}
+function logFeedWA(msg, tag){
+  document.getElementById('mainfeed').insertAdjacentHTML('afterbegin',
+    `<div class="frow"><div class="time">${now()}</div><div class="msg">${msg}<br><span class="tag wa">WhatsApp</span> <span class="tag">${tag}</span></div><div class="check">✓</div></div>`);
+}
+// ============================================================================
+// TAKE
+// ============================================================================
+function taskItem(arr, i, openIdx, setOpen, rerender, tagName){
+  const t = arr[i];
+  const d = daysTo(t.next);
+  const pill = d < 0 ? `<span class="due-pill late">agterstallig</span>`
+             : d === 0 ? `<span class="due-pill due">vandag</span>`
+             : `<span class="due-pill ok">${fmtDate(t.next)}</span>`;
+  const item = document.createElement('div');
+  item.className = 'item' + (openIdx===i ? ' open':'');
+  item.innerHTML = `
+    <div class="item-head" role="button" tabindex="0">
+      <div class="k">${t.naam}<small>${t.detail} · elke ${t.freq} dae</small></div>
+      <div class="v">${pill}<span class="chev">▼</span></div>
+    </div>
+    <div class="item-body">
+      <div class="set-line">
+        <span class="lbl">Frekwensie</span>
+        <div class="freq-ctl">
+          <button class="minus" aria-label="Minder dae">−</button>
+          <span class="fval">elke ${t.freq} dae</span>
+          <button class="plus" aria-label="Meer dae">+</button>
+        </div>
+      </div>
+      <div class="set-line">
+        <span class="lbl"><svg class="ico sm"><use href="#i-bell"/></svg> WhatsApp-herinnering</span>
+        <button class="switch ${t.wa?'on':''}" role="switch" aria-checked="${t.wa}" aria-label="WhatsApp-herinnering"></button>
+      </div>
+      <div class="item-actions">
+        <button class="done-btn">Gedoen vandag ✓</button>
+        <button class="del">Verwyder</button>
+      </div>
+    </div>`;
+  const head = item.querySelector('.item-head');
+  const toggleOpen = ()=>{ setOpen(openIdx===i ? null : i); rerender(); };
+  head.addEventListener('click', toggleOpen);
+  head.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggleOpen();} });
+  item.querySelector('.freq-ctl .minus').addEventListener('click', ()=>{ t.freq=Math.max(1,t.freq-1); rerender(); });
+  item.querySelector('.freq-ctl .plus').addEventListener('click', ()=>{ t.freq+=1; rerender(); });
+  item.querySelector('.switch').addEventListener('click', ()=>{
+    t.wa = !t.wa;
+    logFeed(`WhatsApp-herinnering ${t.wa?'aan':'af'} — ${t.naam}`, tagName);
+    rerender();
+  });
+  item.querySelector('.done-btn').addEventListener('click', ()=>{
+    t.next = addDays(new Date(), t.freq);
+    logFeed(`Gedoen — ${t.naam}${t.wa?` · volgende WhatsApp ${fmtDate(t.next)}`:''}`, tagName);
+    setOpen(null); rerender();
+  });
+  item.querySelector('.del').addEventListener('click', ()=>{
+    if(confirm(`Verwyder "${t.naam}"?`)){
+      arr.splice(i,1); setOpen(null); rerender();
+    }
+  });
+  return item;
+}
+function renderTasks(){
+  const vl = document.getElementById('veetasklist');
+  vl.innerHTML = '';
+  veeTasks.forEach((t,i)=> vl.appendChild(taskItem(veeTasks, i, openVeeTask, v=>openVeeTask=v, renderAll, 'Vee-take')));
+  vl.appendChild(taskAddRow(veeTasks, 'bv. Doseer — Skape', 14, 'Vee-take'));
+  const cl = document.getElementById('croptasklist');
+  cl.innerHTML = '';
+  cropTasks.forEach((t,i)=> cl.appendChild(taskItem(cropTasks, i, openCropTask, v=>openCropTask=v, renderAll, 'Gewas-take')));
+  cl.appendChild(taskAddRow(cropTasks, 'bv. Water — Kool', 3, 'Gewas-take'));
+  renderDue();
+}
+function taskAddRow(arr, ph, defFreq, tagName){
+  const add = document.createElement('div');
+  add.className = 'addrow wide';
+  add.innerHTML = `
+    <input class="t-naam" type="text" placeholder="${ph}">
+    <input class="t-detail" type="text" placeholder="Detail / kamp / middel">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const naam = add.querySelector('.t-naam').value.trim();
+    const detail = add.querySelector('.t-detail').value.trim();
+    if(!naam) return;
+    arr.push({naam, detail:detail||'—', freq:defFreq, next:addDays(new Date(),defFreq), wa:true});
+    logFeed(`Nuwe taak — ${naam} · elke ${defFreq} dae · WhatsApp aan`, tagName);
+    renderAll();
+  });
+  return add;
+}
+function renderDue(){
+  const list = document.getElementById('duetoday');
+  list.innerHTML = '';
+  const all = [...veeTasks, ...cropTasks].filter(t=>daysTo(t.next)<=0)
+              .sort((a,b)=>daysTo(a.next)-daysTo(b.next));
+  if(all.length===0){
+    list.innerHTML = `<div style="padding:16px 14px;font-size:.9rem;color:var(--khaki)">Niks wag nie — alles op skedule ✓</div>`;
+    return;
+  }
+  all.forEach(t=>{
+    const d = daysTo(t.next);
+    const pill = d<0 ? `<span class="due-pill late">agterstallig</span>` : `<span class="due-pill due">vandag</span>`;
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = `
+      <div class="item-head" style="cursor:default">
+        <div class="k">${t.naam}<small>${t.detail}${t.wa?' · WhatsApp gestuur':''}</small></div>
+        <div class="v">${pill}</div>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+// ============================================================================
+// E-POS
+// ============================================================================
+function renderMail(){
+  const card = document.getElementById('mailcard');
+  if(!mailConnected){
+    card.innerHTML = `
+      <div class="mc-head"><svg class="ico"><use href="#i-mail"/></svg> Koppel jou e-pos</div>
+      <div class="mc-sub">Sien plaas-verwante e-posse (fakture, veilings, SARS) direk hier.</div>
+      <button class="connect">Koppel e-pos</button>`;
+    card.querySelector('.connect').addEventListener('click', ()=>{
+      mailConnected = true;
+      logFeed('E-pos gekoppel — boer@kruisrivier.co.za','E-pos');
+      renderMail();
+    });
+  }else{
+    card.innerHTML = `
+      <div class="mc-head"><svg class="ico"><use href="#i-mail"/></svg> boer@kruisrivier.co.za <span class="auto-pill" style="margin-left:auto">gekoppel</span></div>
+      <div class="mailrow"><div><div class="from">OVK</div><div class="subj">Faktuur — veiling 22 Julie</div></div><div class="when">10:14</div></div>
+      <div class="mailrow"><div><div class="from">SARS eFiling</div><div class="subj">Diesel-terugbetaling goedgekeur</div></div><div class="when">Gister</div></div>
+      <div class="mailrow"><div><div class="from">BKB</div><div class="subj">Volgende veiling: 8 Augustus</div></div><div class="when">Do</div></div>`;
+  }
+}
+// ============================================================================
+// GELD
+// ============================================================================
+function moneyItem(arr, i, openIdx, setOpen, rerender, tagName, kind){
+  const e = arr[i];
+  const item = document.createElement('div');
+  item.className = 'item' + (openIdx===i ? ' open':'');
+  item.innerHTML = `
+    <div class="item-head" role="button" tabindex="0">
+      <div class="k">${e.bron}${e.nota?`<small>${e.nota}</small>`:''}</div>
+      <div class="v">${R(e.bedrag)}<span class="chev">▼</span></div>
+    </div>
+    <div class="item-body">
+      <div class="stepper">
+        <button class="minus" aria-label="Minus honderd rand">−100</button>
+        <div class="mid">
+          <input type="number" inputmode="numeric" value="${e.bedrag}" aria-label="Bedrag in rand">
+          <div class="sub">rand</div>
+        </div>
+        <button class="plus" aria-label="Plus honderd rand">+100</button>
+      </div>
+      <div class="item-actions"><button class="del">Verwyder item</button></div>
+    </div>`;
+  const head = item.querySelector('.item-head');
+  const toggleOpen = ()=>{ setOpen(openIdx===i ? null : i); rerender(); };
+  head.addEventListener('click', toggleOpen);
+  head.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggleOpen();} });
+  const input = item.querySelector('.mid input');
+  item.querySelector('.stepper .minus').addEventListener('click', ()=>{ e.bedrag=Math.max(0,e.bedrag-100); rerender(); });
+  item.querySelector('.stepper .plus').addEventListener('click', ()=>{ e.bedrag+=100; rerender(); });
+  input.addEventListener('change', ()=>{
+    const v=parseInt(input.value,10);
+    if(!isNaN(v)&&v>=0){ e.bedrag=v; logFeed(`${kind} verander — ${e.bron} — ${R(v)}`, tagName); }
+    rerender();
+  });
+  item.querySelector('.del').addEventListener('click', ()=>{
+    if(confirm(`Verwyder "${e.bron}"?`)){ arr.splice(i,1); setOpen(null); rerender(); }
+  });
+  return item;
+}
+let openAuto = {};
+function autoRow(key, label, sub, amount, details){
+  const row = document.createElement('div');
+  row.className = 'item' + (openAuto[key] ? ' open':'');
+  row.innerHTML = `
+    <div class="item-head" role="button" tabindex="0">
+      <div class="k">${label}<small>${sub}</small></div>
+      <div class="v">${R(amount)}<span class="auto-pill">outo</span><span class="chev">▼</span></div>
+    </div>
+    <div class="item-body">
+      ${details.length ? details.map(d=>`
+        <div class="set-line" style="border-bottom:1px solid var(--line);padding:11px 0">
+          <span style="font-size:.9rem">${d.k}<small style="display:block;color:var(--khaki);font-size:.75rem">${d.sub||''}</small></span>
+          <span style="font-family:'Archivo',sans-serif;font-weight:700">${R(d.v)}</span>
+        </div>`).join('')
+      : `<div style="padding:12px 0;font-size:.85rem;color:var(--khaki)">Nog geen transaksies nie</div>`}
+    </div>`;
+  const head = row.querySelector('.item-head');
+  const toggle = ()=>{ openAuto[key] = !openAuto[key]; renderMoney(); };
+  head.addEventListener('click', toggle);
+  head.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+  return row;
+}
+function renderDocs(){
+  const list = document.getElementById('doclist');
+  list.innerHTML = '';
+  docs.forEach((d,i)=>{
+    const btw = d.bedrag*0.15, totaal = d.bedrag+btw;
+    const sent = d.status !== 'konsep';
+    const pill = sent ? `<span class="due-pill ok">${d.status}</span>` : `<span class="due-pill due">konsep</span>`;
+    const item = document.createElement('div');
+    item.className = 'item' + (openDoc===i ? ' open':'');
+    item.innerHTML = `
+      <div class="item-head" role="button" tabindex="0">
+        <div class="k">${d.nr} · ${d.klient}<small>${d.tipe} · ${d.beskrywing} · ${d.datum}</small></div>
+        <div class="v">${R(totaal)}${pill}<span class="chev">▼</span></div>
+      </div>
+      <div class="item-body">
+        <div class="set-line" style="padding-bottom:0"><span class="lbl">Bedrag (voor BTW)</span></div>
+        <div class="stepper compact">
+          <button class="minus" aria-label="Minus honderd rand">−100</button>
+          <div class="mid"><input type="number" step="0.01" inputmode="decimal" value="${d.bedrag.toFixed(2)}" aria-label="Bedrag voor BTW"><div class="sub">rand</div></div>
+          <button class="plus" aria-label="Plus honderd rand">+100</button>
+        </div>
+        <div class="set-line" style="padding:4px 0"><span class="lbl">BTW 15%</span><span style="font-family:'Archivo',sans-serif;font-weight:700">${R(btw)}</span></div>
+        <div class="set-line" style="padding:4px 0"><span class="lbl">Totaal</span><span style="font-family:'Archivo',sans-serif;font-weight:800;font-size:1.05rem">${R(totaal)}</span></div>
+        <div class="item-actions">
+          <button class="send-btn se">Stuur per e-pos</button>
+          <button class="send-btn sw">Stuur per WhatsApp</button>
+        </div>
+        <div class="item-actions">
+          ${d.tipe==='Kwotasie' ? '<button class="done-btn mf">Maak faktuur</button>' : ''}
+          <button class="del">Verwyder</button>
+        </div>
+      </div>`;
+    const head = item.querySelector('.item-head');
+    const toggle = ()=>{ openDoc = openDoc===i ? null : i; renderAll(); };
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggle();} });
+    const input = item.querySelector('.mid input');
+    item.querySelector('.stepper .minus').addEventListener('click', ()=>{ d.bedrag=Math.max(0,+(d.bedrag-100).toFixed(2)); renderAll(); });
+    item.querySelector('.stepper .plus').addEventListener('click', ()=>{ d.bedrag=+(d.bedrag+100).toFixed(2); renderAll(); });
+    input.addEventListener('change', ev=>{ const v=parseFloat(ev.target.value); if(!isNaN(v)&&v>=0){d.bedrag=+v.toFixed(2); logFeed(`${d.tipe} ${d.nr} verander — ${R(d.bedrag*1.15)} (BTW ingesluit)`,'Fakture');} renderAll(); });
+    item.querySelector('.se').addEventListener('click', ()=>{
+      d.status = 'gestuur per e-pos';
+      logFeed(`${d.tipe} ${d.nr} as PDF per e-pos gestuur aan ${d.klient} — ${R(d.bedrag*1.15)}`,'Fakture');
+      renderAll();
+    });
+    item.querySelector('.sw').addEventListener('click', ()=>{
+      d.status = 'gestuur per WhatsApp';
+      logFeed(`${d.tipe} ${d.nr} as PDF per WhatsApp gestuur aan ${d.klient} — ${R(d.bedrag*1.15)}`,'Fakture');
+      renderAll();
+    });
+    const mf = item.querySelector('.mf');
+    if(mf) mf.addEventListener('click', ()=>{
+      docTeller.Faktuur += 1;
+      const nr = 'FK-' + String(docTeller.Faktuur).padStart(3,'0');
+      docs.unshift({nr, tipe:'Faktuur', klient:d.klient, beskrywing:d.beskrywing, bedrag:d.bedrag, datum:todayStr(), status:'konsep'});
+      openDoc = 0;
+      logFeed(`Faktuur ${nr} geskep uit ${d.nr} — ${d.klient}`,'Fakture');
+      renderAll();
+    });
+    item.querySelector('.del').addEventListener('click', ()=>{
+      if(confirm(`Verwyder ${d.nr}?`)){
+        logFeed(`${d.tipe} ${d.nr} verwyder`,'Fakture');
+        docs.splice(i,1); openDoc=null; renderAll();
+      }
+    });
+    list.appendChild(item);
+  });
+  const add = document.createElement('div');
+  add.className = 'addrow doc';
+  add.innerHTML = `
+    <select class="doc-tipe"><option value="Kwotasie">Kwotasie</option><option value="Faktuur">Faktuur</option></select>
+    <input class="doc-klient" type="text" placeholder="Kliënt">
+    <input class="doc-beskrywing" type="text" placeholder="Beskrywing (bv. 20 baal lusern)">
+    <input class="doc-bedrag" type="number" step="0.01" inputmode="decimal" placeholder="Bedrag voor BTW">
+    <button class="go">Skep dokument</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const tipe = add.querySelector('.doc-tipe').value;
+    const klient = add.querySelector('.doc-klient').value.trim();
+    const beskrywing = add.querySelector('.doc-beskrywing').value.trim();
+    const bedrag = parseFloat(add.querySelector('.doc-bedrag').value);
+    if(!klient || !beskrywing || isNaN(bedrag)) return;
+    docTeller[tipe] += 1;
+    const nr = (tipe==='Kwotasie'?'KW-':'FK-') + String(docTeller[tipe]).padStart(3,'0');
+    docs.unshift({nr, tipe, klient, beskrywing, bedrag:+bedrag.toFixed(2), datum:todayStr(), status:'konsep'});
+    openDoc = 0;
+    logFeed(`${tipe} ${nr} geskep — ${klient} — ${R(bedrag*1.15)} (BTW ingesluit)`,'Fakture');
+    renderAll();
+  });
+  list.appendChild(add);
+}
+function renderDiesel(){
+  const totL   = dieselEntries.reduce((s,e)=>s+e.liter,0);
+  const totR   = dieselEntries.reduce((s,e)=>s+e.bedrag,0);
+  const totBTW = dieselEntries.reduce((s,e)=>s+BTW(e.bedrag),0);
+  const sum = document.getElementById('dieselsummary');
+  sum.innerHTML = `
+    <div class="bignum">${totL} L</div>
+    <div class="sub">Julie 2026 · ${dieselEntries.length} inskrywings · ${R(totR)} · BTW terugeisbaar: <b>${R(totBTW)}</b></div>
+    <div class="badge-ok">✓ Oudit-gereed — elke slip gelog met datum &amp; voertuig</div>`;
+  const list = document.getElementById('diesellist');
+  list.innerHTML = '';
+  dieselEntries.forEach((e,i)=>{
+    const item = document.createElement('div');
+    item.className = 'item' + (openDieselE===i ? ' open':'');
+    item.innerHTML = `
+      <div class="item-head" role="button" tabindex="0">
+        <div class="k">${e.voertuig}<small>${e.datum} · ${e.liter}L · BTW ${R(BTW(e.bedrag))}${e.bron==='slip'?' · slip-foto':''}</small></div>
+        <div class="v">${R(e.bedrag)}${e.bron==='slip'?'<span class="auto-pill">slip</span>':''}<span class="chev">▼</span></div>
+      </div>
+      <div class="item-body">
+        <div class="set-line" style="padding-bottom:0"><span class="lbl">Liter</span></div>
+        <div class="stepper compact">
+          <button class="minus l-m" aria-label="Minus 5 liter">−5</button>
+          <div class="mid"><input class="l-i" type="number" inputmode="numeric" value="${e.liter}" aria-label="Liter"><div class="sub">liter</div></div>
+          <button class="plus l-p" aria-label="Plus 5 liter">+5</button>
+        </div>
+        <div class="set-line" style="padding-bottom:0"><span class="lbl">Bedrag (BTW ingesluit)</span></div>
+        <div class="stepper compact">
+          <button class="minus b-m" aria-label="Minus vyftig rand">−50</button>
+          <div class="mid"><input class="b-i" type="number" step="0.01" inputmode="decimal" value="${e.bedrag.toFixed(2)}" aria-label="Bedrag"><div class="sub">rand</div></div>
+          <button class="plus b-p" aria-label="Plus vyftig rand">+50</button>
+        </div>
+        <div class="item-actions"><button class="del">Verwyder inskrywing</button></div>
+      </div>`;
+    const head = item.querySelector('.item-head');
+    const toggle = ()=>{ openDieselE = openDieselE===i ? null : i; renderAll(); };
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggle();} });
+    item.querySelector('.l-m').addEventListener('click', ()=>{ e.liter=Math.max(0,e.liter-5); renderAll(); });
+    item.querySelector('.l-p').addEventListener('click', ()=>{ e.liter+=5; renderAll(); });
+    item.querySelector('.l-i').addEventListener('change', ev=>{ const v=parseFloat(ev.target.value); if(!isNaN(v)&&v>=0){e.liter=v; logFeed(`Diesel verander — ${e.voertuig} — ${e.liter}L`,'Diesel-joernaal');} renderAll(); });
+    item.querySelector('.b-m').addEventListener('click', ()=>{ e.bedrag=Math.max(0,+(e.bedrag-50).toFixed(2)); renderAll(); });
+    item.querySelector('.b-p').addEventListener('click', ()=>{ e.bedrag=+(e.bedrag+50).toFixed(2); renderAll(); });
+    item.querySelector('.b-i').addEventListener('change', ev=>{ const v=parseFloat(ev.target.value); if(!isNaN(v)&&v>=0){e.bedrag=+v.toFixed(2); logFeed(`Diesel verander — ${e.voertuig} — ${R(e.bedrag)}`,'Diesel-joernaal');} renderAll(); });
+    item.querySelector('.del').addEventListener('click', ()=>{
+      if(confirm(`Verwyder ${e.voertuig} se inskrywing van ${e.datum}?`)){
+        logFeed(`Diesel-inskrywing verwyder — ${e.voertuig} — ${e.datum}`,'Diesel-joernaal');
+        dieselEntries.splice(i,1); openDieselE=null; renderAll();
+      }
+    });
+    list.appendChild(item);
+  });
+  const add = document.createElement('div');
+  add.className = 'addrow four';
+  add.innerHTML = `
+    <input class="d-voertuig" type="text" placeholder="Voertuig">
+    <input class="d-liter" type="number" inputmode="numeric" placeholder="Liter">
+    <input class="d-bedrag" type="number" step="0.01" inputmode="decimal" placeholder="Rand">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const voertuig = add.querySelector('.d-voertuig').value.trim();
+    const liter = parseFloat(add.querySelector('.d-liter').value);
+    const bedrag = parseFloat(add.querySelector('.d-bedrag').value);
+    if(!voertuig || isNaN(liter) || isNaN(bedrag)) return;
+    dieselEntries.unshift({datum:todayStr(), voertuig, liter, bedrag:+bedrag.toFixed(2), bron:'hand'});
+    logFeed(`Diesel — ${voertuig} — ${liter}L — ${R(bedrag)} — BTW ${R(BTW(bedrag))}`,'Diesel-joernaal');
+    renderAll();
+  });
+  list.appendChild(add);
+}
+function renderMoney(){
+  const veeTot  = veeSales.reduce((s,x)=>s+x.kg*x.prys,0);
+  const cropTot = cropSales.reduce((s,x)=>s+x.kg*x.prys,0);
+  const lone    = weekPayTotal();
+  const dieselTot = dieselEntries.reduce((s,e)=>s+e.bedrag,0);
+  const il = document.getElementById('incomelist');
+  il.innerHTML = '';
+  il.appendChild(autoRow('vee','Vee-verkope','outomaties uit Vee-oortjie · tik oop', veeTot,
+    veeSales.map(s=>({k:s.produk, sub:`${s.kg}kg × ${Rk(s.prys)}/kg · ${s.datum}`, v:s.kg*s.prys}))));
+  il.appendChild(autoRow('gewas','Gewas-verkope','outomaties uit Gewasse-oortjie · tik oop', cropTot,
+    cropSales.map(s=>({k:s.produk, sub:`${s.kg}kg × ${Rk(s.prys)}/kg · ${s.datum}`, v:s.kg*s.prys}))));
+  income.forEach((e,i)=> il.appendChild(moneyItem(income, i, openIncome, v=>openIncome=v, renderAll, 'Geld', 'Inkomste')));
+  const addI = document.createElement('div');
+  addI.className = 'addrow';
+  addI.innerHTML = `
+    <input class="i-bron" type="text" placeholder="Ander inkomste (bv. Huur)">
+    <input class="i-bedrag" type="number" inputmode="numeric" placeholder="Rand">
+    <button class="go">Voeg by</button>`;
+  addI.querySelector('.go').addEventListener('click', ()=>{
+    const bron = addI.querySelector('.i-bron').value.trim();
+    const n = parseInt(addI.querySelector('.i-bedrag').value,10);
+    if(!bron || isNaN(n)) return;
+    income.push({bron, nota:'', bedrag:n});
+    logFeed(`Inkomste bygevoeg — ${bron} — ${R(n)}`,'Geld');
+    renderAll();
+  });
+  il.appendChild(addI);
+  const el = document.getElementById('expenselist');
+  el.innerHTML = '';
+  el.appendChild(autoRow('lone','Lone dié week','outomaties uit Werkers-oortjie · tik oop', lone,
+    workers.map(w=>({k:w.name, sub:`${w.week.reduce((a,b)=>a+b,0)} dae × ${R(w.rate)}`, v:DAE.reduce((a,_,di)=>a+dayPay(w,di),0)}))));
+  el.appendChild(autoRow('diesel','Diesel','outomaties uit Diesel-joernaal · tik oop', dieselTot,
+    dieselEntries.map(e=>({k:e.voertuig, sub:`${e.datum} · ${e.liter}L · BTW ${R(BTW(e.bedrag))}`, v:e.bedrag}))));
+  expenses.forEach((e,i)=> el.appendChild(moneyItem(expenses, i, openExpense, v=>openExpense=v, renderAll, 'Geld', 'Uitgawe')));
+  const addE = document.createElement('div');
+  addE.className = 'addrow';
+  addE.innerHTML = `
+    <input class="e-bron" type="text" placeholder="Nuwe uitgawe (bv. Kunsmis)">
+    <input class="e-bedrag" type="number" inputmode="numeric" placeholder="Rand">
+    <button class="go">Voeg by</button>`;
+  addE.querySelector('.go').addEventListener('click', ()=>{
+    const bron = addE.querySelector('.e-bron').value.trim();
+    const n = parseInt(addE.querySelector('.e-bedrag').value,10);
+    if(!bron || isNaN(n)) return;
+    expenses.push({bron, nota:'', bedrag:n});
+    logFeed(`Uitgawe bygevoeg — ${bron} — ${R(n)}`,'Geld');
+    renderAll();
+  });
+  el.appendChild(addE);
+  const totIn  = veeTot + cropTot + income.reduce((s,e)=>s+e.bedrag,0);
+  const totUit = expenses.reduce((s,e)=>s+e.bedrag,0) + lone + dieselTot;
+  const netto  = totIn - totUit;
+  document.getElementById('netto-in').textContent  = R(totIn);
+  document.getElementById('netto-uit').textContent = R(totUit);
+  const amt = document.getElementById('netto-amt');
+  amt.textContent = R(netto);
+  amt.classList.toggle('neg', netto < 0);
+  document.getElementById('tile-netto').textContent = (netto<0?'−':'') + 'R' + Math.abs(netto/1000).toFixed(1).replace('.',',') + 'k';
+}
+// ============================================================================
+// WERKERS
+// ============================================================================
+function dayPay(w, di){
+  return w.week[di] ? (w.pay && w.pay[di]!=null ? w.pay[di] : w.rate) : 0;
+}
+function weekPayTotal(){
+  return workers.reduce((s,w)=> s + DAE.reduce((a,_,di)=>a+dayPay(w,di),0), 0);
+}
+function renderWorkers(){
+  const list = document.getElementById('workerlist');
+  list.innerHTML = '';
+  workers.forEach((w,i)=>{
+    if(!w.pay) w.pay = [null,null,null,null,null,null,null];
+    const days = w.week.reduce((a,b)=>a+b,0);
+    const pay = DAE.reduce((a,_,di)=>a+dayPay(w,di),0);
+    const item = document.createElement('div');
+    item.className = 'item' + (openWorker===i ? ' open':'');
+    item.innerHTML = `
+      <div class="item-head" role="button" tabindex="0">
+        <div class="k">${w.name}<small>${R(w.rate)}/dag · ${days} dae dié week</small></div>
+        <div class="v">${R(pay)}<span class="chev">▼</span></div>
+      </div>
+      <div class="item-body">
+        <div class="week-sub">Tik die dae wat ${w.name} gewerk het. Tik weer op 'n groen dag om net dié dag se bedrag te wysig.</div>
+        <div class="week">
+          ${DAE.map((d,di)=>`<button class="day ${w.week[di]?'on':''} ${di===TODAY_IDX?'today':''} ${w.editDay===di?'editing':''}" data-d="${di}">${d}</button>`).join('')}
+        </div>
+        ${w.editDay!=null && w.week[w.editDay]!=null ? (()=>{ const di=w.editDay; return `
+        <div class="day-edit-popup">
+          <div class="day-edit-head">${DAE_VOL[di]} se bedrag <button class="day-edit-close" aria-label="Maak toe">×</button></div>
+          <div class="rate-ctl small">
+            <button class="dp-minus" data-d="${di}" aria-label="Minus R10">−</button>
+            <input type="number" inputmode="numeric" class="dp-input" data-d="${di}" value="${dayPay(w,di)}" aria-label="Bedrag vir ${DAE_VOL[di]}">
+            <button class="dp-plus" data-d="${di}" aria-label="Plus R10">+</button>
+          </div>
+          <div class="day-edit-note">Slegs ${DAE_VOL[di]} se bedrag word gewysig — die res van die week bly ${R(w.rate)}/dag, tensy jy hulle ook apart wysig.</div>
+          <button class="day-edit-clear" data-d="${di}">Merk ${DAE_VOL[di]} as nie gewerk nie</button>
+        </div>`; })() : ''}
+        <div class="rate-line">
+          <span class="lbl">Dagloon (standaard vir nuwe dae)</span>
+          <div class="rate-ctl">
+            <button class="minus" aria-label="Minus R10">−</button>
+            <input type="number" inputmode="numeric" value="${w.rate}" aria-label="Dagloon in rand">
+            <button class="plus" aria-label="Plus R10">+</button>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="del">Verwyder werker</button>
+        </div>
+      </div>`;
+    const head = item.querySelector('.item-head');
+    const toggleOpen = ()=>{ openWorker = openWorker===i ? null : i; renderAll(); };
+    head.addEventListener('click', toggleOpen);
+    head.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleOpen();} });
+    item.querySelectorAll('.day').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const di = +btn.dataset.d;
+        if(!w.week[di]){
+          // day was off — mark worked at the standard rate, no popup yet
+          w.week[di] = 1;
+          w.pay[di] = w.rate;
+          w.editDay = null;
+        } else {
+          // day already worked — tapping it again opens/closes that day's amount editor
+          w.editDay = (w.editDay===di) ? null : di;
+        }
+        renderAll();
+      });
+    });
+    const closeBtn = item.querySelector('.day-edit-close');
+    if(closeBtn) closeBtn.addEventListener('click', ()=>{ w.editDay=null; renderAll(); });
+    const clearBtn = item.querySelector('.day-edit-clear');
+    if(clearBtn) clearBtn.addEventListener('click', ()=>{
+      const di = +clearBtn.dataset.d;
+      w.week[di] = 0; w.pay[di] = null; w.editDay = null;
+      renderAll();
+    });
+    item.querySelectorAll('.dp-minus').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const di = +btn.dataset.d;
+        w.pay[di] = Math.max(0, dayPay(w,di) - 10);
+        logFeed(`Dagbedrag gewysig — ${w.name} — ${DAE[di]} — ${R(w.pay[di])}`,'Werkers');
+        renderAll();
+      });
+    });
+    item.querySelectorAll('.dp-plus').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const di = +btn.dataset.d;
+        w.pay[di] = dayPay(w,di) + 10;
+        logFeed(`Dagbedrag gewysig — ${w.name} — ${DAE[di]} — ${R(w.pay[di])}`,'Werkers');
+        renderAll();
+      });
+    });
+    item.querySelectorAll('.dp-input').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const di = +inp.dataset.d;
+        const v = parseInt(inp.value,10);
+        if(!isNaN(v)&&v>=0){
+          w.pay[di] = v;
+          logFeed(`Dagbedrag gewysig — ${w.name} — ${DAE[di]} — ${R(v)}${v<w.rate?' (voorskot afgetrek)':''}`,'Werkers');
+        }
+        renderAll();
+      });
+    });
+    const rateInput = item.querySelector('.rate-ctl input');
+    item.querySelector('.rate-ctl .minus').addEventListener('click', ()=>{ w.rate=Math.max(0,w.rate-10); renderAll(); });
+    item.querySelector('.rate-ctl .plus').addEventListener('click', ()=>{ w.rate+=10; renderAll(); });
+    rateInput.addEventListener('change', ()=>{
+      const v = parseInt(rateInput.value,10);
+      if(!isNaN(v)&&v>=0){ w.rate=v; logFeed(`Dagloon verander — ${w.name} — ${R(v)}/dag`,'Werkers'); }
+      renderAll();
+    });
+    item.querySelector('.del').addEventListener('click', ()=>{
+      if(confirm(`Verwyder ${w.name}?`)){
+        logFeed(`Werker verwyder — ${w.name}`,'Werkers');
+        workers.splice(i,1); openWorker=null; renderAll();
+      }
+    });
+    list.appendChild(item);
+  });
+  const add = document.createElement('div');
+  add.className = 'addrow';
+  add.innerHTML = `
+    <input class="w-name" type="text" placeholder="Nuwe werker se naam">
+    <input class="w-rate" type="number" inputmode="numeric" placeholder="R/dag">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const name = add.querySelector('.w-name').value.trim();
+    const rate = parseInt(add.querySelector('.w-rate').value,10);
+    if(!name || isNaN(rate)) return;
+    workers.push({name, rate, week:[0,0,0,0,0,0,0], pay:[null,null,null,null,null,null,null]});
+    openWorker = workers.length-1;
+    logFeed(`Nuwe werker — ${name} — ${R(rate)}/dag`,'Werkers');
+    renderAll();
+  });
+  list.appendChild(add);
+  renderPay();
+}
+function renderPay(){
+  const pl = document.getElementById('paylist');
+  let total = 0, presentToday = 0;
+  pl.innerHTML = '';
+  workers.forEach(w=>{
+    const days = w.week.reduce((a,b)=>a+b,0);
+    const pay = DAE.reduce((a,_,di)=>a+dayPay(w,di),0);
+    total += pay;
+    if(w.week[TODAY_IDX]) presentToday++;
+    const hasAdvance = w.pay && w.pay.some((v,di)=> w.week[di] && v!=null && v!==w.rate);
+    pl.innerHTML += `<div class="lrow"><div class="k">${w.name} <small>${days} dae × ${R(w.rate)}${hasAdvance?' · voorskot afgetrek':''}</small></div><div class="v">${R(pay)}</div></div>`;
+  });
+  pl.innerHTML += `<div class="lrow"><div class="k"><b>TOTAAL DIÉ WEEK</b></div><div class="v"><b>${R(total)}</b></div></div>`;
+  document.getElementById('tile-workers').innerHTML = presentToday + '<span class="unit">/ ' + workers.length + '</span>';
+  document.getElementById('tile-workers-note').textContent = presentToday===0 ? 'Merk vandag (Vr) se dae' : presentToday + ' werk vandag';
+}
+// ============================================================================
+// VEE & GEWASSE (voorraad)
+// ============================================================================
+function renderHerd(){
+  const list = document.getElementById('herdlist');
+  list.innerHTML = '';
+  herd.forEach((h,i)=>{
+    const item = document.createElement('div');
+    item.className = 'item' + (openHerd===i ? ' open':'');
+    item.innerHTML = `
+      <div class="item-head" role="button" tabindex="0">
+        <div class="k">${h.tipe}${h.nota?`<small>${h.nota}</small>`:''}</div>
+        <div class="v">${h.count}<span class="chev">▼</span></div>
+      </div>
+      <div class="item-body">
+        <div class="stepper">
+          <button class="minus" aria-label="Minus een">−</button>
+          <div class="mid"><input type="number" inputmode="numeric" value="${h.count}" aria-label="Aantal"></div>
+          <button class="plus" aria-label="Plus een">+</button>
+        </div>
+        <div class="item-actions"><button class="del">Verwyder tipe</button></div>
+      </div>`;
+    const head = item.querySelector('.item-head');
+    const toggleOpen = ()=>{ openHerd = openHerd===i ? null : i; renderAll(); };
+    head.addEventListener('click', toggleOpen);
+    head.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleOpen();} });
+    const input = item.querySelector('.mid input');
+    item.querySelector('.stepper .minus').addEventListener('click', ()=>{ h.count=Math.max(0,h.count-1); renderAll(); });
+    item.querySelector('.stepper .plus').addEventListener('click', ()=>{ h.count+=1; renderAll(); });
+    input.addEventListener('change', ()=>{
+      const v=parseInt(input.value,10);
+      if(!isNaN(v)&&v>=0){ h.count=v; logFeed(`Getal reggestel — ${h.tipe} — ${v}`,'Kudde-register'); }
+      renderAll();
+    });
+    item.querySelector('.del').addEventListener('click', ()=>{
+      if(confirm(`Verwyder ${h.tipe} heeltemal?`)){
+        herd.splice(i,1); openHerd=null; renderAll();
+      }
+    });
+    list.appendChild(item);
+  });
+  const add = document.createElement('div');
+  add.className = 'addrow';
+  add.innerHTML = `
+    <input class="h-naam" type="text" placeholder="Nuwe tipe (bv. Varke, Hoenders)">
+    <input class="h-aantal" type="number" inputmode="numeric" placeholder="Aantal">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const naam = add.querySelector('.h-naam').value.trim();
+    const n = parseInt(add.querySelector('.h-aantal').value,10);
+    if(!naam || isNaN(n)) return;
+    herd.push({tipe:naam, nota:'', count:n});
+    openHerd = herd.length-1;
+    logFeed(`Nuwe tipe vee — ${n} ${naam}`,'Kudde-register');
+    renderAll();
+  });
+  list.appendChild(add);
+  const totaal = herd.reduce((s,h)=>s+h.count,0);
+  document.getElementById('tile-vee').textContent = totaal;
+  document.getElementById('tile-vee-note').textContent = herd.slice(0,3).map(h=>`${h.count} ${h.tipe.toLowerCase()}`).join(' · ');
+}
+function renderCrops(){
+  const list = document.getElementById('croplist');
+  list.innerHTML = '';
+  crops.forEach((c,i)=>{
+    const item = document.createElement('div');
+    item.className = 'item' + (openCrop===i ? ' open':'');
+    item.innerHTML = `
+      <div class="item-head" role="button" tabindex="0">
+        <div class="k">${c.gewas}<small>${c.plek}</small></div>
+        <div class="v">${c.aantal} ${c.eenheid}<span class="chev">▼</span></div>
+      </div>
+      <div class="item-body">
+        <div class="stepper">
+          <button class="minus" aria-label="Minus tien">−10</button>
+          <div class="mid"><input type="number" inputmode="numeric" value="${c.aantal}" aria-label="Hoeveelheid"><div class="sub">${c.eenheid}</div></div>
+          <button class="plus" aria-label="Plus tien">+10</button>
+        </div>
+        <div class="item-actions"><button class="del">Verwyder gewas</button></div>
+      </div>`;
+    const head = item.querySelector('.item-head');
+    const toggleOpen = ()=>{ openCrop = openCrop===i ? null : i; renderAll(); };
+    head.addEventListener('click', toggleOpen);
+    head.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleOpen();} });
+    const input = item.querySelector('.mid input');
+    item.querySelector('.stepper .minus').addEventListener('click', ()=>{ c.aantal=Math.max(0,c.aantal-10); renderAll(); });
+    item.querySelector('.stepper .plus').addEventListener('click', ()=>{ c.aantal+=10; renderAll(); });
+    input.addEventListener('change', ()=>{
+      const v=parseInt(input.value,10);
+      if(!isNaN(v)&&v>=0){ c.aantal=v; logFeed(`Hoeveelheid reggestel — ${c.gewas} — ${v} ${c.eenheid}`,'Gewasse'); }
+      renderAll();
+    });
+    item.querySelector('.del').addEventListener('click', ()=>{
+      if(confirm(`Verwyder ${c.gewas}?`)){ crops.splice(i,1); openCrop=null; renderAll(); }
+    });
+    list.appendChild(item);
+  });
+  const add = document.createElement('div');
+  add.className = 'addrow four';
+  add.innerHTML = `
+    <input class="c-gewas" type="text" placeholder="Gewas (bv. Kool)">
+    <input class="c-plek" type="text" placeholder="Bed">
+    <input class="c-aantal" type="number" inputmode="numeric" placeholder="Aantal">
+    <button class="go">Voeg by</button>`;
+  add.querySelector('.go').addEventListener('click', ()=>{
+    const gewas = add.querySelector('.c-gewas').value.trim();
+    const plek = add.querySelector('.c-plek').value.trim();
+    const n = parseInt(add.querySelector('.c-aantal').value,10);
+    if(!gewas || !plek || isNaN(n)) return;
+    crops.unshift({gewas, plek, aantal:n, eenheid:'plante'});
+    openCrop = 0;
+    logFeed(`Geplant — ${gewas} — ${plek} — ${n} plante`,'Gewasse');
+    renderAll();
+  });
+  list.appendChild(add);
+}
+// ============================================================================
+// HELPERS & NAV
+// ============================================================================
+function logFeed(msg, tag){
+  document.getElementById('mainfeed').insertAdjacentHTML('afterbegin',
+    `<div class="frow"><div class="time">${now()}</div><div class="msg">${msg}<br><span class="tag">${tag}</span></div><div class="check">✓</div></div>`);
+}
+function renderAll(){
+  renderWorkers();
+  renderHerd();
+  renderCrops();
+  renderSales();
+  renderTasks();
+  renderDocs();
+  renderDiesel();
+  renderMoney();
+}
+const tabs = document.querySelectorAll('nav button');
+const secs = document.querySelectorAll('main section');
+tabs.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    tabs.forEach(b=>b.classList.remove('active'));
+    secs.forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.sec).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+renderAll();
+renderMail();
+bubble('Môre! Ek is jou NexAgri-agent. Alles wat jy hier vir my sê, verskyn dadelik op die dashboard — en alles op die dashboard kan ek vir jou opsoek. Probeer: "verkoop 500kg bees @ 110"', 'agent');
+</script>
+</body>
+</html>
