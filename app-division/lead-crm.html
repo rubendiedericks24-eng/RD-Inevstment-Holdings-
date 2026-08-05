@@ -7,18 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Saira:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#000000;--surface:#0A0A0A;--surface2:#111111;
-  --border:rgba(255,255,255,.12);--border-dk:rgba(255,255,255,.22);
-  --text:#FFFFFF;--muted:rgba(255,255,255,.5);--subtle:rgba(255,255,255,.35);
-  --navy:#FFFFFF;--navy2:rgba(255,255,255,.85);--accent:#FFFFFF;
-  --green:#FFFFFF;--green-lt:rgba(255,255,255,.05);--green-border:rgba(255,255,255,.2);
-  --yellow:#FFB800;--amber:#FFB800;
-  --amber-lt:rgba(255,184,0,.06);--amber-border:rgba(255,184,0,.2);
-  --red:#FF3B3B;--red-lt:rgba(255,59,59,.04);--red-border:rgba(255,59,59,.25);
-  --blue:#4B9EFF;--blue-lt:rgba(75,158,255,.04);--blue-border:rgba(75,158,255,.2);
-  --purple:#A855F7;--purple-lt:rgba(168,85,247,.06);--purple-border:rgba(168,85,247,.2);
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --text:#0F172A;--muted:#475569;--subtle:#94A3B8;
+  --navy:#0F172A;--navy2:#334155;--accent:#0F172A;
+  --green:#16A34A;--green-lt:rgba(22,163,74,.07);--green-border:rgba(22,163,74,.25);
+  --yellow:#D97706;--amber:#D97706;
+  --amber-lt:rgba(217,119,6,.08);--amber-border:rgba(217,119,6,.25);
+  --red:#DC2626;--red-lt:rgba(220,38,38,.06);--red-border:rgba(220,38,38,.25);
+  --blue:#2563EB;--blue-lt:rgba(37,99,235,.06);--blue-border:rgba(37,99,235,.25);
+  --purple:#7C3AED;--purple-lt:rgba(124,58,237,.06);--purple-border:rgba(124,58,237,.25);
   --wa:#25D366;
-  --shadow:none;--shadow-md:0 4px 24px rgba(0,0,0,.6);--shadow-lg:0 8px 48px rgba(0,0,0,.8);
+  --shadow:0 1px 2px rgba(15,23,42,.04);--shadow-md:0 4px 24px rgba(15,23,42,.08);--shadow-lg:0 8px 48px rgba(15,23,42,.14);
   --disp:'Saira Condensed',sans-serif;--body:'Saira',sans-serif;--mono:'IBM Plex Mono',monospace;
   --radius:4px;--sidebar:230px;
 }
@@ -35,7 +35,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 }
 .sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
 .brand-row{display:flex;align-items:center;gap:10px}
-.brand-icon{width:28px;height:28px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon{width:28px;height:28px;background:rgba(15,23,42,.05);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .brand-icon svg{width:14px;height:14px}
 .brand-name{font-family:var(--disp);font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
 .brand-sub{font-family:var(--mono);font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
@@ -56,7 +56,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 .nav-item:hover{background:var(--bg);color:var(--text)}
 .nav-item.active{background:var(--surface2);color:var(--navy);border-left-color:var(--navy);font-weight:600}
 .nav-item .count{margin-left:auto;font-family:var(--mono);font-size:.65rem;background:var(--surface2);border:1px solid var(--border);padding:1px 7px;border-radius:12px;color:var(--muted)}
-.nav-item.active .count{background:#FFFFFF;color:#000000;border-color:#FFFFFF}
+.nav-item.active .count{background:#0F172A;color:#FFFFFF;border-color:#0F172A}
 .sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
 
 /* MAIN */
@@ -71,12 +71,12 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;text-decoration:none}
-.btn-primary{background:#FFFFFF;color:#000000;border:1.5px solid #FFFFFF}
-.btn-primary:hover{background:transparent;color:#FFFFFF;border-color:#FFFFFF}
+.btn-primary{background:#0F172A;color:#FFFFFF;border:1.5px solid #0F172A}
+.btn-primary:hover{background:transparent;color:#0F172A;border-color:#0F172A}
 .btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 .btn-outline:hover{background:var(--bg);border-color:var(--border-dk)}
-.btn-green{background:#FFFFFF;color:#000000}
-.btn-green:hover{background:rgba(255,255,255,.85);color:#000000}
+.btn-green{background:#0F172A;color:#FFFFFF}
+.btn-green:hover{background:#1E293B;color:#FFFFFF}
 .btn-red{background:var(--red);color:#fff}
 .btn-red:hover{background:#B91C1C}
 .btn-sm{padding:6px 11px;font-size:.78rem}
@@ -99,7 +99,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
 .filter-btn{padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all .1s}
 .filter-btn:hover{border-color:var(--border-dk);color:var(--text)}
-.filter-btn.active{background:#FFFFFF;color:#000000;border-color:#FFFFFF}
+.filter-btn.active{background:#0F172A;color:#FFFFFF;border-color:#0F172A}
 .search-wrap{margin-left:auto;position:relative}
 .search-wrap input{padding:6px 12px 6px 32px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.82rem;width:200px;outline:none}
 .search-wrap input:focus{border-color:var(--border-dk);box-shadow:0 0 0 3px rgba(15,23,42,.06)}
@@ -192,13 +192,13 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
 }
 .lexi-dot{width:8px;height:8px;background:#22C55E;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.15)}}
-.lexi-text{font-size:.82rem;color:rgba(255,255,255,.7)}
+.lexi-text{font-size:.82rem;color:rgba(15,23,42,.7)}
 .lexi-text strong{font-weight:600}
 
 /* TOAST */
 .toast{
   position:fixed;bottom:24px;right:24px;
-  background:var(--surface2);border:1px solid rgba(255,255,255,.15);color:var(--text);
+  background:var(--surface2);border:1px solid rgba(15,23,42,.12);color:var(--text);
   padding:10px 16px;border-radius:8px;
   font-size:.82rem;font-weight:500;
   z-index:999;box-shadow:var(--shadow-md);

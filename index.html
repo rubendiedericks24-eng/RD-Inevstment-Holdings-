@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NexAgri OS — WhatsApp AI for South African Farmers | NexAgent AI</title>
-<meta name="description" content="NexAgri OS runs your farm from one WhatsApp number: log sales, worker hours, diesel & VAT, herd and crops — no app, no typing. Built by NexAgent AI for South African farmers.">
+<title>Farmer's OS — WhatsApp AI for South African Farmers | NexAgent AI</title>
+<meta name="description" content="Farmer's OS runs your farm from one WhatsApp number: log sales, worker hours, diesel & VAT, herd and crops — no app, no typing. Built by NexAgent AI for South African farmers.">
 <link rel="canonical" href="https://rdinvestmentholdings.co.za/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,8 +12,8 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Organization","@id":"https://rdinvestmentholdings.co.za/#org","name":"RD Investment Holdings (Pty) Ltd","identifier":"2026/237915/07","url":"https://rdinvestmentholdings.co.za/","telephone":"+27728400352","address":{"@type":"PostalAddress","addressLocality":"Gqeberha","addressCountry":"ZA"},"brand":{"@type":"Brand","name":"NexAgent AI"}},
-{"@type":"Product","name":"NexAgri OS","brand":{"@type":"Brand","name":"NexAgent AI"},"offers":{"@type":"Offer","price":"999","priceCurrency":"ZAR","description":"R999 per month, no setup fee","availability":"https://schema.org/InStock","seller":{"@id":"https://rdinvestmentholdings.co.za/#org"}}},
-{"@type":"Product","name":"NexAgent OS","brand":{"@type":"Brand","name":"NexAgent AI"},"offers":{"@type":"Offer","price":"2499","priceCurrency":"ZAR","description":"R2,499 per month, no setup fee","availability":"https://schema.org/InStock","seller":{"@id":"https://rdinvestmentholdings.co.za/#org"}}}
+{"@type":"Product","name":"Farmer's OS","brand":{"@type":"Brand","name":"NexAgent AI"},"offers":{"@type":"Offer","price":"999","priceCurrency":"ZAR","description":"R999 per month (Founder's Discount, down from R1,199), no setup fee","availability":"https://schema.org/InStock","seller":{"@id":"https://rdinvestmentholdings.co.za/#org"}}},
+{"@type":"Product","name":"NexAgent OS","brand":{"@type":"Brand","name":"NexAgent AI"},"offers":{"@type":"Offer","price":"1999","priceCurrency":"ZAR","description":"R1,999 per month (Founder's Discount, down from R2,499), no setup fee","availability":"https://schema.org/InStock","seller":{"@id":"https://rdinvestmentholdings.co.za/#org"}}}
 ]}
 </script>
 <style>
@@ -59,6 +59,7 @@ nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-bac
   linear-gradient(180deg, rgba(21,43,30,0) 0%, rgba(21,43,30,.5) 60%, var(--veld-deep) 100%),
   repeating-linear-gradient(100deg, rgba(250,248,243,.035) 0px, rgba(250,248,243,.035) 2px, transparent 2px, transparent 34px),
   linear-gradient(160deg, #24462F 0%, #1B3624 45%, var(--veld-deep) 100%)}
+.hero .wrap{position:relative;z-index:2}
 .hero .kicker{margin-bottom:22px}
 .hero .sub{margin:26px auto 42px}
 .scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--khaki);text-transform:uppercase;z-index:2}
@@ -79,6 +80,34 @@ nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-bac
 .panel .price-line{font-family:var(--mono);font-size:16px;color:var(--amber);margin:22px 0 34px;letter-spacing:.04em}
 .panel .price-line span{color:var(--khaki)}
 .badge-soon{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:6px 14px;margin:22px 0 30px;border-radius:20px}
+.price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.price-orig{font-family:var(--mono);color:var(--khaki);text-decoration:line-through;font-size:15px}
+.price-badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:4px 10px;border-radius:20px;white-space:nowrap}
+.hero-sme{background:var(--veld-deep) !important;color:var(--white) !important;--khaki:#B9C4AC;--line:rgba(250,248,243,.16)}
+/* NexAgent OS sections — themed to match privacy-policy.html / terms.html (light slate/white, navy accent) instead of the Farmer's OS cream/veld theme. Note: privacy-policy.html's --green (#25D366) is only ever used for ::selection — its real visible accent throughout headings/borders/buttons is navy (#0F172A), so navy is used here as --pp-accent to genuinely match, not just reuse the unused green token. */
+:root{--pp-bg:#F8FAFC;--pp-surface:#FFFFFF;--pp-surface2:#F1F5F9;--pp-border:#E2E8F0;--pp-border-dk:#CBD5E1;--pp-text:#0F172A;--pp-muted:#475569;--pp-subtle:#94A3B8;--pp-accent:#0F172A}
+.hero-sme{background:var(--pp-bg) !important;color:var(--pp-text) !important}
+.hero-sme .field-bg{display:none}
+.hero-sme .kicker{color:var(--pp-accent)}
+.hero-sme .sub{color:var(--pp-muted)}
+.hero-sme .btn-solid{background:var(--pp-accent);border-color:var(--pp-accent);color:#fff}
+.hero-sme .btn-solid:hover{background:transparent;color:var(--pp-accent)}
+#sme-details.panel{background:var(--pp-bg);border-color:var(--pp-border)}
+#sme-details .kicker{color:var(--pp-accent)}
+#sme-details .h-panel{color:var(--pp-text)}
+#sme-details .sub{color:var(--pp-muted)}
+#sme-details .checklist{color:var(--pp-muted)}
+#sme-details .checklist b{color:var(--pp-accent)}
+#sme-details .price-line{color:var(--pp-accent)}
+#sme-details .price-line span{color:var(--pp-muted)}
+#sme-details .price-orig{color:var(--pp-subtle)}
+#sme-details .price-badge{background:var(--pp-accent);color:#fff}
+#sme-details .btn-solid{background:var(--pp-accent);border-color:var(--pp-accent);color:#fff}
+#sme-details .btn-solid:hover{background:transparent;color:var(--pp-accent)}
+#sme-sequence.panel{background:var(--pp-surface2);border-color:var(--pp-border)}
+#sme-sequence .kicker{color:var(--pp-accent)}
+#sme-sequence .h-panel{color:var(--pp-text)}
+#sme-sequence .sub{color:var(--pp-muted)}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.show{opacity:1;transform:none}
 .checklist{font-family:var(--mono);font-size:13.5px;color:var(--khaki);display:grid;gap:10px;margin:30px 0 38px;max-width:560px}
@@ -167,7 +196,7 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
   <div class="nav-in">
     <a class="brand" href="#top">NexAgent<b>·AI</b></a>
     <div class="nav-links">
-      <a href="#agri">NexAgri OS</a>
+      <a href="#agri">Farmer's OS</a>
       <a href="#sequence">Live Sequence</a>
       <a href="#sme">For SMEs</a>
       <a href="#contact">Contact</a>
@@ -179,7 +208,7 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
   <div class="wrap">
     <div class="kicker">NexAgent AI · Gqeberha, South Africa</div>
     <h1 class="h-giant">Run your farm<br>from WhatsApp.</h1>
-    <p class="sub" style="margin-left:auto;margin-right:auto">NexAgri OS logs sales, worker hours, diesel &amp; VAT, herd and crops the moment you tell it — no app, no typing, no admin evening. Built for South African farmers by someone who grew up on the land.</p>
+    <p class="sub" style="margin-left:auto;margin-right:auto">Farmer's OS logs sales, worker hours, diesel &amp; VAT, herd and crops the moment you tell it — no app, no typing, no admin evening. Built for South African farmers by someone who grew up on the land.</p>
     <a class="btn btn-solid" href="#agri">See how it works</a>
   </div>
   <div class="scroll-cue">Scroll</div>
@@ -197,17 +226,22 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
   <div class="wrap">
     <div class="reveal">
       <div class="kicker">Flagship · farm operations</div>
-      <h2 class="h-panel">NexAgri OS</h2>
+      <h2 class="h-panel">Farmer's OS</h2>
       <p class="sub">One WhatsApp number runs the whole farm. Text it or send a photo — the AI agent understands what you mean, reads it back to confirm, then logs it. Not a chatbot with menus. A real agent that acts. A companion dashboard mirrors everything for when you want the full picture on your phone.</p>
       <div class="checklist">
-        <div><b>Vee &amp; Gewasse</b> herd and crop counts, updated straight from WhatsApp</div>
-        <div><b>Verkope</b> livestock and crop sales — flows straight into income, no double entry</div>
-        <div><b>Werkers</b> worker hours logged by text, weekly payroll calculated automatically</div>
-        <div><b>Diesel &amp; BTW</b> send a photo of the slip — logged, VAT extracted, audit-ready</div>
-        <div><b>Take</b> dip, inoculation, spraying and camp-rotation reminders sent on schedule</div>
-        <div><b>Foto-diagnose</b> photo of a sick animal or crop gets a first-line read — always refer to your vet or agronomist to confirm</div>
+        <div><b>Livestock &amp; Crops</b> herd and crop counts, updated straight from WhatsApp</div>
+        <div><b>Sales</b> livestock and crop sales — flows straight into income, no double entry</div>
+        <div><b>Workers</b> worker hours logged by text, weekly payroll calculated automatically</div>
+        <div><b>Diesel &amp; VAT</b> send a photo of the slip — logged, VAT extracted, audit-ready</div>
+        <div><b>Tasks</b> dip, inoculation, spraying and camp-rotation reminders sent on schedule</div>
+        <div><b>Photo Diagnosis</b> photo of a sick animal or crop gets a first-line read — always refer to your vet or agronomist to confirm</div>
       </div>
-      <div class="price-line">R999/month <span>· no setup fee · one WhatsApp number, full farm coverage</span></div>
+      <div class="price-line">
+        <span class="price-orig">R1,199</span>
+        <span>R999/month</span>
+        <span class="price-badge">Founder's Discount · 17% off</span>
+        <span>· no setup fee · one WhatsApp number, full farm coverage</span>
+      </div>
       <a class="btn btn-solid" href="#contact">Book a demo</a>
     </div>
   </div>
@@ -220,11 +254,11 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
       <p class="sub">One real exchange, end to end: you text a sale, the agent reads it back to confirm, then it's on the dashboard and rolled into your income — before you've put your phone down.</p>
     </div>
     <div class="reveal">
-      <div class="phone" aria-label="Demo WhatsApp conversation showing NexAgri OS logging a livestock sale">
+      <div class="phone" aria-label="Demo WhatsApp conversation showing Farmer's OS logging a livestock sale">
         <div class="phone-top">
           <div class="avatar">NA</div>
           <div>
-            <div class="who">NexAgri Agent</div>
+            <div class="who">Farmer's OS Agent</div>
             <div class="status">WHATSAPP · ONLINE 24/7</div>
           </div>
         </div>
@@ -243,21 +277,68 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
     </div>
   </div>
 </section>
-<section class="panel" id="sme">
+<section class="hero hero-sme" id="sme">
+  <div class="field-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="kicker">NexAgent AI · SME Operations</div>
+    <h1 class="h-giant">Run your business<br>from WhatsApp.</h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">NexAgent OS handles quotes, job cards, invoicing, stock, payroll and leads — the same proven AI-and-WhatsApp approach as Farmer's OS, built for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
+    <a class="btn btn-solid" href="#sme-details">See the modules</a>
+  </div>
+</section>
+<section class="panel" id="sme-details">
   <div class="wrap">
     <div class="reveal">
-      <div class="kicker">Also available · SME operations</div>
+      <div class="kicker">SME operations · eight modules</div>
       <h2 class="h-panel">NexAgent OS</h2>
-      <p class="sub">The same proven AI-and-WhatsApp approach, built for South African SME owners — workshops, dealerships, cleaning companies, and more. Eight modules, one pipeline, from first enquiry to money in your account.</p>
+      <p class="sub">One pipeline, from first enquiry to money in your account.</p>
       <div class="checklist">
         <div><b>M1</b> WhatsApp AI intake — answers customers day and night</div>
         <div><b>M2</b> Quote Generator — VAT-compliant, sent in seconds</div>
         <div><b>M3</b> Job Card Tracker — opens on acceptance, notifies on completion</div>
+        <div><b>M4</b> Inventory &amp; Stock Manager — live stock levels, no manual counts</div>
+        <div><b>M5</b> Staff Timesheet &amp; Payroll — hours logged, payroll calculated automatically</div>
         <div><b>M6</b> Invoice &amp; Payments — issues, logs, chases overdue</div>
+        <div><b>M7</b> Operations Dashboard — the whole business on one screen</div>
         <div><b>M8</b> Lead CRM — every prospect captured, none lost</div>
       </div>
-      <div class="price-line">R2,499/month <span>· no setup fee · all eight modules · support included</span></div>
+      <div class="price-line">
+        <span class="price-orig">R2,499</span>
+        <span>R1,999/month</span>
+        <span class="price-badge">Founder's Discount · 20% off</span>
+        <span>· no setup fee · all eight modules · support included</span>
+      </div>
       <a class="btn btn-solid" href="#contact" style="margin-top:6px">Book a demo</a>
+    </div>
+  </div>
+</section>
+<section class="panel alt sequence" id="sme-sequence">
+  <div class="wrap seq-grid">
+    <div class="reveal">
+      <div class="kicker">How a message becomes a job card</div>
+      <h2 class="h-panel">Tell it once.<br>It's quoted.</h2>
+      <p class="sub">One real exchange, end to end: a customer asks for a quote, the agent confirms it, and it's logged as a job — before they've put their phone down.</p>
+    </div>
+    <div class="reveal">
+      <div class="phone" aria-label="Demo WhatsApp conversation showing NexAgent OS generating a quote">
+        <div class="phone-top">
+          <div class="avatar">NA</div>
+          <div>
+            <div class="who">NexAgent OS Agent</div>
+            <div class="status">WHATSAPP · ONLINE 24/7</div>
+          </div>
+        </div>
+        <div class="chat" id="chat-sme">
+          <div class="msg in">Hi, can I get a quote for brake pads — VW Polo 2019</div>
+          <div class="msg out">Front brake pads for a 2019 VW Polo, got it. What's your name and number so we can confirm?</div>
+          <div class="msg in">Sipho Nkosi, 082 555 1234</div>
+          <div class="msg sys"><b>QUOTE READY ✓</b> Sipho Nkosi · Brake pads (front) · <span class="money">R1,450</span></div>
+          <div class="msg in">yes please</div>
+          <div class="msg out">Quote accepted — job card opened, we'll be in touch to book you in.</div>
+          <div class="msg brief"><span class="t">DASHBOARD</span>Job card created and invoice queued — see it live on the operations dashboard.</div>
+        </div>
+        <button class="replay" id="replay-sme" type="button">↻ Replay sequence</button>
+      </div>
     </div>
   </div>
 </section>
@@ -265,16 +346,16 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
   <div class="wrap">
     <div class="kicker" style="margin-bottom:14px">Questions people ask</div>
     <details>
-      <summary>What exactly is NexAgri OS?</summary>
+      <summary>What exactly is Farmer's OS?</summary>
       <p>A WhatsApp-first farm operations system. You text it or send a photo, and a real AI agent — not a fixed-menu chatbot — understands what you mean, reads it back to confirm, then logs it: herd and crop tracking, worker hours, livestock and crop sales, a SARS-ready diesel &amp; VAT journal, task reminders, and quotes/invoices. A companion dashboard mirrors everything on your phone for when you want the full picture.</p>
     </details>
     <details>
-      <summary>What does NexAgri OS cost?</summary>
-      <p>R999 per month, no setup fee. One WhatsApp number covers the whole farm.</p>
+      <summary>What does Farmer's OS cost?</summary>
+      <p>R999 per month — Founder's Discount, down from R1,199 (17% off), no setup fee. One WhatsApp number covers the whole farm.</p>
     </details>
     <details>
       <summary>What does NexAgent OS (for SMEs) cost?</summary>
-      <p>R2,499 per month, no setup fee. All eight modules, support included.</p>
+      <p>R1,999 per month — Founder's Discount, down from R2,499 (20% off), no setup fee. All eight modules, support included.</p>
     </details>
     <details>
       <summary>Do I need to change my WhatsApp number?</summary>
@@ -295,7 +376,7 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
     <div class="reveal">
       <div class="kicker">Contact</div>
       <h2 class="h-panel">Get in touch<br>about your farm.</h2>
-      <p class="sub" style="margin:18px 0 34px">Tell us about your operation — herd, crops, or both — and we'll be in touch as NexAgri OS opens for early access. SME enquiries welcome too.</p>
+      <p class="sub" style="margin:18px 0 34px">Tell us about your operation — herd, crops, or both — and we'll be in touch as Farmer's OS opens for early access. SME enquiries welcome too.</p>
       <div class="c-item"><div class="l">Phone / WhatsApp</div><div class="v"><a href="https://wa.me/27728400352">+27 72 840 0352</a></div></div>
       <div class="c-item"><div class="l">Email</div><div class="v"><a href="mailto:rubendiedericks24@gmail.com">rubendiedericks24@gmail.com</a></div></div>
       <div class="c-item"><div class="l">Location</div><div class="v">Gqeberha, South Africa</div></div>
@@ -307,7 +388,7 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
       <input type="text" name="business" placeholder="Farm / business name" aria-label="Farm or business name">
       <select name="interest" aria-label="What are you interested in?">
         <option value="">What are you interested in?</option>
-        <option value="NexAgri OS — Farm">NexAgri OS — Farm operations</option>
+        <option value="Farmer's OS — Farm">Farmer's OS — Farm operations</option>
         <option value="NexAgent OS — SME">NexAgent OS — SME operations</option>
         <option value="Not sure yet">Not sure yet</option>
       </select>
@@ -340,8 +421,10 @@ addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passi
   const io=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.2});
   els.forEach(e=>io.observe(e));
 })();
-(function(){
-  const msgs=[...document.querySelectorAll('#chat .msg')];
+function initChatSequence(chatId,replayId){
+  const chatEl=document.getElementById(chatId);
+  if(!chatEl)return;
+  const msgs=[...chatEl.querySelectorAll('.msg')];
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   let timers=[];
   function play(){
@@ -351,9 +434,12 @@ addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passi
     msgs.forEach((m,i)=>timers.push(setTimeout(()=>m.classList.add('show'),500+i*950)));
   }
   const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){play();io.disconnect()}},{threshold:.35});
-  io.observe(document.getElementById('chat'));
-  document.getElementById('replay').addEventListener('click',play);
-})();
+  io.observe(chatEl);
+  const replayBtn=document.getElementById(replayId);
+  if(replayBtn)replayBtn.addEventListener('click',play);
+}
+initChatSequence('chat','replay');
+initChatSequence('chat-sme','replay-sme');
 (function(){
   const WEBHOOK_URL='https://hook.us2.make.com/1jwaheml9625nibctelkwe4ahs42pcgp';
   const form=document.getElementById('leadform'),ok=document.getElementById('formok');
