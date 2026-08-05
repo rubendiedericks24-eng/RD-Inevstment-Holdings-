@@ -83,31 +83,13 @@ nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-bac
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
 .price-orig{font-family:var(--mono);color:var(--khaki);text-decoration:line-through;font-size:15px}
 .price-badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:4px 10px;border-radius:20px;white-space:nowrap}
+/* NexAgent OS sections (.hero-sme, #sme-details, #sme-sequence) intentionally have NO color overrides —
+   2026-08-05 final: the whole of index.html must look the same (one consistent green/beige/amber theme).
+   They fall back to the exact same rules Farmer's OS sections already use: .hero-sme picks up the plain
+   .hero dark-green style below, and #sme-details/#sme-sequence pick up .site-light .panel's cream background
+   plus the global amber .kicker/.checklist b rules — identical treatment to #agri/#sequence, no separate palette.
+   "White" only applies to the separate app-division module HTML files, not to anything inside index.html. */
 .hero-sme{background:var(--veld-deep) !important;color:var(--white) !important;--khaki:#B9C4AC;--line:rgba(250,248,243,.16)}
-/* NexAgent OS sections — themed to match privacy-policy.html / terms.html (light slate/white, navy accent) instead of the Farmer's OS cream/veld theme. Note: privacy-policy.html's --green (#25D366) is only ever used for ::selection — its real visible accent throughout headings/borders/buttons is navy (#0F172A), so navy is used here as --pp-accent to genuinely match, not just reuse the unused green token. */
-:root{--pp-bg:#F8FAFC;--pp-surface:#FFFFFF;--pp-surface2:#F1F5F9;--pp-border:#E2E8F0;--pp-border-dk:#CBD5E1;--pp-text:#0F172A;--pp-muted:#475569;--pp-subtle:#94A3B8;--pp-accent:#0F172A}
-.hero-sme{background:var(--pp-bg) !important;color:var(--pp-text) !important}
-.hero-sme .field-bg{display:none}
-.hero-sme .kicker{color:var(--pp-accent)}
-.hero-sme .sub{color:var(--pp-muted)}
-.hero-sme .btn-solid{background:var(--pp-accent);border-color:var(--pp-accent);color:#fff}
-.hero-sme .btn-solid:hover{background:transparent;color:var(--pp-accent)}
-#sme-details.panel{background:var(--pp-bg);border-color:var(--pp-border)}
-#sme-details .kicker{color:var(--pp-accent)}
-#sme-details .h-panel{color:var(--pp-text)}
-#sme-details .sub{color:var(--pp-muted)}
-#sme-details .checklist{color:var(--pp-muted)}
-#sme-details .checklist b{color:var(--pp-accent)}
-#sme-details .price-line{color:var(--pp-accent)}
-#sme-details .price-line span{color:var(--pp-muted)}
-#sme-details .price-orig{color:var(--pp-subtle)}
-#sme-details .price-badge{background:var(--pp-accent);color:#fff}
-#sme-details .btn-solid{background:var(--pp-accent);border-color:var(--pp-accent);color:#fff}
-#sme-details .btn-solid:hover{background:transparent;color:var(--pp-accent)}
-#sme-sequence.panel{background:var(--pp-surface2);border-color:var(--pp-border)}
-#sme-sequence .kicker{color:var(--pp-accent)}
-#sme-sequence .h-panel{color:var(--pp-text)}
-#sme-sequence .sub{color:var(--pp-muted)}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.show{opacity:1;transform:none}
 .checklist{font-family:var(--mono);font-size:13.5px;color:var(--khaki);display:grid;gap:10px;margin:30px 0 38px;max-width:560px}

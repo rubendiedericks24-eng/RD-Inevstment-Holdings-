@@ -9,16 +9,22 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #F8FAFC;
-      --surface: #FFFFFF;
-      --surface2:#F1F5F9;
-      --border:  #E2E8F0;
-      --border-dk:#CBD5E1;
-      --green:   #25D366;
-      --navy:    #0F172A;
-      --text:    #0F172A;
-      --muted:   #475569;
-      --subtle:  #94A3B8;
+      /* Matches index.html's main site palette (green/beige/amber) as of 2026-08-05 — was privacy-policy's
+         own light slate/white scheme before Ruben asked for it to follow the main site instead. --navy is
+         repurposed to the site's dark veld green (was #0F172A) so every existing border/hover rule below
+         that already references var(--navy) picks up the new color for free. --amber is new, used for
+         label pills and hover states ("yellow touch-ups"). */
+      --bg:      #EFE4CC;
+      --surface: #FAF5E8;
+      --surface2:#E7DAB8;
+      --border:  rgba(24,28,21,.16);
+      --border-dk:rgba(24,28,21,.26);
+      --green:   #1F3D2B;
+      --navy:    #152B1E;
+      --amber:   #D9A441;
+      --text:    #181C15;
+      --muted:   #5B6355;
+      --subtle:  #8A9180;
     }
 
     html { scroll-behavior: smooth; }
@@ -31,20 +37,19 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    ::selection { background: var(--green); color: var(--navy); }
+    ::selection { background: var(--amber); color: var(--navy); }
 
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 5%;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(250,248,243,.16);
       position: sticky;
       top: 0;
-      background: rgba(255,255,255,0.97);
+      background: var(--navy);
       backdrop-filter: blur(12px);
       z-index: 100;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     .nav-logo {
@@ -52,21 +57,21 @@
       font-weight: 900;
       font-size: 1rem;
       letter-spacing: -0.01em;
-      color: var(--text);
+      color: #EFE4CC;
       text-decoration: none;
     }
 
-    .nav-logo span { color: var(--navy); }
+    .nav-logo span { color: var(--amber); }
 
     nav a {
-      color: var(--muted);
+      color: #B9C4AC;
       text-decoration: none;
       font-size: 0.88rem;
       font-weight: 500;
       transition: color 0.2s;
     }
 
-    nav a:hover { color: var(--text); }
+    nav a:hover { color: var(--amber); }
 
     .page-header {
       background: var(--surface2);
@@ -84,8 +89,8 @@
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border);
+      color: var(--amber);
+      border: 1px solid var(--amber);
       padding: 0.35rem 1rem;
       border-radius: 999px;
       margin-bottom: 1.25rem;
@@ -207,7 +212,7 @@
       text-decoration: none;
     }
 
-    footer a:hover { color: var(--navy); }
+    footer a:hover { color: var(--amber); }
   </style>
 </head>
 <body>
@@ -235,7 +240,7 @@
 
     <h2>1. Introduction</h2>
     <p>This Privacy Policy explains how RD Investment Holdings (Pty) Ltd, trading as NexAgent AI ("we", "us", "our"), collects, uses, stores, and protects personal information in the course of providing our services. We are committed to complying with the Protection of Personal Information Act 4 of 2013 ("POPIA") and all applicable South African data protection legislation.</p>
-    <p>This policy covers all three NexAgent AI product lines:</p>
+    <p>This policy covers NexAgent AI's current product line:</p>
     <table>
       <thead>
         <tr>
@@ -246,19 +251,9 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>WhatsApp AI Agent</strong></td>
-          <td>Standalone AI-powered WhatsApp agent for a single business niche and dedicated WhatsApp number</td>
-          <td>R2,499 setup + R499/month</td>
-        </tr>
-        <tr>
-          <td><strong>Individual Modules</strong><br><em>(NexTracker / NexQuote)</em></td>
-          <td>Standalone NexAgent OS module — job card tracker or quote generator</td>
-          <td>R4,999 setup + R999/month</td>
-        </tr>
-        <tr>
           <td><strong>NexAgent OS</strong><br><em>(Full System)</em></td>
-          <td>Complete automated business system — all 7 modules connected (CRM, NexQuote, NexTracker, Stock, Payroll, Invoice, Dashboard)</td>
-          <td>R14,999 setup + R2,499/month</td>
+          <td>Complete automated business system — all 8 modules connected (WhatsApp Intake, NexQuote, NexTracker, Stock, Payroll, Invoice, Dashboard, Lead CRM)</td>
+          <td>R1,999/month — Founder's Discount, down from R2,499 (20% off), no setup fee</td>
         </tr>
       </tbody>
     </table>
@@ -274,16 +269,8 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>WhatsApp AI Agent</strong></td>
-          <td>Inbound WhatsApp messages; sender phone numbers; conversation history; business data supplied by the client (listings, inventory, service descriptions, pricing)</td>
-        </tr>
-        <tr>
-          <td><strong>Individual Modules (NexTracker / NexQuote)</strong></td>
-          <td>Job card records (client name, phone, email, job description, technician, status); quote records (client name, phone, email, quoted items, totals); staff details entered during setup</td>
-        </tr>
-        <tr>
           <td><strong>NexAgent OS (Full System)</strong></td>
-          <td>All of the above, plus: lead and enquiry data from the CRM module; stock and inventory data; staff timesheet and payroll data; invoice and payment records; operational dashboard data</td>
+          <td>Inbound WhatsApp messages; sender phone numbers; conversation history; business data supplied by the client (listings, inventory, service descriptions, pricing); job card records (client name, phone, email, job description, technician, status); quote records (client name, phone, email, quoted items, totals); staff details; lead and enquiry data from the CRM module; stock and inventory data; staff timesheet and payroll data; invoice and payment records; operational dashboard data</td>
         </tr>
       </tbody>
     </table>
@@ -293,7 +280,7 @@
     <p>We process personal information solely for the following purposes:</p>
     <ul>
       <li>To operate and deliver whichever NexAgent AI product(s) the client has subscribed to</li>
-      <li>To respond automatically to customer enquiries on behalf of our clients (WhatsApp AI Agent)</li>
+      <li>To respond automatically to customer enquiries on behalf of our clients via WhatsApp</li>
       <li>To generate, store, and surface job cards, quotes, leads, invoices, stock records, payroll records, and operational data for our clients (NexAgent OS modules)</li>
       <li>To deliver WhatsApp notifications to clients and their customers (job completion alerts, quote confirmations, lead notifications)</li>
       <li>To maintain service performance, diagnose issues, and improve the system</li>
