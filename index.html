@@ -54,7 +54,7 @@ nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-bac
 .brand b{color:var(--amber);font-weight:800}
 .nav-links{display:flex;gap:34px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--khaki)}
 .nav-links a:hover{color:var(--white)}
-.hero{background:var(--veld-deep);min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:120px 0 80px}
+.hero{background:var(--veld-deep);color:var(--white);min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:120px 0 80px}
 .field-bg{position:absolute;inset:0;pointer-events:none;opacity:1;z-index:0;background:
   linear-gradient(180deg, rgba(21,43,30,0) 0%, rgba(21,43,30,.5) 60%, var(--veld-deep) 100%),
   repeating-linear-gradient(100deg, rgba(250,248,243,.035) 0px, rgba(250,248,243,.035) 2px, transparent 2px, transparent 34px),
@@ -83,13 +83,11 @@ nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-bac
 .price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
 .price-orig{font-family:var(--mono);color:var(--khaki);text-decoration:line-through;font-size:15px}
 .price-badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:4px 10px;border-radius:20px;white-space:nowrap}
-/* NexAgent OS sections (.hero-sme, #sme-details, #sme-sequence) intentionally have NO color overrides —
-   2026-08-05 final: the whole of index.html must look the same (one consistent green/beige/amber theme).
-   They fall back to the exact same rules Farmer's OS sections already use: .hero-sme picks up the plain
-   .hero dark-green style below, and #sme-details/#sme-sequence pick up .site-light .panel's cream background
-   plus the global amber .kicker/.checklist b rules — identical treatment to #agri/#sequence, no separate palette.
-   "White" only applies to the separate app-division module HTML files, not to anything inside index.html. */
-.hero-sme{background:var(--veld-deep) !important;color:var(--white) !important;--khaki:#B9C4AC;--line:rgba(250,248,243,.16)}
+/* All index.html sections use the plain .hero / .panel rules with no per-section color overrides —
+   2026-08-05: the whole page must look the same, one consistent green/beige/amber theme throughout.
+   NexAgent OS is now the top hero (id="top") and Farmer's OS is the second hero (id="agri-hero") —
+   both just plain .hero, no modifier class. "White" only applies to the separate app-division module
+   HTML files, not to anything inside index.html. */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.show{opacity:1;transform:none}
 .checklist{font-family:var(--mono);font-size:13.5px;color:var(--khaki);display:grid;gap:10px;margin:30px 0 38px;max-width:560px}
@@ -178,9 +176,9 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
   <div class="nav-in">
     <a class="brand" href="#top">NexAgent<b>·AI</b></a>
     <div class="nav-links">
+      <a href="#sme-details">NexAgent OS</a>
+      <a href="#sme-sequence">Live Sequence</a>
       <a href="#agri">Farmer's OS</a>
-      <a href="#sequence">Live Sequence</a>
-      <a href="#sme">For SMEs</a>
       <a href="#contact">Contact</a>
     </div>
   </div>
@@ -188,10 +186,10 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
 <header class="hero" id="top">
   <div class="field-bg" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="kicker">NexAgent AI · Gqeberha, South Africa</div>
-    <h1 class="h-giant">Run your farm<br>from WhatsApp.</h1>
-    <p class="sub" style="margin-left:auto;margin-right:auto">Farmer's OS logs sales, worker hours, diesel &amp; VAT, herd and crops the moment you tell it — no app, no typing, no admin evening. Built for South African farmers by someone who grew up on the land.</p>
-    <a class="btn btn-solid" href="#agri">See how it works</a>
+    <div class="kicker">NexAgent AI · SME Operations</div>
+    <h1 class="h-giant">Run your business<br>from WhatsApp.</h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">NexAgent OS handles quotes, job cards, invoicing, stock, payroll and leads — the same proven AI-and-WhatsApp approach used for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
+    <a class="btn btn-solid" href="#sme-details">See the modules</a>
   </div>
   <div class="scroll-cue">Scroll</div>
 </header>
@@ -204,6 +202,71 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
     <div class="tele"><div class="n">1<em>×</em></div><div class="l">Confirm before it writes anything</div></div>
   </div>
 </div>
+<section class="panel" id="sme-details">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">SME operations · eight modules</div>
+      <h2 class="h-panel">NexAgent OS</h2>
+      <p class="sub">One pipeline, from first enquiry to money in your account.</p>
+      <div class="checklist">
+        <div><b>M1</b> WhatsApp AI intake — answers customers day and night</div>
+        <div><b>M2</b> Quote Generator — VAT-compliant, sent in seconds</div>
+        <div><b>M3</b> Job Card Tracker — opens on acceptance, notifies on completion</div>
+        <div><b>M4</b> Inventory &amp; Stock Manager — live stock levels, no manual counts</div>
+        <div><b>M5</b> Staff Timesheet &amp; Payroll — hours logged, payroll calculated automatically</div>
+        <div><b>M6</b> Invoice &amp; Payments — issues, logs, chases overdue</div>
+        <div><b>M7</b> Operations Dashboard — the whole business on one screen</div>
+        <div><b>M8</b> Lead CRM — every prospect captured, none lost</div>
+      </div>
+      <div class="price-line">
+        <span class="price-orig">R2,499</span>
+        <span>R1,999/month</span>
+        <span class="price-badge">Founder's Discount · 20% off</span>
+        <span>· no setup fee · all eight modules · support included</span>
+      </div>
+      <a class="btn btn-solid" href="#contact" style="margin-top:6px">Book a demo</a>
+    </div>
+  </div>
+</section>
+<section class="panel alt sequence" id="sme-sequence">
+  <div class="wrap seq-grid">
+    <div class="reveal">
+      <div class="kicker">How a message becomes a job card</div>
+      <h2 class="h-panel">Tell it once.<br>It's quoted.</h2>
+      <p class="sub">One real exchange, end to end: a customer asks for a quote, the agent confirms it, and it's logged as a job — before they've put their phone down.</p>
+    </div>
+    <div class="reveal">
+      <div class="phone" aria-label="Demo WhatsApp conversation showing NexAgent OS generating a quote">
+        <div class="phone-top">
+          <div class="avatar">NA</div>
+          <div>
+            <div class="who">NexAgent OS Agent</div>
+            <div class="status">WHATSAPP · ONLINE 24/7</div>
+          </div>
+        </div>
+        <div class="chat" id="chat-sme">
+          <div class="msg in">Hi, can I get a quote for brake pads — VW Polo 2019</div>
+          <div class="msg out">Front brake pads for a 2019 VW Polo, got it. What's your name and number so we can confirm?</div>
+          <div class="msg in">Sipho Nkosi, 082 555 1234</div>
+          <div class="msg sys"><b>QUOTE READY ✓</b> Sipho Nkosi · Brake pads (front) · <span class="money">R1,450</span></div>
+          <div class="msg in">yes please</div>
+          <div class="msg out">Quote accepted — job card opened, we'll be in touch to book you in.</div>
+          <div class="msg brief"><span class="t">DASHBOARD</span>PDF quote sent, job card created — see it live on the operations dashboard.</div>
+        </div>
+        <button class="replay" id="replay-sme" type="button">↻ Replay sequence</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="hero" id="agri-hero">
+  <div class="field-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="kicker">NexAgent AI · Farmer Operations</div>
+    <h1 class="h-giant">Run your farm<br>from WhatsApp.</h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">Farmer's OS logs sales, worker hours, diesel &amp; VAT, herd and crops the moment you tell it — no app, no typing, no admin evening. Built for South African farmers by someone who grew up on the land.</p>
+    <a class="btn btn-solid" href="#agri">See how it works</a>
+  </div>
+</section>
 <section class="panel" id="agri">
   <div class="wrap">
     <div class="reveal">
@@ -255,71 +318,6 @@ footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1
           <div class="msg brief"><span class="t">DASHBOARD</span>Netto hierdie maand bygewerk — sien dit direk op die plaas-dashboard.</div>
         </div>
         <button class="replay" id="replay" type="button">↻ Replay sequence</button>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="hero hero-sme" id="sme">
-  <div class="field-bg" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="kicker">NexAgent AI · SME Operations</div>
-    <h1 class="h-giant">Run your business<br>from WhatsApp.</h1>
-    <p class="sub" style="margin-left:auto;margin-right:auto">NexAgent OS handles quotes, job cards, invoicing, stock, payroll and leads — the same proven AI-and-WhatsApp approach as Farmer's OS, built for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
-    <a class="btn btn-solid" href="#sme-details">See the modules</a>
-  </div>
-</section>
-<section class="panel" id="sme-details">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="kicker">SME operations · eight modules</div>
-      <h2 class="h-panel">NexAgent OS</h2>
-      <p class="sub">One pipeline, from first enquiry to money in your account.</p>
-      <div class="checklist">
-        <div><b>M1</b> WhatsApp AI intake — answers customers day and night</div>
-        <div><b>M2</b> Quote Generator — VAT-compliant, sent in seconds</div>
-        <div><b>M3</b> Job Card Tracker — opens on acceptance, notifies on completion</div>
-        <div><b>M4</b> Inventory &amp; Stock Manager — live stock levels, no manual counts</div>
-        <div><b>M5</b> Staff Timesheet &amp; Payroll — hours logged, payroll calculated automatically</div>
-        <div><b>M6</b> Invoice &amp; Payments — issues, logs, chases overdue</div>
-        <div><b>M7</b> Operations Dashboard — the whole business on one screen</div>
-        <div><b>M8</b> Lead CRM — every prospect captured, none lost</div>
-      </div>
-      <div class="price-line">
-        <span class="price-orig">R2,499</span>
-        <span>R1,999/month</span>
-        <span class="price-badge">Founder's Discount · 20% off</span>
-        <span>· no setup fee · all eight modules · support included</span>
-      </div>
-      <a class="btn btn-solid" href="#contact" style="margin-top:6px">Book a demo</a>
-    </div>
-  </div>
-</section>
-<section class="panel alt sequence" id="sme-sequence">
-  <div class="wrap seq-grid">
-    <div class="reveal">
-      <div class="kicker">How a message becomes a job card</div>
-      <h2 class="h-panel">Tell it once.<br>It's quoted.</h2>
-      <p class="sub">One real exchange, end to end: a customer asks for a quote, the agent confirms it, and it's logged as a job — before they've put their phone down.</p>
-    </div>
-    <div class="reveal">
-      <div class="phone" aria-label="Demo WhatsApp conversation showing NexAgent OS generating a quote">
-        <div class="phone-top">
-          <div class="avatar">NA</div>
-          <div>
-            <div class="who">NexAgent OS Agent</div>
-            <div class="status">WHATSAPP · ONLINE 24/7</div>
-          </div>
-        </div>
-        <div class="chat" id="chat-sme">
-          <div class="msg in">Hi, can I get a quote for brake pads — VW Polo 2019</div>
-          <div class="msg out">Front brake pads for a 2019 VW Polo, got it. What's your name and number so we can confirm?</div>
-          <div class="msg in">Sipho Nkosi, 082 555 1234</div>
-          <div class="msg sys"><b>QUOTE READY ✓</b> Sipho Nkosi · Brake pads (front) · <span class="money">R1,450</span></div>
-          <div class="msg in">yes please</div>
-          <div class="msg out">Quote accepted — job card opened, we'll be in touch to book you in.</div>
-          <div class="msg brief"><span class="t">DASHBOARD</span>Job card created and invoice queued — see it live on the operations dashboard.</div>
-        </div>
-        <button class="replay" id="replay-sme" type="button">↻ Replay sequence</button>
       </div>
     </div>
   </div>
