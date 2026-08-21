@@ -112,50 +112,18 @@ table.tbl tbody tr:hover{background:var(--bg)}
 /* ── ALERT BANNER ── */
 .alert-banner{background:var(--red-lt);border:1px solid var(--red-border);border-radius:8px;padding:10px 16px;font-size:.82rem;color:var(--red);margin-bottom:16px;display:none}
 .alert-banner.show{display:block}
-
-/* ── MOBILE TOP BAR + HAMBURGER ── */
-.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding:0 14px;gap:12px}
-.mobile-bar .mb-brand{font-family:var(--disp);font-weight:900;font-size:.95rem;color:var(--navy);flex:1}
-.hamburger{width:40px;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0}
-.hamburger span{display:block;width:18px;height:2px;background:var(--navy);border-radius:1px;transition:transform .2s,opacity .2s}
-.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:150}
-.sidebar-backdrop.show{display:block}
-@media(max-width:700px){
-  .mobile-bar{display:flex}
-  .sidebar{display:flex;transform:translateX(-100%);transition:transform .25s ease;box-shadow:none;z-index:160}
-  .sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(15,23,42,.18)}
-  .main{margin-left:0;padding:68px 14px 24px}
-  .stat-grid{grid-template-columns:repeat(2,1fr)}
-  .stat-cell{padding:14px 12px}
-  .stat-val{font-size:1.45rem}
-  .stat-cell:nth-child(2n){border-right:none}
-  .stat-cell:nth-child(n+3){border-top:1px solid var(--border)}
-  .pg-title{font-size:1.2rem}
-  .pg-header{margin-bottom:18px}
-  table.tbl th,table.tbl td{padding:9px 10px;font-size:.78rem}
-  .btn{min-height:40px;padding:10px 16px}
-  .nav-item{padding:12px 18px;min-height:44px}
-}
 </style>
 </head>
-<body>
-<div class="mobile-bar" id="mobileBar">
-  <button class="hamburger" id="menuBtn" aria-label="Open menu" type="button">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="mb-brand">Auto Workshop PE</div>
-</div>
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
- <!-- LOADING -->
+<body> <!-- LOADING -->
 <div class="loading" id="loadingOverlay"> <div class="spinner"></div> Loading live data from Google Sheets…
 </div> <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Operations Dashboard</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</div> <a class="nav-item" href="job-card-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Job Cards</a> <a class="nav-item" href="auto-quote-generator.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Quotes</a> <a class="nav-item" href="invoice-payment-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Invoices</a> <a class="nav-item" href="lead-crm.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Lead CRM</a> <a class="nav-item" href="inventory-stock-manager.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Inventory &amp; Stock</a> <a class="nav-item" href="staff-timesheet-payroll.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Timesheet &amp; Payroll</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </aside> <!-- MAIN -->
-<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Bookings</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts &amp; Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:var(--mono);font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Open Bookings</div> <span class="card-link" style="cursor:default">Job Bookings tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
+<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Job Cards</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts &amp; Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary (from localStorage — written by Inventory & Stock Manager) --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:var(--mono);font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Job Cards</div> <a class="card-link" href="job-card-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
 </main> <script>
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
+// Tabs
 const TABS = {
   jobs:      'Job Bookings',
   quotes:    'Quotes',
@@ -165,10 +133,12 @@ const TABS = {
   timesheet: 'Timesheet'
 };
 
+// Status values that mean "closed / done"
 const CLOSED_STATUSES = ['done','complete','completed','cancelled','canceled','closed','paid'];
 
+// ── CACHE — stale-while-revalidate ───────────────────────────────────────────
 const CACHE_KEY = 'nexdash_cache';
-const CACHE_TTL = 10 * 60 * 1000;
+const CACHE_TTL = 10 * 60 * 1000; // 10 min — show cached data, refresh silently
 
 function saveCache(data) {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch {}
@@ -182,14 +152,17 @@ function loadCache() {
   } catch { return null; }
 }
 
+// ── FETCH ── (Apps Script middleware — sheet stays private, no API key needed)
 async function fetchTab(tab) {
   const url = `${SHEETS_SCRIPT_URL}?tab=${encodeURIComponent(tab)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${tab}: ${res.status}`);
   const data = await res.json();
+  // Apps Script returns array of objects already — filter out blank rows
   return Array.isArray(data) ? data.filter(r => Object.values(r).some(v => v !== '' && v !== null)) : [];
 }
 
+// Flexible field getter — tries multiple keys
 function gf(obj, ...keys) {
   for (const k of keys) {
     const found = Object.keys(obj).find(h => h.toLowerCase() === k.toLowerCase());
@@ -198,11 +171,13 @@ function gf(obj, ...keys) {
   return '';
 }
 
+// Format currency
 function fmt(v) {
   const n = parseFloat(String(v).replace(/[^0-9.]/g, '')) || 0;
   return 'R' + n.toLocaleString('en-ZA', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
+// Format date (ISO or dd/mm/yyyy → readable)
 function fmtDate(d) {
   if (!d) return '—';
   try {
@@ -216,6 +191,7 @@ function isClosed(status) {
   return CLOSED_STATUSES.includes((status||'').toLowerCase().trim());
 }
 
+// Badge helper
 function badge(status) {
   const s = (status||'').toLowerCase().trim();
   if (!s) return `<span class="badge badge-new">New</span>`;
@@ -228,10 +204,25 @@ function badge(status) {
 
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── RENDER — called with cached or fresh data ─────────────────────────────────
 function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
-    const openJobs = jobs.filter(j => !isClosed(gf(j,'Status','status')));
+
+    // ── COMPUTE STATS ──
+
+    // Open Bookings — Status not closed
+    const openJobs = jobs.filter(j => {
+      const s = gf(j,'Status','status');
+      return !isClosed(s);
+    });
+
+    // Pending Quotes — Status = Pending / Sent / empty (not Accepted/Declined)
     const QUOTE_DONE = ['accepted','declined','invoiced','cancelled'];
-    const pendingQuotes = quotes.filter(q => !QUOTE_DONE.includes(gf(q,'Status','status').toLowerCase()));
+    const pendingQuotes = quotes.filter(q => {
+      const s = gf(q,'Status','status').toLowerCase();
+      return !QUOTE_DONE.includes(s);
+    });
+
+    // Unpaid Invoices — Status = Outstanding or Overdue
     const unpaidInvoices = invoices.filter(i => {
       const s = gf(i,'Status','status').toLowerCase();
       return s === 'outstanding' || s === 'overdue';
@@ -240,15 +231,20 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
       const t = parseFloat(String(gf(i,'Total','total','Grand Total','grand')).replace(/[^0-9.]/g,'')) || 0;
       return sum + t;
     }, 0);
+
+    // New Leads — Status = New or blank
     const newLeads = leads.filter(l => {
       const s = gf(l,'Status','status').toLowerCase();
       return s === 'new' || s === '';
     });
+
+    // Stock Alerts — Stock Level ≤ 3
     const stockAlerts = stock.filter(s => {
       const level = parseInt(gf(s,'Stock Level','stock level','StockLevel','qty','Qty')) || 0;
       return level <= 3;
     });
 
+    // ── UPDATE TILES ──
     document.getElementById('statJobs').textContent     = openJobs.length;
     document.getElementById('subJobs').textContent      = openJobs.length === 1 ? '1 booking open' : `${openJobs.length} bookings open`;
     document.getElementById('statQuotes').textContent   = pendingQuotes.length;
@@ -258,6 +254,9 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
     document.getElementById('statLeads').textContent    = newLeads.length;
     document.getElementById('subLeads').textContent     = `of ${leads.length} total leads`;
 
+    // ── RENDER TABLES ──
+
+    // Unpaid Invoices
     const invBody = document.getElementById('invoiceBody');
     if (!unpaidInvoices.length) {
       invBody.innerHTML = '<tr class="empty-row"><td colspan="5">No unpaid invoices — all clear </td></tr>';
@@ -272,6 +271,7 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
       }).join('');
     }
 
+    // Stock Alerts
     const stockBody = document.getElementById('stockBody');
     if (!stockAlerts.length) {
       stockBody.innerHTML = '<tr class="empty-row"><td colspan="3">All stock levels OK </td></tr>';
@@ -287,6 +287,7 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
       }).join('');
     }
 
+    // Recent Leads (last 8, most recent first)
     const leadsBody = document.getElementById('leadsBody');
     const recentLeads = [...leads].reverse().slice(0,8);
     if (!recentLeads.length) {
@@ -302,6 +303,7 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
       }).join('');
     }
 
+    // Open Bookings
     const jobsBody = document.getElementById('jobsBody');
     const openJobsDisplay = openJobs.slice(0,8);
     if (!openJobsDisplay.length) {
@@ -317,6 +319,12 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
       }).join('');
     }
 
+    // ── TIMESHEET SUMMARY ──
+    const today = new Date().toISOString().slice(0,10);
+    const todayEntries = timesheet.filter(t => {
+      const d = String(gf(t,'Date','date'));
+      return d.startsWith(today) || d === today;
+    });
     const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
     const weekEntries = timesheet.filter(t => {
       const raw = String(gf(t,'Date','date'));
@@ -343,15 +351,19 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
     document.getElementById('subTimesheetHours').textContent = `${weekEntries.length} shift${weekEntries.length!==1?'s':''} this week`;
     document.getElementById('statTimesheetPay').textContent = fmt(weekPay);
     document.getElementById('subTimesheetPay').textContent = `week-to-date payroll`;
+
 }
 
+// ── LOAD — fetches fresh data, saves cache, then renders ─────────────────────
 async function loadDashboard(silent = false) {
   if (!silent) {
     document.getElementById('loadingOverlay').classList.add('show');
     document.getElementById('lastRefresh').textContent = 'Loading live data…';
   }
   document.getElementById('errorBanner').classList.remove('show');
+
   try {
+    // Parallel fetches — all 6 tabs load simultaneously; individual failures fall back to []
     const results = await Promise.allSettled([
       fetchTab(TABS.jobs),
       fetchTab(TABS.quotes),
@@ -361,11 +373,14 @@ async function loadDashboard(silent = false) {
       fetchTab(TABS.timesheet)
     ]);
     const [jobs, quotes, invoices, leads, stock, timesheet] = results.map(r => r.status === 'fulfilled' ? r.value : []);
+    // Log any tab failures to console without crashing the dashboard
     results.forEach((r,i) => { if(r.status==='rejected') console.warn('Tab load failed:',Object.values(TABS)[i],r.reason?.message||r.reason); });
+
     const freshData = { jobs, quotes, invoices, leads, stock, timesheet };
     saveCache(freshData);
     renderDashboard(freshData);
     document.getElementById('lastRefresh').textContent = `Live data · Refreshed ${new Date().toLocaleTimeString('en-ZA', {hour:'2-digit', minute:'2-digit'})}`;
+
   } catch(err) {
     if (!silent) {
       console.error(err);
@@ -382,7 +397,7 @@ async function loadDashboard(silent = false) {
 function loadInventoryPanel() {
   const raw = localStorage.getItem('nexstock_parts');
   const body = document.getElementById('invStockBody');
-  if (!raw) return;
+  if (!raw) return; // no data yet
   const parts = JSON.parse(raw);
   const alerts = parts.filter(p => p.stockLevel <= p.reorderLevel);
   if (!alerts.length) {
@@ -397,29 +412,19 @@ function loadInventoryPanel() {
   }).join('');
 }
 
-// Mobile sidebar toggle
-(function(){
-  const btn = document.getElementById('menuBtn');
-  const sidebar = document.querySelector('.sidebar');
-  const backdrop = document.getElementById('sidebarBackdrop');
-  if (!btn || !sidebar) return;
-  function open(){ sidebar.classList.add('open'); backdrop && backdrop.classList.add('show'); }
-  function close(){ sidebar.classList.remove('open'); backdrop && backdrop.classList.remove('show'); }
-  btn.addEventListener('click', () => sidebar.classList.contains('open') ? close() : open());
-  if (backdrop) backdrop.addEventListener('click', close);
-  sidebar.querySelectorAll('a.nav-item').forEach(a => a.addEventListener('click', close));
-})();
-
 window.onload = () => {
   loadInventoryPanel();
   const cached = loadCache();
   if (cached) {
+    // Render cached data instantly — no spinner
     renderDashboard(cached.data);
     const ageMin = Math.round(cached.age / 60000);
     document.getElementById('lastRefresh').textContent =
       ageMin < 1 ? 'Cached · Refreshing in background…' : `Cached ${ageMin}m ago · Refreshing…`;
+    // Silent background refresh — updates UI when done, no loading overlay
     loadDashboard(true);
   } else {
+    // First load ever — show spinner
     loadDashboard(false);
   }
 };
