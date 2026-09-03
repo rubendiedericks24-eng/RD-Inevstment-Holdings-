@@ -4,8 +4,359 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NexAgent OS — WhatsApp AI for South African SMEs | NexAgent AI</title>
+<meta name="description" content="NexAgent OS runs your business from one WhatsApp number: quotes, job cards, invoicing, stock, payroll and leads — no extra apps, no manual admin. Built by NexAgent AI for South African SMEs.">
+<link rel="canonical" href="https://rdinvestmentholdings.co.za/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://rdinvestmentholdings.co.za/#org","name":"RD Investment Holdings (Pty) Ltd","identifier":"2026/237915/07","url":"https://rdinvestmentholdings.co.za/","telephone":"+27728400352","address":{"@type":"PostalAddress","addressLocality":"Gqeberha","addressCountry":"ZA"},"brand":{"@type":"Brand","name":"NexAgent AI"}},
+{"@type":"Product","name":"NexAgent OS","brand":{"@type":"Brand","name":"NexAgent AI"},"offers":{"@type":"Offer","price":"1999","priceCurrency":"ZAR","description":"R1,999 per month (Founder's Discount, down from R2,499), no setup fee","availability":"https://schema.org/InStock","seller":{"@id":"https://rdinvestmentholdings.co.za/#org"}}}
+]}
+</script>
+<style>
+:root{
+  --veld:#1F3D2B;
+  --veld-deep:#152B1E;
+  --kalk:#EFE4CC;
+  --ink:#181C15;
+  --panel:#152B1E;
+  --line:rgba(250,248,243,.16);
+  --khaki:#B9C4AC;
+  --amber:#D9A441;
+  --white:#EFE4CC;
+  --muted:#AEB8A2;
+  --disp:'Archivo',sans-serif;
+  --body:'Instrument Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--veld-deep)}
+body{background:var(--veld-deep);color:var(--white);font-family:var(--body);font-weight:400;font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 28px}
+.h-giant{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:.97;font-size:clamp(44px,8vw,100px)}
+.h-panel{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.02em;line-height:1.02;font-size:clamp(34px,5.5vw,64px)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+.sub{color:var(--khaki);max-width:54ch;font-size:17px}
+.money{font-family:var(--mono);color:var(--amber)}
+.btn{display:inline-block;border:1.5px solid var(--white);padding:15px 42px;font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:14px;transition:background .2s ease,color .2s ease,border-color .2s ease;color:var(--white)}
+.btn:hover{background:var(--white);border-color:var(--white);color:var(--veld-deep)}
+.btn-solid{background:var(--amber);color:var(--veld-deep);border-color:var(--amber)}
+.btn-solid:hover{background:transparent;border-color:var(--amber);color:var(--amber)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s ease,border-color .3s ease;border-bottom:1px solid transparent;background:transparent}
+nav.scrolled{background:rgba(21,43,30,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-color:var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:76px;padding:0 28px}
+.brand{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.2em;font-size:16px}
+.brand b{color:var(--amber);font-weight:800}
+.nav-links{display:flex;gap:34px;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--khaki)}
+.nav-links a:hover{color:var(--white)}
+.hero{background:var(--veld-deep);color:var(--white);min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:120px 0 80px}
+.field-bg{position:absolute;inset:0;pointer-events:none;opacity:1;z-index:0;background:
+  linear-gradient(180deg, rgba(21,43,30,0) 0%, rgba(21,43,30,.5) 60%, var(--veld-deep) 100%),
+  repeating-linear-gradient(100deg, rgba(250,248,243,.035) 0px, rgba(250,248,243,.035) 2px, transparent 2px, transparent 34px),
+  linear-gradient(160deg, #24462F 0%, #1B3624 45%, var(--veld-deep) 100%)}
+.hero .wrap{position:relative;z-index:2}
+.hero .kicker{margin-bottom:22px}
+.hero .sub{margin:26px auto 42px}
+.scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--khaki);text-transform:uppercase;z-index:2}
+.scroll-cue::after{content:"\2193";display:block;margin-top:6px;font-size:16px;animation:bob 2s infinite ease-in-out}
+@keyframes bob{50%{transform:translateY(6px)}}
+.telemetry{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.tele-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.tele{padding:44px 20px;text-align:center;border-right:1px solid var(--line)}
+.tele:last-child{border-right:none}
+.tele .n{font-family:var(--disp);font-weight:800;font-size:clamp(30px,4vw,48px);line-height:1}
+.tele .n em{font-style:normal;color:var(--amber)}
+.tele .l{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--khaki);margin-top:10px}
+.panel{min-height:92vh;display:flex;align-items:center;position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:var(--veld-deep)}
+.panel.alt{background:var(--panel)}
+.panel .wrap{position:relative;z-index:2;width:100%}
+.panel .kicker{margin-bottom:16px}
+.panel .h-panel{margin-bottom:18px}
+.panel .price-line{font-family:var(--mono);font-size:16px;color:var(--amber);margin:22px 0 34px;letter-spacing:.04em}
+.panel .price-line span{color:var(--khaki)}
+.badge-soon{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:6px 14px;margin:22px 0 30px;border-radius:20px}
+.price-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.price-orig{font-family:var(--mono);color:var(--khaki);text-decoration:line-through;font-size:15px}
+.price-badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--veld-deep);background:var(--amber);padding:4px 10px;border-radius:20px;white-space:nowrap}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.show{opacity:1;transform:none}
+.checklist{font-family:var(--mono);font-size:13.5px;color:var(--khaki);display:grid;gap:10px;margin:30px 0 38px;max-width:560px}
+.checklist div{display:flex;gap:12px}
+.checklist b{color:var(--amber);font-weight:500;flex:0 0 auto}
+.seq-grid{display:grid;grid-template-columns:1fr auto;gap:70px;align-items:center}
+.phone{background:var(--veld-deep);border:1px solid var(--line);border-radius:26px;padding:14px;width:min(380px,90vw);box-shadow:0 40px 100px rgba(0,0,0,.5)}
+.phone-top{display:flex;align-items:center;gap:10px;padding:8px 10px 14px;border-bottom:1px solid var(--line)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--veld-deep);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:800;font-size:13px}
+.phone-top .who{font-size:14px;font-weight:500}
+.phone-top .status{font-family:var(--mono);font-size:10.5px;color:var(--amber);letter-spacing:.1em}
+.chat{padding:16px 6px 6px;display:flex;flex-direction:column;gap:10px;min-height:420px}
+.msg{max-width:84%;padding:10px 14px;border-radius:4px;font-size:14px;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
+.msg.show{opacity:1;transform:none}
+.msg.in{background:var(--veld-deep);border:1px solid var(--line);align-self:flex-start}
+.msg.out{background:var(--white);color:var(--veld-deep);align-self:flex-end}
+.msg.sys{align-self:stretch;max-width:100%;background:transparent;border:1px dashed var(--line);font-family:var(--mono);font-size:11.5px;color:var(--khaki)}
+.msg.sys b{color:var(--amber);font-weight:500}
+.msg.brief{align-self:stretch;max-width:100%;background:rgba(250,248,243,.07);border-left:2px solid var(--amber);font-size:13px}
+.msg.out .money{color:var(--veld-deep);font-weight:600}
+.msg.brief .t{font-family:var(--mono);font-size:10.5px;color:var(--amber);display:block;margin-bottom:4px;letter-spacing:.14em}
+.replay{margin:10px 6px 2px;background:none;border:1px solid var(--line);color:var(--khaki);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:9px 16px;cursor:pointer}
+.replay:hover{color:var(--white);border-color:var(--amber)}
+.section-divider{border-top:2px solid var(--amber);margin-top:56px;padding-top:32px}
+.h-sub{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(24px,3.5vw,36px)}
+.model-list{border-top:1px solid var(--line);margin-top:24px}
+.model{border-bottom:1px solid var(--line);transition:background .2s ease}
+.model:hover{background:rgba(250,248,243,.05)}
+.model summary{padding:26px 8px;gap:20px}
+.model-name{flex:1 1 auto;font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:clamp(18px,2.4vw,26px);display:flex;align-items:center;gap:14px}
+.model-name .m{font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:.1em}
+.model-p{flex:0 0 auto;font-family:var(--mono);font-size:14px;color:var(--amber);white-space:nowrap}
+.model-p span{display:block;color:var(--khaki);font-size:11.5px;margin-top:2px}
+.model p{padding:0 8px 26px;color:var(--khaki)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 38px;max-width:600px}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);padding:8px 16px;color:var(--khaki)}
+.faq{padding:110px 0;border-bottom:1px solid var(--line);background:var(--veld-deep)}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;padding:22px 0;font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::after{content:"+";font-family:var(--mono);color:var(--amber);font-size:20px}
+details[open] summary::after{content:"\2013"}
+details p{color:var(--khaki);padding:0 0 22px;max-width:64ch;font-size:15.5px}
+details p a{text-decoration:underline;text-underline-offset:3px;opacity:.8}
+details p a:hover{opacity:1}
+.contact{min-height:88vh;display:flex;align-items:center;position:relative;overflow:hidden;background:var(--panel)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;width:100%;position:relative;z-index:2}
+.c-item{margin-bottom:22px}
+.c-item .l{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--khaki)}
+.c-item .v{font-size:18px;margin-top:4px}
+form{display:grid;gap:16px}
+input,textarea,select{background:transparent;border:1px solid var(--line);padding:14px 16px;color:var(--white);font-family:var(--body);font-size:15px;width:100%;border-radius:0}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--amber)}
+input::placeholder,textarea::placeholder{color:var(--khaki);font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+textarea{min-height:110px;resize:vertical}
+select{color:var(--khaki)}
+.form-ok{display:none;font-family:var(--mono);font-size:12.5px;color:var(--amber);letter-spacing:.1em}
+footer{padding:40px 0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--khaki);background:var(--veld-deep)}
+.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;text-transform:uppercase}
+.foot a:hover{color:var(--white)}
+@media(max-width:920px){
+  .nav-links{display:none}
+  .tele-grid{grid-template-columns:1fr 1fr}
+  .tele:nth-child(2){border-right:none}
+  .tele:nth-child(1),.tele:nth-child(2){border-bottom:1px solid var(--line)}
+  .seq-grid,.contact-grid{grid-template-columns:1fr}
+  .phone{margin:0 auto}
+  .model summary{flex-wrap:wrap}
+  .model-p{order:1}
+  .panel{min-height:auto;padding:100px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .msg,.reveal{transition:none;opacity:1;transform:none}
+  .scroll-cue::after{animation:none}
+}
+.site-light{background:var(--kalk);color:var(--ink);--line:rgba(24,28,21,.14);--khaki:#5B6355}
+.site-light .telemetry,.site-light .panel,.site-light .panel.alt,.site-light .faq,.site-light .contact,.site-light footer{background:var(--kalk)}
+.site-light input,.site-light textarea,.site-light select{color:var(--ink)}
+.site-light .nav-links a:hover{color:var(--ink)}
+.site-light .phone{background:var(--veld-deep);color:var(--kalk);--khaki:#B9C4AC;--line:rgba(250,248,243,.16)}
+.site-light .msg.in{background:var(--veld-deep)}
+</style>
 </head>
 <body>
-<!-- placeholder replaced below -->
+<nav id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top">NexAgent<b>·AI</b></a>
+    <div class="nav-links">
+      <a href="#sme-details">NexAgent OS</a>
+      <a href="#sme-sequence">Live Sequence</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+<header class="hero" id="top">
+  <div class="field-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="kicker">NexAgent AI · SME Operations</div>
+    <h1 class="h-giant">Run your business<br>from WhatsApp.</h1>
+    <p class="sub" style="margin-left:auto;margin-right:auto">NexAgent OS handles quotes, job cards, invoicing, stock, payroll and leads — the same proven AI-and-WhatsApp approach used for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
+    <a class="btn btn-solid" href="#sme-details">See the modules</a>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
+<div class="site-light">
+<div class="telemetry">
+  <div class="wrap tele-grid">
+    <div class="tele"><div class="n"><em>0</em></div><div class="l">Apps to install</div></div>
+    <div class="tele"><div class="n">24<em>/</em>7</div><div class="l">WhatsApp intake</div></div>
+    <div class="tele"><div class="n">15<em>%</em></div><div class="l">VAT calculated on every quote</div></div>
+    <div class="tele"><div class="n">1<em>×</em></div><div class="l">Confirm before it writes anything</div></div>
+  </div>
+</div>
+<section class="panel" id="sme-details">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">SME operations · eight modules</div>
+      <h2 class="h-panel">NexAgent OS</h2>
+      <p class="sub">One pipeline, from first enquiry to money in your account.</p>
+      <div class="checklist">
+        <div><b>M1</b> WhatsApp AI intake — answers customers day and night</div>
+        <div><b>M2</b> Quote Generator — VAT-compliant, sent in seconds</div>
+        <div><b>M3</b> Job Card Tracker — opens on acceptance, notifies on completion</div>
+        <div><b>M4</b> Inventory & Stock Manager — live stock levels, no manual counts</div>
+        <div><b>M5</b> Staff Timesheet & Payroll — hours logged, payroll calculated automatically</div>
+        <div><b>M6</b> Invoice & Payments — issues, logs, chases overdue</div>
+        <div><b>M7</b> Operations Dashboard — the whole business on one screen</div>
+        <div><b>M8</b> Lead CRM — every prospect captured, none lost</div>
+      </div>
+      <div class="price-line">
+        <span class="price-orig">R2,499</span>
+        <span>R1,999/month</span>
+        <span class="price-badge">Founder's Discount · 20% off</span>
+        <span>· no setup fee · all eight modules · support included</span>
+      </div>
+      <a class="btn btn-solid" href="#contact" style="margin-top:6px">Book a demo</a>
+    </div>
+  </div>
+</section>
+<section class="panel alt sequence" id="sme-sequence">
+  <div class="wrap seq-grid">
+    <div class="reveal">
+      <div class="kicker">How a message becomes a job card</div>
+      <h2 class="h-panel">Tell it once.<br>It's quoted.</h2>
+      <p class="sub">One real exchange, end to end: a customer asks for a quote, the agent confirms it, and it's logged as a job — before they've put their phone down.</p>
+    </div>
+    <div class="reveal">
+      <div class="phone" aria-label="Demo WhatsApp conversation showing NexAgent OS generating a quote">
+        <div class="phone-top">
+          <div class="avatar">NA</div>
+          <div>
+            <div class="who">NexAgent OS Agent</div>
+            <div class="status">WHATSAPP · ONLINE 24/7</div>
+          </div>
+        </div>
+        <div class="chat" id="chat-sme">
+          <div class="msg in">Hi, can I get a quote for brake pads — VW Polo 2019</div>
+          <div class="msg out">Front brake pads for a 2019 VW Polo, got it. What's your name and number so we can confirm?</div>
+          <div class="msg in">Sipho Nkosi, 082 555 1234</div>
+          <div class="msg sys"><b>QUOTE READY ✓</b> Sipho Nkosi · Brake pads (front) · <span class="money">R1,450</span></div>
+          <div class="msg in">yes please</div>
+          <div class="msg out">Quote accepted — job card opened, we'll be in touch to book you in.</div>
+          <div class="msg brief"><span class="t">DASHBOARD</span>PDF quote sent, job card created — see it live on the operations dashboard.</div>
+        </div>
+        <button class="replay" id="replay-sme" type="button">↻ Replay sequence</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="faq">
+  <div class="wrap">
+    <div class="kicker" style="margin-bottom:14px">Questions people ask</div>
+    <details>
+      <summary>What does NexAgent OS cost?</summary>
+      <p>R1,999 per month — Founder's Discount, down from R2,499 (20% off), no setup fee. All eight modules, support included.</p>
+    </details>
+    <details>
+      <summary>Do I need to change my WhatsApp number?</summary>
+      <p>No. The AI runs on its own dedicated South African number — your personal and existing business numbers stay untouched.</p>
+    </details>
+    <details>
+      <summary>Is my data safe and POPIA-compliant?</summary>
+      <p>Yes. Your operational data belongs to you, is never sold or shared, and is processed under POPIA-aligned agreements with our automation and AI providers. Full details in our <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+    </details>
+    <details>
+      <summary>What are your terms of service?</summary>
+      <p>Our full terms covering service delivery, payment, cancellation and liability are available in our <a href="/terms.html">Terms of Service</a>. By requesting a demo or signing a service agreement you accept these terms.</p>
+    </details>
+  </div>
+</section>
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <div class="kicker">Contact</div>
+      <h2 class="h-panel">Get in touch<br>about your business.</h2>
+      <p class="sub" style="margin:18px 0 34px">Tell us what you run and we'll show you exactly how NexAgent OS handles it — book a demo and see it live.</p>
+      <div class="c-item"><div class="l">Phone / WhatsApp</div><div class="v"><a href="https://wa.me/27728400352">+27 72 840 0352</a></div></div>
+      <div class="c-item"><div class="l">Email</div><div class="v"><a href="mailto:admin@rdinvestmentholdings.co.za">admin@rdinvestmentholdings.co.za</a></div></div>
+      <div class="c-item"><div class="l">Location</div><div class="v">Gqeberha, South Africa</div></div>
+      <div class="c-item"><div class="l">Company</div><div class="v" style="font-size:13px;color:#5B6355;font-family:var(--mono)">RD INVESTMENT HOLDINGS (PTY) LTD · REG 2026/237915/07</div></div>
+    </div>
+    <form id="leadform" class="reveal" novalidate>
+      <input type="text" name="name" placeholder="Name" required aria-label="Your name">
+      <input type="email" name="email" placeholder="Email" required aria-label="Email">
+      <input type="text" name="business" placeholder="Business name" aria-label="Business name">
+      <select name="interest" aria-label="What are you interested in?">
+        <option value="">What are you interested in?</option>
+        <option value="NexAgent OS — SME">NexAgent OS — SME operations</option>
+        <option value="Not sure yet">Not sure yet</option>
+      </select>
+      <textarea name="message" placeholder="What would you like automated?" aria-label="Message"></textarea>
+      <button class="btn btn-solid" type="submit" style="justify-self:start">Send</button>
+      <div class="form-ok" id="formok">✓ SENT — REPLY WITHIN 1 BUSINESS DAY</div>
+    </form>
+  </div>
+</section>
+<footer>
+  <div class="wrap foot">
+    <div>© 2026 RD Investment Holdings (Pty) Ltd · Reg 2026/237915/07</div>
+    <div>
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      &nbsp;·&nbsp;
+      <a href="/terms.html">Terms of Service</a>
+      &nbsp;·&nbsp;
+      <a href="https://wa.me/27728400352">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+</div>
+<script>
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+(function(){
+  const els=document.querySelectorAll('.reveal');
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){els.forEach(e=>e.classList.add('show'));return}
+  const io=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.2});
+  els.forEach(e=>io.observe(e));
+})();
+function initChatSequence(chatId,replayId){
+  const chatEl=document.getElementById(chatId);
+  if(!chatEl)return;
+  const msgs=[...chatEl.querySelectorAll('.msg')];
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timers=[];
+  function play(){
+    timers.forEach(clearTimeout);timers=[];
+    if(reduced){msgs.forEach(m=>m.classList.add('show'));return}
+    msgs.forEach(m=>m.classList.remove('show'));
+    msgs.forEach((m,i)=>timers.push(setTimeout(()=>m.classList.add('show'),500+i*950)));
+  }
+  const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){play();io.disconnect()}},{threshold:.35});
+  io.observe(chatEl);
+  const replayBtn=document.getElementById(replayId);
+  if(replayBtn)replayBtn.addEventListener('click',play);
+}
+initChatSequence('chat-sme','replay-sme');
+(function(){
+  const WEBHOOK_URL='https://hook.us2.make.com/1jwaheml9625nibctelkwe4ahs42pcgp';
+  const form=document.getElementById('leadform'),ok=document.getElementById('formok');
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const data=Object.fromEntries(new FormData(form));
+    if(!data.name||!data.email){form.reportValidity();return}
+    data.source='website';data.submitted=new Date().toISOString();
+    if(WEBHOOK_URL){
+      try{await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})}
+      catch(err){location.href='https://wa.me/27728400352?text='+encodeURIComponent('Enquiry: '+data.name+' ('+(data.business||'')+')');return}
+    }else{
+      location.href='https://wa.me/27728400352?text='+encodeURIComponent('Hi, I\'d like to know more. '+data.name+' — '+(data.business||''));
+      return;
+    }
+    form.reset();ok.style.display='block';
+  });
+})();
+</script>
 </body>
 </html>
