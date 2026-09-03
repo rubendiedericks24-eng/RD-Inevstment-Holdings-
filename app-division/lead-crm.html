@@ -61,7 +61,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 
 /* MAIN */
 .main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
-@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
 
 /* PAGE HEADER */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
@@ -206,9 +206,39 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
   transition:all .2s;pointer-events:none
 }
 .toast.show{opacity:1;transform:translateY(0)}
+
+/* NexAgent gate + phone nav */
+.nex-gate{position:fixed;inset:0;z-index:9999;background:#0F172A;display:flex;align-items:center;justify-content:center;padding:24px}
+.nex-gate.ok{display:none}
+.nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
+.nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
+.nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
+.nex-gate-box input{width:100%;padding:12px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:1rem;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:12px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer}
+.nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:42px;height:42px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+@media(max-width:700px){
+  .nex-burger{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
+  .main{margin-left:0;padding:56px 16px 20px}
+}
+
 </style>
 </head>
-<body> <!-- SIDEBAR -->
+<body>
+
+<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-gate" id="nexGate">
+  <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
+    <h2>Auto Workshop PE</h2>
+    <p>Staff login. Clients do not use this page.</p>
+    <p class="nex-gate-err" id="nexGateErr"></p>
+    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="submit">Open</button>
+  </form>
+</div>
+ <!-- SIDEBAR -->
 <nav class="sidebar"> <div class="sidebar-brand"> <div class="brand-row"> <div> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Lead CRM</div> </div> </div> <div style="margin:10px 14px 0;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <div class="sidebar-nav"> <div class="nav-section">Pipeline</div> <div class="nav-item active" onclick="setFilter('all')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> All Leads <span class="count" id="cnt-all">0</span> </div> <div class="nav-item" onclick="setFilter('New')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg> New <span class="count" id="cnt-new">0</span> </div> <div class="nav-item" onclick="setFilter('Contacted')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.08l1.96-1.96a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Contacted <span class="count" id="cnt-contacted">0</span> </div> <div class="nav-item" onclick="setFilter('Quoted')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Quoted <span class="count" id="cnt-quoted">0</span> </div> <div class="nav-item" onclick="setFilter('Won')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Won <span class="count" id="cnt-won">0</span> </div> <div class="nav-item" onclick="setFilter('Lost')"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Lost <span class="count" id="cnt-lost">0</span> </div> <a class="nav-item" href="operations-dashboard.html" style="margin-top:8px;text-decoration:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </div> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </nav> <!-- MAIN -->
 <div class="main"> <div class="pg-header"> <div> <div class="pg-label">NexOS — Module 1</div> <div class="pg-title">Lead Follow-Up CRM</div> <div class="pg-sub">Track, follow up, and close every inbound lead</div> </div> <button class="btn btn-primary" onclick="openAddModal()"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Lead
@@ -233,7 +263,7 @@ let currentLeadId = null;
 
 async function loadLeads() {
   try {
-    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Leads`);
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Leads&key=NexOS-PE`);
     const rows = await res.json();
     leads = rows
       .map((r, i) => ({...r, __rowFallback: i + 2}))
@@ -520,5 +550,26 @@ function openWhatsAppFor(phone) {
 // ── INIT ──
 loadLeads();
 </script>
+
+<script>
+const NEX_GATE_KEY = 'nexos_pe_gate_v1';
+const NEX_GATE_PW = 'NexOS-PE';
+function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
+function nexUnlock(e){
+  e.preventDefault();
+  const v = (document.getElementById('nexGatePw').value || '').trim();
+  if(v === NEX_GATE_PW){
+    sessionStorage.setItem(NEX_GATE_KEY,'1');
+    document.getElementById('nexGate').classList.add('ok');
+  } else {
+    document.getElementById('nexGateErr').textContent = 'Wrong password';
+  }
+  return false;
+}
+if(nexUnlocked()){
+  document.getElementById('nexGate').classList.add('ok');
+}
+</script>
+
 </body>
 </html>

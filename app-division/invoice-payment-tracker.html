@@ -56,7 +56,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
-@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
 
 /* ── PAGE HEADER ── */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
@@ -173,9 +173,39 @@ textarea{resize:vertical;min-height:70px}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid rgba(15,23,42,.12);color:var(--text);padding:11px 22px;border-radius:10px;font-size:.85rem;font-weight:500;z-index:999;display:none;box-shadow:var(--shadow-md);white-space:nowrap}
 .toast.show{display:block}
+
+/* NexAgent gate + phone nav */
+.nex-gate{position:fixed;inset:0;z-index:9999;background:#0F172A;display:flex;align-items:center;justify-content:center;padding:24px}
+.nex-gate.ok{display:none}
+.nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
+.nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
+.nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
+.nex-gate-box input{width:100%;padding:12px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:1rem;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:12px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer}
+.nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:42px;height:42px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+@media(max-width:700px){
+  .nex-burger{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
+  .main{margin-left:0;padding:56px 16px 20px}
+}
+
 </style>
 </head>
-<body> <!-- SIDEBAR -->
+<body>
+
+<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-gate" id="nexGate">
+  <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
+    <h2>Auto Workshop PE</h2>
+    <p>Staff login. Clients do not use this page.</p>
+    <p class="nex-gate-err" id="nexGateErr"></p>
+    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="submit">Open</button>
+  </form>
+</div>
+ <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-row"> <div> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Invoice Tracker</div> </div> </div> <div style="margin:10px 14px 0;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active" onclick="showView('all',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Invoices</div> <div class="nav-item" onclick="showView('Outstanding',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Outstanding</div> <div class="nav-item" onclick="showView('Overdue',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Overdue</div> <div class="nav-item" onclick="showView('Paid',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Paid</div> <a class="nav-item" href="operations-dashboard.html" style="margin-top:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </aside> <!-- MAIN -->
 <main class="main"> <div class="pg-header"> <div> <div class="pg-label">App Division</div> <div class="pg-title">Invoice & Payment Tracker</div> <div class="pg-sub" id="viewLabel">All invoices · <span id="invCount">0</span> records</div> </div> <div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="loadInvoices().then(()=>toast('Refreshed'))" style="font-size:.8rem;padding:8px 14px">↻ Refresh</button><button class="btn btn-primary" onclick="openNewInvoice()">+ New Invoice</button></div> </div> <!-- STATS --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Outstanding</div> <div class="stat-val v-amber" id="statOutstanding">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Overdue</div> <div class="stat-val v-red" id="statOverdue">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Paid This Month</div> <div class="stat-val v-green" id="statPaid">R0</div> </div> <div class="stat-cell"> <div class="stat-label">Total Invoices</div> <div class="stat-val v-navy" id="statTotal">0</div> </div> </div> <!-- TABLE --> <div class="card"> <div class="card-head"> <div class="card-title">Invoices</div> <div class="chips"> <div class="chip active" onclick="setFilter('all',this)">All</div> <div class="chip" onclick="setFilter('Outstanding',this)">Outstanding</div> <div class="chip" onclick="setFilter('Overdue',this)">Overdue</div> <div class="chip" onclick="setFilter('Paid',this)">Paid</div> </div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice #</th> <th>Client</th> <th>Description</th> <th>Amount</th> <th>Due Date</th> <th>Status</th> <th></th> </tr> </thead> <tbody id="invBody"> <tr><td colspan="7" style="text-align:center;padding:52px 16px;color:var(--subtle);font-family:var(--mono);font-size:.78rem">No invoices yet — create your first one above.</td></tr> </tbody> </table> </div> </div>
@@ -205,7 +235,7 @@ let currentFilter = 'all';
 
 async function loadInvoices() {
   try {
-    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Invoices`);
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Invoices&key=NexOS-PE`);
     const rows = await res.json();
     invoices = rows
       .map((r, i) => ({...r, __rowFallback: i + 2}))
@@ -408,5 +438,26 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 async function fireWebhook(url, p) { if(!url)return; try{await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});}catch(e){} }
 </script>
+
+<script>
+const NEX_GATE_KEY = 'nexos_pe_gate_v1';
+const NEX_GATE_PW = 'NexOS-PE';
+function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
+function nexUnlock(e){
+  e.preventDefault();
+  const v = (document.getElementById('nexGatePw').value || '').trim();
+  if(v === NEX_GATE_PW){
+    sessionStorage.setItem(NEX_GATE_KEY,'1');
+    document.getElementById('nexGate').classList.add('ok');
+  } else {
+    document.getElementById('nexGateErr').textContent = 'Wrong password';
+  }
+  return false;
+}
+if(nexUnlocked()){
+  document.getElementById('nexGate').classList.add('ok');
+}
+</script>
+
 </body>
 </html>

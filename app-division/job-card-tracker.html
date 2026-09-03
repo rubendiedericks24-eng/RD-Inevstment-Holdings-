@@ -40,7 +40,7 @@ input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inh
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
-@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
 
 /* ── PAGE HEADER ── */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;gap:12px;flex-wrap:wrap}
@@ -131,9 +131,39 @@ table.tbl tbody tr.clickable:hover{background:var(--bg)}
 .toast-el.show{opacity:1;transform:translateY(0)}
 .toast-el.success{background:var(--surface2);border:1px solid rgba(15,23,42,.12);color:var(--text)}
 .toast-el.error{background:var(--red);color:#fff}
+
+/* NexAgent gate + phone nav */
+.nex-gate{position:fixed;inset:0;z-index:9999;background:#0F172A;display:flex;align-items:center;justify-content:center;padding:24px}
+.nex-gate.ok{display:none}
+.nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
+.nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
+.nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
+.nex-gate-box input{width:100%;padding:12px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:1rem;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:12px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer}
+.nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:42px;height:42px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+@media(max-width:700px){
+  .nex-burger{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
+  .main{margin-left:0;padding:56px 16px 20px}
+}
+
 </style>
 </head>
 <body>
+
+<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-gate" id="nexGate">
+  <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
+    <h2>Auto Workshop PE</h2>
+    <p>Staff login. Clients do not use this page.</p>
+    <p class="nex-gate-err" id="nexGateErr"></p>
+    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="submit">Open</button>
+  </form>
+</div>
+
 <div id="app"></div>
 <div id="toast" class="toast-el"></div>
 <script>
@@ -141,7 +171,7 @@ const SHEETS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiC
 
 async function syncJobsFromSheet(){
   try{
-    const res=await fetch(`${SHEETS_SCRIPT_URL}?tab=Job%20Bookings`);
+    const res=await fetch(`${SHEETS_SCRIPT_URL}?tab=Job%20Bookings&key=NexOS-PE`);
     const rows=await res.json();
     if(!Array.isArray(rows))return;
     const currentJobs=DB.getJobs();
@@ -288,5 +318,26 @@ render();
 // Auto-sync from Google Sheets on load — pulls in any jobs created by Make.com automation
 syncJobsFromSheet().catch(()=>{});
 </script>
+
+<script>
+const NEX_GATE_KEY = 'nexos_pe_gate_v1';
+const NEX_GATE_PW = 'NexOS-PE';
+function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
+function nexUnlock(e){
+  e.preventDefault();
+  const v = (document.getElementById('nexGatePw').value || '').trim();
+  if(v === NEX_GATE_PW){
+    sessionStorage.setItem(NEX_GATE_KEY,'1');
+    document.getElementById('nexGate').classList.add('ok');
+  } else {
+    document.getElementById('nexGateErr').textContent = 'Wrong password';
+  }
+  return false;
+}
+if(nexUnlocked()){
+  document.getElementById('nexGate').classList.add('ok');
+}
+</script>
+
 </body>
 </html>

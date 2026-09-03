@@ -39,7 +39,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:1
 
 /* ── MAIN ── */
 .main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
-@media(max-width:700px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px}}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
 
 /* ── PAGE HEADER ── */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
@@ -112,9 +112,39 @@ table.tbl tbody tr:hover{background:var(--bg)}
 /* ── ALERT BANNER ── */
 .alert-banner{background:var(--red-lt);border:1px solid var(--red-border);border-radius:8px;padding:10px 16px;font-size:.82rem;color:var(--red);margin-bottom:16px;display:none}
 .alert-banner.show{display:block}
+
+/* NexAgent gate + phone nav */
+.nex-gate{position:fixed;inset:0;z-index:9999;background:#0F172A;display:flex;align-items:center;justify-content:center;padding:24px}
+.nex-gate.ok{display:none}
+.nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
+.nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
+.nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
+.nex-gate-box input{width:100%;padding:12px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:1rem;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:12px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer}
+.nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:42px;height:42px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+@media(max-width:700px){
+  .nex-burger{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
+  .main{margin-left:0;padding:56px 16px 20px}
+}
+
 </style>
 </head>
-<body> <!-- LOADING -->
+<body>
+
+<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-gate" id="nexGate">
+  <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
+    <h2>Auto Workshop PE</h2>
+    <p>Staff login. Clients do not use this page.</p>
+    <p class="nex-gate-err" id="nexGateErr"></p>
+    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="submit">Open</button>
+  </form>
+</div>
+ <!-- LOADING -->
 <div class="loading" id="loadingOverlay"> <div class="spinner"></div> Loading live data from Google Sheets…
 </div> <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Operations Dashboard</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</div> <a class="nav-item" href="job-card-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Job Cards</a> <a class="nav-item" href="auto-quote-generator.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Quotes</a> <a class="nav-item" href="invoice-payment-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Invoices</a> <a class="nav-item" href="lead-crm.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Lead CRM</a> <a class="nav-item" href="inventory-stock-manager.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Inventory &amp; Stock</a> <a class="nav-item" href="staff-timesheet-payroll.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Timesheet &amp; Payroll</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
@@ -154,7 +184,7 @@ function loadCache() {
 
 // ── FETCH ── (Apps Script middleware — sheet stays private, no API key needed)
 async function fetchTab(tab) {
-  const url = `${SHEETS_SCRIPT_URL}?tab=${encodeURIComponent(tab)}`;
+  const url = `${SHEETS_SCRIPT_URL}?tab=${encodeURIComponent(tab)}&key=NexOS-PE`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${tab}: ${res.status}`);
   const data = await res.json();
@@ -429,5 +459,26 @@ window.onload = () => {
   }
 };
 </script>
+
+<script>
+const NEX_GATE_KEY = 'nexos_pe_gate_v1';
+const NEX_GATE_PW = 'NexOS-PE';
+function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
+function nexUnlock(e){
+  e.preventDefault();
+  const v = (document.getElementById('nexGatePw').value || '').trim();
+  if(v === NEX_GATE_PW){
+    sessionStorage.setItem(NEX_GATE_KEY,'1');
+    document.getElementById('nexGate').classList.add('ok');
+  } else {
+    document.getElementById('nexGateErr').textContent = 'Wrong password';
+  }
+  return false;
+}
+if(nexUnlocked()){
+  document.getElementById('nexGate').classList.add('ok');
+}
+</script>
+
 </body>
 </html>
