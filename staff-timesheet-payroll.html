@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Timesheet & Payroll — Auto Workshop PE</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Saira:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;
+  --border:#E2E8F0;--border-dk:#CBD5E1;
+  --text:#0F172A;--muted:#475569;--subtle:#94A3B8;
+  --navy:#0F172A;--navy2:#334155;--accent:#0F172A;
+  --green:#16A34A;--green-lt:rgba(22,163,74,.07);--green-border:rgba(22,163,74,.25);
+  --yellow:#D97706;--amber:#D97706;
+  --amber-lt:rgba(217,119,6,.08);--amber-border:rgba(217,119,6,.25);
+  --red:#DC2626;--red-lt:rgba(220,38,38,.06);--red-border:rgba(220,38,38,.25);
+  --blue:#2563EB;--blue-lt:rgba(37,99,235,.06);--blue-border:rgba(37,99,235,.25);
+  --purple:#7C3AED;--purple-lt:rgba(124,58,237,.06);--purple-border:rgba(124,58,237,.25);
+  --wa:#25D366;
+  --shadow:0 1px 2px rgba(15,23,42,.04);--shadow-md:0 4px 24px rgba(15,23,42,.08);--shadow-lg:0 8px 48px rgba(15,23,42,.14);
+  --disp:'Saira Condensed',sans-serif;--body:'Saira',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --radius:4px;--sidebar:230px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;line-height:1.5}
+input,select,textarea,button{font-family:var(--body);font-size:inherit;color:inherit}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;left:0;top:0;width:var(--sidebar);min-height:100vh;background:var(--bg);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.brand-name{font-family:var(--disp);font-size:.95rem;font-weight:900;color:var(--navy);line-height:1.2}
+.brand-sub{font-family:var(--mono);font-size:.65rem;color:var(--subtle);letter-spacing:.06em;margin-top:2px}
+.sidebar-nav{padding:10px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px 9px 15px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);margin-bottom:1px;transition:all .1s;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--surface2);color:var(--navy);border-left-color:var(--navy);font-weight:600}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
+
+/* ── PAGE HEADER ── */
+.pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+.pg-label{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:6px}
+.pg-title{font-family:var(--disp);font-size:1.45rem;font-weight:900;color:var(--text);letter-spacing:-.3px;line-height:1.1}
+.pg-sub{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.stat-cell{padding:18px 20px;border-right:1px solid var(--border);text-align:center}
+.stat-cell:last-child{border-right:none}
+.stat-label{font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:6px}
+.stat-value{font-family:var(--disp);font-size:1.6rem;font-weight:900;color:var(--navy);letter-spacing:-.5px}
+.stat-unit{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.toolbar-left{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap}
+select.filter-select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.82rem;color:var(--text);cursor:pointer}
+input.search-input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:.82rem;width:200px}
+input.search-input:focus,select.filter-select:focus{outline:none;border-color:var(--navy)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:#0F172A;color:#FFFFFF;border:1.5px solid #0F172A}
+.btn-primary:hover{background:transparent;color:#0F172A;border-color:#0F172A}
+.btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--surface2)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{opacity:.9}
+.btn-sm{padding:5px 10px;font-size:.78rem}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 14px;text-align:left;font-family:var(--mono);font-size:.66rem;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--subtle);background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.badge-green{background:var(--green-lt);color:var(--green);border:1px solid var(--green-border)}
+.badge-amber{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-blue{background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-border)}
+
+/* ── ACTION BUTTONS ── */
+.act-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all .1s;font-size:.85rem}
+.act-btn:hover{background:var(--surface2);color:var(--text)}
+.act-btn.del:hover{background:var(--red-lt);border-color:var(--red-border);color:var(--red)}
+.actions-cell{display:flex;gap:6px;align-items:center}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-header{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--disp);font-size:1.05rem;font-weight:900;color:var(--navy)}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1rem}
+.modal-close:hover{background:var(--surface2)}
+.modal-body{padding:20px 24px}
+.modal-body .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-body .form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.77rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--surface);color:var(--text);transition:border .1s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--navy)}
+.form-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+
+/* ── PAYROLL SUMMARY ── */
+.payroll-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow)}
+.payroll-card h3{font-family:var(--disp);font-weight:900;font-size:.95rem;color:var(--navy);margin-bottom:14px}
+.payroll-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.84rem}
+.payroll-row:last-child{border-bottom:none;font-weight:700;font-size:.9rem;color:var(--navy)}
+.payroll-name{color:var(--text)}
+.payroll-hours{color:var(--muted);font-family:var(--mono);font-size:.78rem}
+.payroll-pay{font-weight:600;color:var(--navy)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid rgba(15,23,42,.12);color:var(--text);padding:10px 18px;border-radius:10px;font-size:.83rem;font-weight:500;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;color:var(--subtle)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+.empty-text{font-size:.9rem;font-weight:500;color:var(--muted)}
+.empty-sub{font-size:.8rem;margin-top:4px}
+
+/* NexAgent gate + phone nav */
+.nex-gate{position:fixed;inset:0;z-index:9999;background:#0F172A;display:flex;align-items:center;justify-content:center;padding:24px}
+.nex-gate.ok{display:none}
+.nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
+.nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
+.nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
+.nex-gate-box input{width:100%;padding:14px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:16px;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:14px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer;min-height:44px}
+.nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:220;width:44px;height:44px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+.nex-dim{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:150}
+@media(max-width:700px){
+  .nex-burger{display:block}
+  .nex-dim.on{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s;z-index:210;width:min(280px,86vw)}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
+  .main{margin-left:0;padding:56px 12px 24px}
+  .nav-item{min-height:44px}
+  .btn,.btn-primary,.btn-secondary,button.btn{min-height:44px}
+  input,select,textarea{font-size:16px !important}
+  .tbl-wrap,table.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stat-grid{grid-template-columns:repeat(2,1fr) !important}
+  .panel-grid{grid-template-columns:1fr !important}
+  .pg-header{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-dim" id="nexDim"></div>
+<div class="nex-gate" id="nexGate">
+  <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
+    <h2>Auto Workshop PE</h2>
+    <p>Staff login. Clients do not use this page.</p>
+    <p class="nex-gate-err" id="nexGateErr"></p>
+    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="submit">Open</button>
+  </form>
+</div>
+ <!-- SIDEBAR -->
+<aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Staff Timesheet & Payroll</div> </div> <nav class="sidebar-nav"> <a class="nav-item active" onclick="setView('all')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Entries</a> <a class="nav-item" onclick="setView('today')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Today</a> <a class="nav-item" onclick="setView('week')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="7" y="14" width="3" height="3" fill="currentColor" stroke="none"/><rect x="11" y="14" width="3" height="3" fill="currentColor" stroke="none"/></svg> This Week</a> <a class="nav-item" onclick="setView('payroll')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Payroll Summary</a> <a class="nav-item" href="operations-dashboard.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
+</aside> <!-- MAIN -->
+<main class="main"> <div class="pg-header"> <div> <div class="pg-label">Module 5</div> <div class="pg-title">Staff Timesheet & Payroll</div> <div class="pg-sub" id="pgSub">Loading entries…</div> </div> <button class="btn btn-primary" onclick="openModal()">+ Log Entry</button> </div> <!-- STAT GRID --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Entries</div> <div class="stat-value" id="statTotal">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Hours (Week)</div> <div class="stat-value" id="statHours">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Payroll (Week)</div> <div class="stat-value" id="statPay">—</div> </div> <div class="stat-cell"> <div class="stat-label">Staff on Sheet</div> <div class="stat-value" id="statStaff">—</div> </div> </div> <!-- PAYROLL SUMMARY (hidden unless payroll view) --> <div id="payrollSection" style="display:none"> <div class="payroll-card"> <h3>Payroll Summary — This Week</h3> <div id="payrollRows"></div> </div> </div> <!-- TOOLBAR --> <div class="toolbar" id="mainToolbar"> <div class="toolbar-left"> <input class="search-input" id="searchInput" placeholder="Search staff…" oninput="renderEntries()"> <select class="filter-select" id="filterStaff" onchange="renderEntries()"> <option value="">All Staff</option> </select> </div> </div> <!-- TABLE --> <div class="table-wrap" id="tableSection"> <table> <thead> <tr> <th>Date</th> <th>Staff Name</th> <th>Clock In</th> <th>Clock Out</th> <th>Hours</th> <th>Rate (R/hr)</th> <th>Day Pay</th> <th>Job Ref</th> <th>Notes</th> <th></th> </tr> </thead> <tbody id="entriesTbody"></tbody> </table> </div>
+</main> <!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="entryModal"> <div class="modal"> <div class="modal-header"> <span class="modal-title" id="modalTitle">Log Entry</span> <button class="modal-close" onclick="closeModal()">&#x2715;</button> </div> <div class="modal-body"> <div class="form-grid"> <div class="form-group"> <label>Date *</label> <input type="date" id="fDate"> </div> <div class="form-group"> <label>Staff Name *</label> <input type="text" id="fName" placeholder="e.g. John Smith"> </div> <div class="form-group"> <label>Clock In *</label> <input type="time" id="fClockIn" oninput="autoCalc()"> </div> <div class="form-group"> <label>Clock Out *</label> <input type="time" id="fClockOut" oninput="autoCalc()"> </div> <div class="form-group"> <label>Hourly Rate (R) *</label> <input type="number" id="fRate" placeholder="e.g. 85" min="0" oninput="autoCalc()"> </div> <div class="form-group"> <label>Job Ref</label> <input type="text" id="fJobRef" placeholder="e.g. JOB-004"> </div> <div class="form-group form-full"> <label>Notes</label> <input type="text" id="fNotes" placeholder="Optional notes"> </div> <div class="form-group"> <label>Hours Worked (auto)</label> <input type="text" id="fHours" readonly style="background:var(--surface2);color:var(--muted)"> </div> <div class="form-group"> <label>Day Pay (auto)</label> <input type="text" id="fDayPay" readonly style="background:var(--surface2);color:var(--muted)"> </div> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal()">Cancel</button> <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button> </div> </div>
+</div> <!-- TOAST -->
+<div class="toast" id="toast"></div> <script>
+// ── CONFIG ──
+const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
+const WEBHOOK_ADD    = 'https://hook.us2.make.com/un3alg53vw51mvrvqe2bfrem4r3xc0sy';
+const WEBHOOK_EDIT   = 'https://hook.us2.make.com/spvftneex45ybhfbej32ul1nlo0v9dlk';
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/4q92lkkq9efk1oepbsllre0tm4019h4r';
+
+let entries = [];
+let editingId = null;
+let currentView = 'all';
+
+// ── ID GENERATOR ──
+function nextId(){ return 'TS-' + Date.now().toString().slice(-6); }
+
+// ── LOAD FROM SHEET ──
+async function loadEntries(){
+  document.getElementById('pgSub').textContent = 'Loading entries…';
+  try {
+    const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Timesheet&key=NexOS-PE`);
+    const rows = await res.json();
+    entries = rows
+      .map((r, i) => ({...r, __rowFallback: i + 2}))
+      .filter(r => r['Staff Name'])
+      .map(r => ({
+        id:         String(r['Entry ID'] || '').trim() || nextId(),
+        __row:      r.__row != null ? Number(r.__row) : r.__rowFallback,
+        date:       parseSheetDate(r['Date']),
+        staffName:  String(r['Staff Name']   || ''),
+        clockIn:    parseSheetTime(r['Clock In']),
+        clockOut:   parseSheetTime(r['Clock Out']),
+        hours:      Number(r['Hours Worked']) || 0,
+        rate:       Number(String(r['Hourly Rate']||'').replace(/R/gi,'').replace(/,/g,'')) || 0,
+        dayPay:     Number(String(r['Day Pay']||'').replace(/R/gi,'').replace(/,/g,'')) || 0,
+        jobRef:     String(r['Job Ref']      || ''),
+        notes:      String(r['Notes']        || ''),
+      }));
+    updateStats();
+    renderEntries();
+    populateStaffFilter();
+    document.getElementById('pgSub').textContent = `${entries.length} entries loaded`;
+  } catch(e){
+    document.getElementById('pgSub').textContent = 'Error loading data — check Apps Script URL';
+    console.error('loadEntries error:', e);
+  }
+}
+
+// ── FIRE WEBHOOK ──
+async function fireWebhook(url, payload){
+  if (!url || url.startsWith('PASTE')){ console.warn('Webhook not configured:', url); return; }
+  try {
+    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  } catch(e){ console.error('Webhook failed:', e); toast('Webhook error — check Make.com'); }
+}
+
+// ── TOAST ──
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+// ── VIEW ──
+function setView(v){
+  currentView = v;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+  const paySection = document.getElementById('payrollSection');
+  const tableSection = document.getElementById('tableSection');
+  const toolbar = document.getElementById('mainToolbar');
+  if(v === 'payroll'){
+    paySection.style.display = 'block';
+    tableSection.style.display = 'none';
+    toolbar.style.display = 'none';
+    renderPayroll();
+  } else {
+    paySection.style.display = 'none';
+    tableSection.style.display = 'block';
+    toolbar.style.display = 'flex';
+    renderEntries();
+  }
+}
+
+// ── FILTER ENTRIES ──
+function getFilteredEntries(){
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const staff  = document.getElementById('filterStaff').value;
+  const today  = new Date().toISOString().slice(0,10);
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10);
+  return entries.filter(e => {
+    if(currentView === 'today' && e.date !== today) return false;
+    if(currentView === 'week' && e.date < weekAgo) return false;
+    if(staff && e.staffName !== staff) return false;
+    if(search && !e.staffName.toLowerCase().includes(search) && !e.jobRef.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+// ── RENDER TABLE ──
+function renderEntries(){
+  const filtered = getFilteredEntries();
+  const tbody = document.getElementById('entriesTbody');
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty"><div class="empty-icon"></div><div class="empty-text">No entries found</div><div class="empty-sub">Log an entry to get started</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(e => {
+    const payBadge = e.dayPay > 0 ? `<span class="badge badge-green">R${e.dayPay.toFixed(2)}</span>` : '—';
+    return `<tr> <td><span style="font-family:var(--mono);font-size:.78rem">${formatDate(e.date)}</span></td> <td><strong>${e.staffName}</strong></td> <td>${e.clockIn || '—'}</td> <td>${e.clockOut || '—'}</td> <td><span class="badge badge-blue">${e.hours.toFixed(1)}h</span></td> <td>R${e.rate}/hr</td> <td>${payBadge}</td> <td>${e.jobRef ? `<span class="badge badge-amber">${e.jobRef}</span>` : '—'}</td> <td style="color:var(--muted);font-size:.8rem">${e.notes || '—'}</td> <td><div class="actions-cell"> <button class="act-btn" onclick="openEdit('${e.id}')" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button> <button class="act-btn del" onclick="deleteEntry('${e.id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button> </div></td> </tr>`;
+  }).join('');
+}
+
+// ── RENDER PAYROLL ──
+function renderPayroll(){
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10);
+  const weekEntries = entries.filter(e => e.date >= weekAgo);
+  const byStaff = {};
+  weekEntries.forEach(e => {
+    if(!byStaff[e.staffName]) byStaff[e.staffName] = { hours:0, pay:0 };
+    byStaff[e.staffName].hours += e.hours;
+    byStaff[e.staffName].pay  += e.dayPay;
+  });
+  const container = document.getElementById('payrollRows');
+  const names = Object.keys(byStaff);
+  if(!names.length){
+    container.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:12px 0">No entries this week.</div>';
+    return;
+  }
+  let totalPay = 0;
+  let html = names.map(n => {
+    totalPay += byStaff[n].pay;
+    return `<div class="payroll-row"> <span class="payroll-name">${n}</span> <span class="payroll-hours">${byStaff[n].hours.toFixed(1)}h</span> <span class="payroll-pay">R${byStaff[n].pay.toFixed(2)}</span> </div>`;
+  }).join('');
+  html += `<div class="payroll-row"><span>Total</span><span></span><span>R${totalPay.toFixed(2)}</span></div>`;
+  container.innerHTML = html;
+}
+
+// ── STATS ──
+function updateStats(){
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10);
+  const weekE = entries.filter(e => e.date >= weekAgo);
+  const totalHours = weekE.reduce((s,e) => s + e.hours, 0);
+  const totalPay   = weekE.reduce((s,e) => s + e.dayPay, 0);
+  const staffSet   = new Set(entries.map(e => e.staffName));
+  document.getElementById('statTotal').textContent = entries.length;
+  document.getElementById('statHours').textContent = totalHours.toFixed(1);
+  document.getElementById('statPay').textContent   = 'R' + totalPay.toFixed(0);
+  document.getElementById('statStaff').textContent = staffSet.size;
+}
+
+// ── POPULATE STAFF FILTER ──
+function populateStaffFilter(){
+  const sel = document.getElementById('filterStaff');
+  const names = [...new Set(entries.map(e => e.staffName))].sort();
+  sel.innerHTML = '<option value="">All Staff</option>' + names.map(n=>`<option value="${n}">${n}</option>`).join('');
+}
+
+// ── PARSE SHEET DATE (handles ISO datetime strings from Sheets) ──
+function parseSheetDate(val){
+  if(!val) return '';
+  const s = String(val);
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : s;
+}
+
+// ── PARSE SHEET TIME (handles 1899-12-30T06:30:00.000Z from Sheets) ──
+function parseSheetTime(val){
+  if(!val) return '';
+  const s = String(val);
+  const m = s.match(/T(\d{2}:\d{2})/);
+  if(m) return m[1];
+  if(/^\d{1,2}:\d{2}/.test(s)) return s.slice(0,5).padStart(5,'0');
+  return s;
+}
+
+// ── FORMAT DATE ──
+function formatDate(d){
+  if(!d) return '—';
+  try { return new Date(d + 'T00:00:00').toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'}); }
+  catch { return d; }
+}
+
+// ── CALC HOURS ──
+function calcHours(clockIn, clockOut){
+  if(!clockIn || !clockOut) return 0;
+  const [ih,im] = clockIn.split(':').map(Number);
+  const [oh,om] = clockOut.split(':').map(Number);
+  const diff = (oh*60+om) - (ih*60+im);
+  return diff > 0 ? Math.round(diff/60*10)/10 : 0;
+}
+
+// ── MODAL AUTO-CALC ──
+function autoCalc(){
+  const clockIn  = document.getElementById('fClockIn').value;
+  const clockOut = document.getElementById('fClockOut').value;
+  const rate     = parseFloat(document.getElementById('fRate').value) || 0;
+  const hours    = calcHours(clockIn, clockOut);
+  const dayPay   = Math.round(hours * rate * 100)/100;
+  document.getElementById('fHours').value  = hours > 0 ? hours.toFixed(1) + ' hrs' : '';
+  document.getElementById('fDayPay').value = dayPay > 0 ? 'R' + dayPay.toFixed(2) : '';
+}
+
+// ── OPEN MODAL ──
+function openModal(){
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Log Entry';
+  document.getElementById('fDate').value     = new Date().toISOString().slice(0,10);
+  document.getElementById('fName').value     = '';
+  document.getElementById('fClockIn').value  = '';
+  document.getElementById('fClockOut').value = '';
+  document.getElementById('fRate').value     = '';
+  document.getElementById('fJobRef').value   = '';
+  document.getElementById('fNotes').value    = '';
+  document.getElementById('fHours').value    = '';
+  document.getElementById('fDayPay').value   = '';
+  document.getElementById('entryModal').classList.add('open');
+}
+
+// ── OPEN EDIT ──
+function openEdit(id){
+  const e = entries.find(x => x.id === id);
+  if(!e) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Entry';
+  document.getElementById('fDate').value     = e.date;
+  document.getElementById('fName').value     = e.staffName;
+  document.getElementById('fClockIn').value  = e.clockIn;
+  document.getElementById('fClockOut').value = e.clockOut;
+  document.getElementById('fRate').value     = e.rate;
+  document.getElementById('fJobRef').value   = e.jobRef;
+  document.getElementById('fNotes').value    = e.notes;
+  autoCalc();
+  document.getElementById('entryModal').classList.add('open');
+}
+
+// ── CLOSE MODAL ──
+function closeModal(){ document.getElementById('entryModal').classList.remove('open'); }
+
+// ── SAVE ENTRY ──
+async function saveEntry(){
+  const date    = document.getElementById('fDate').value;
+  const name    = document.getElementById('fName').value.trim();
+  const clockIn = document.getElementById('fClockIn').value;
+  const clockOut= document.getElementById('fClockOut').value;
+  const rate    = parseFloat(document.getElementById('fRate').value) || 0;
+  if(!date || !name || !clockIn || !clockOut || !rate){ toast('Fill in all required fields'); return; }
+  const hours  = calcHours(clockIn, clockOut);
+  const dayPay = Math.round(hours * rate * 100)/100;
+  const data = { date, staffName:name, clockIn, clockOut, hours, rate, dayPay, jobRef:document.getElementById('fJobRef').value.trim(), notes:document.getElementById('fNotes').value.trim() };
+
+  if(editingId){
+    const existing = entries.find(e => e.id===editingId);
+    entries = entries.map(e => e.id===editingId ? {...e,...data} : e);
+    closeModal(); updateStats(); renderEntries();
+    toast('Entry updated — syncing to sheet…');
+    await fireWebhook(WEBHOOK_EDIT, { action:'edit', id:editingId, rowNumber: existing?.__row, ...data });
+  } else {
+    const newEntry = { id:nextId(), ...data };
+    entries.unshift(newEntry);
+    closeModal(); updateStats(); renderEntries(); populateStaffFilter();
+    toast('Entry logged — syncing to sheet…');
+    await fireWebhook(WEBHOOK_ADD, { action:'add', ...newEntry });
+  }
+  setTimeout(loadEntries, 4000);
+}
+
+// ── DELETE ENTRY ──
+async function deleteEntry(id){
+  const e = entries.find(x=>x.id===id);
+  if(!e) return;
+  if(!confirm(`Delete entry for ${e.staffName} on ${formatDate(e.date)}? This cannot be undone.`)) return;
+  entries = entries.filter(x=>x.id!==id);
+  updateStats(); renderEntries();
+  toast('Entry deleted — syncing to sheet…');
+  await fireWebhook(WEBHOOK_DELETE, { action:'delete', id, rowNumber: e.__row, staffName:e.staffName, date:e.date });
+  setTimeout(loadEntries, 4000);
+}
+
+// ── AUTO-CALC ON INPUT ──
+document.getElementById('fClockIn').addEventListener('input', autoCalc);
+document.getElementById('fClockOut').addEventListener('input', autoCalc);
+document.getElementById('fRate').addEventListener('input', autoCalc);
+
+window.onload = loadEntries;
+</script>
+
+<script>
+const NEX_GATE_KEY = 'nexagent_pe_gate_v1';
+const NEX_GATE_PW = 'NexOS-PE';
+function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
+function nexUnlock(e){
+  e.preventDefault();
+  const v = (document.getElementById('nexGatePw').value || '').trim();
+  if(v === NEX_GATE_PW){
+    sessionStorage.setItem(NEX_GATE_KEY,'1');
+    document.getElementById('nexGate').classList.add('ok');
+  } else {
+    document.getElementById('nexGateErr').textContent = 'Wrong password';
+  }
+  return false;
+}
+if(nexUnlocked()){
+  document.getElementById('nexGate').classList.add('ok');
+}
+(function(){
+  const side=document.querySelector('.sidebar');
+  const dim=document.getElementById('nexDim');
+  const burger=document.querySelector('.nex-burger');
+  function close(){ if(side) side.classList.remove('open'); if(dim) dim.classList.remove('on'); }
+  function toggle(){ if(!side) return; side.classList.toggle('open'); if(dim) dim.classList.toggle('on', side.classList.contains('open')); }
+  if(burger) burger.onclick=toggle;
+  if(dim) dim.onclick=close;
+  document.querySelectorAll('.sidebar .nav-item').forEach(el=>el.addEventListener('click', close));
+})();
+</script>
+
+</body>
+</html>
