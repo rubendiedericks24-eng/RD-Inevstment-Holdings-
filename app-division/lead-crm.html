@@ -213,22 +213,31 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
 .nex-gate-box{width:100%;max-width:340px;background:#fff;border-radius:8px;padding:28px 24px;font-family:'Saira',sans-serif}
 .nex-gate-box h2{font-family:'Saira Condensed',sans-serif;font-size:1.4rem;margin:0 0 6px;color:#0F172A}
 .nex-gate-box p{font-size:.85rem;color:#475569;margin:0 0 16px}
-.nex-gate-box input{width:100%;padding:12px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:1rem;margin-bottom:10px}
-.nex-gate-box button{width:100%;padding:12px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer}
+.nex-gate-box input{width:100%;padding:14px 12px;border:1px solid #E2E8F0;border-radius:4px;font-size:16px;margin-bottom:10px}
+.nex-gate-box button{width:100%;padding:14px;background:#0F172A;color:#fff;border:0;border-radius:4px;font-weight:600;cursor:pointer;min-height:44px}
 .nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
-.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:42px;height:42px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+.nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:220;width:44px;height:44px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
+.nex-dim{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:150}
 @media(max-width:700px){
   .nex-burger{display:block}
-  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s}
+  .nex-dim.on{display:block}
+  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s;z-index:210;width:min(280px,86vw)}
   .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
-  .main{margin-left:0;padding:56px 16px 20px}
+  .main{margin-left:0;padding:56px 12px 24px}
+  .nav-item{min-height:44px}
+  .btn,.btn-primary,.btn-secondary,button.btn{min-height:44px}
+  input,select,textarea{font-size:16px !important}
+  .tbl-wrap,table.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stat-grid{grid-template-columns:repeat(2,1fr) !important}
+  .panel-grid{grid-template-columns:1fr !important}
+  .pg-header{flex-direction:column;align-items:flex-start}
 }
-
 </style>
 </head>
 <body>
 
 <button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<div class="nex-dim" id="nexDim"></div>
 <div class="nex-gate" id="nexGate">
   <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
     <h2>Auto Workshop PE</h2>
@@ -552,7 +561,7 @@ loadLeads();
 </script>
 
 <script>
-const NEX_GATE_KEY = 'nexos_pe_gate_v1';
+const NEX_GATE_KEY = 'nexagent_pe_gate_v1';
 const NEX_GATE_PW = 'NexOS-PE';
 function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
 function nexUnlock(e){
@@ -569,6 +578,16 @@ function nexUnlock(e){
 if(nexUnlocked()){
   document.getElementById('nexGate').classList.add('ok');
 }
+(function(){
+  const side=document.querySelector('.sidebar');
+  const dim=document.getElementById('nexDim');
+  const burger=document.querySelector('.nex-burger');
+  function close(){ if(side) side.classList.remove('open'); if(dim) dim.classList.remove('on'); }
+  function toggle(){ if(!side) return; side.classList.toggle('open'); if(dim) dim.classList.toggle('on', side.classList.contains('open')); }
+  if(burger) burger.onclick=toggle;
+  if(dim) dim.onclick=close;
+  document.querySelectorAll('.sidebar .nav-item').forEach(el=>el.addEventListener('click', close));
+})();
 </script>
 
 </body>
