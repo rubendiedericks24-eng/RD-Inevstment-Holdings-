@@ -469,7 +469,7 @@ let iCount = 0;
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
 // ── DELETE WEBHOOK — paste NexQuote-DeleteQuote URL here after building Make.com scenario ──
-const WEBHOOK_DELETE = 'https://hook.us2.make.com/zvguu9svuyll817wwf6lj544lp9mn7x2';
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
 async function fetchQuoteRow(num) {
   try {
@@ -750,7 +750,7 @@ async function deleteQuote(idx, e) {
         await fetch(WEBHOOK_DELETE, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', quoteNum: q.num, rowNumber: q.__row })
+          body: JSON.stringify({ event: 'delete_quote', quoteNum: q.num, rowNumber: q.__row })
         });
         toast('Quote deleted.', 'success');
       } catch(err) { toast('Sheet delete failed — check Make.com.', 'error'); }
