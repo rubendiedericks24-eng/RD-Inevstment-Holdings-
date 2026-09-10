@@ -235,7 +235,7 @@ function sheetDate(val) {
   }
   return String(val).trim().slice(0, 10);
 }
-const WEBHOOK_CREATE  = 'https://hook.us2.make.com/3kbai6k3xzd1hn41qe6y93nmdputxndd';
+const WEBHOOK_CREATE  = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 const WEBHOOK_PAID    = 'https://hook.us2.make.com/utq7yl7c07xbrggrts24ek5gdc6qwg0q';
 const WEBHOOK_REMINDER= 'https://hook.us2.make.com/7narvwpeddf6dt2j1ts30h7u6b5le25u';
 const WEBHOOK_DELETE  = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
@@ -374,18 +374,14 @@ async function deleteInvoice(invNo) {
   if (!confirm('Delete invoice? This cannot be undone.')) return;
   const inv = invoices.find(i => i.invNo === decoded);
   if (WEBHOOK_DELETE && inv) {
-    if (!inv.__row) {
-      toast('Row number missing — delete from sheet manually.');
-    } else {
-      try {
-        await fetch(WEBHOOK_DELETE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', invNo: decoded, rowNumber: inv.__row })
-        });
-        toast('Invoice deleted');
-      } catch(e) { toast('Sheet delete failed — check Make.com.'); }
-    }
+    try {
+      await fetch(WEBHOOK_DELETE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', invNo: decoded, rowNumber: inv.__row || null })
+      });
+      toast('Invoice deleted');
+    } catch(e) { toast('Sheet delete failed — check Make.com.'); }
   } else {
     toast('Invoice deleted');
   }
