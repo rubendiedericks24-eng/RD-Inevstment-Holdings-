@@ -459,6 +459,23 @@ function saveLead() {
     source: lead.source,
     status: lead.status
   });
+  let ph = String(lead.phone || '').replace(/\D/g, '');
+  if (ph.startsWith('0')) ph = '27' + ph.slice(1);
+  fireWebhook(WEBHOOK_DELETE, {
+    event: 'add_lead',
+    action: 'add_lead',
+    leadId: lead.id,
+    date: lead.date,
+    name: lead.name,
+    clientName: lead.name,
+    phone: ph,
+    clientPhone: ph,
+    enquiry: lead.enquiry,
+    vehicle: lead.vehicle,
+    details: lead.details,
+    source: lead.source,
+    status: lead.status
+  });
   setTimeout(loadLeads, 5000);
 }
 
@@ -528,7 +545,7 @@ async function deleteLead() {
       await fetch(WEBHOOK_DELETE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete_lead', leadId: lead.id, phone: ph, name: lead.name })
+        body: JSON.stringify({ event: 'delete_lead', action: 'delete_lead', leadId: lead.id, phone: ph, clientPhone: ph, name: lead.name })
       });
       toast('Lead deleted');
     } catch(e) { toast('Sheet delete failed — check Make.com.'); }
