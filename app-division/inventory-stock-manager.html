@@ -203,9 +203,9 @@ textarea{resize:vertical;min-height:60px}
 </div> <div class="toast" id="toast"></div> <script>
 // ── CONFIG — paste URLs here once Make.com scenarios + Apps Script are deployed ──
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
-const WEBHOOK_ADD    = 'https://hook.us2.make.com/kmeplsfj71oxbdrdr3hh9ehprnwtpiui';
+const WEBHOOK_ADD    = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 const WEBHOOK_EDIT   = 'https://hook.us2.make.com/v84g3iwkdkl0q4g1qmwffnd3l9yial88';
-const WEBHOOK_DELETE = 'https://hook.us2.make.com/db51w9e8gegt5883x7mihpcfj66gctqj';
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 const WEBHOOK_ADJUST = 'https://hook.us2.make.com/v6hpwidgig4qdnbr2j4t3pvy28mbq1y7';
 
 let parts = [];
@@ -404,7 +404,7 @@ async function savePart(){
     const newPart = { id:nextId(), ...data };
     parts.unshift(newPart);
     closeModal('partModal'); render(); toast('Part added — syncing to sheet…');
-    await fireWebhook(WEBHOOK_ADD, { action:'add', ...newPart });
+    await fireWebhook(WEBHOOK_ADD, { event:'add_part', action:'add_part', partId:newPart.id, partName:newPart.name, name:newPart.name, category:newPart.category, description:newPart.description, priceRange:newPart.priceRange, stockLevel:newPart.stockLevel, reorderLevel:newPart.reorderLevel, supplier:newPart.supplier, costPrice:newPart.costPrice });
   }
   setTimeout(loadParts, 4000); // refresh from sheet after Make.com writes
 }
@@ -414,7 +414,7 @@ async function deletePart(id){
   if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
   parts = parts.filter(x=>x.id!==id);
   render(); toast('Part deleted — syncing to sheet…');
-  await fireWebhook(WEBHOOK_DELETE, { action:'delete', id, rowNumber: p.__row, name:p.name });
+  await fireWebhook(WEBHOOK_DELETE, { event:'delete_part', action:'delete_part', partId:id, partName:p.name, name:p.name });
   setTimeout(loadParts, 4000);
 }
 
