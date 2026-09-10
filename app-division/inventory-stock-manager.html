@@ -206,7 +206,7 @@ const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZ
 const WEBHOOK_ADD    = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 const WEBHOOK_EDIT   = 'https://hook.us2.make.com/v84g3iwkdkl0q4g1qmwffnd3l9yial88';
 const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-const WEBHOOK_ADJUST = 'https://hook.us2.make.com/v6hpwidgig4qdnbr2j4t3pvy28mbq1y7';
+const WEBHOOK_ADJUST = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
 let parts = [];
 
@@ -426,7 +426,7 @@ async function quickAdj(id, delta){
   render();
   const p = parts.find(x=>x.id===id);
   toast(delta>0 ? `+1 received — ${p.name}: ${p.stockLevel} in stock` : `−1 used — ${p.name}: ${p.stockLevel} remaining`);
-  await fireWebhook(WEBHOOK_ADJUST, { action:'adjust', id, rowNumber: part.__row, name:p.name, newStock:newLevel, delta, mode:delta>0?'receive':'use' });
+  await fireWebhook(WEBHOOK_ADJUST, { event:'adjust_part', action:'adjust_part', partId:id, partName:p.name, name:p.name, newStock:newLevel, delta, mode:delta>0?'receive':'use' });
   setTimeout(loadParts, 4000);
 }
 
@@ -459,7 +459,7 @@ async function confirmAdj(){
   closeModal('adjModal'); render();
   const p = parts.find(x=>x.id===adjId);
   toast(adjMode==='receive' ? `+${qty} received — ${p.name}: ${p.stockLevel} in stock` : `${qty} used — ${p.name}: ${p.stockLevel} remaining`);
-  await fireWebhook(WEBHOOK_ADJUST, { action:'adjust', id:adjId, rowNumber: part.__row, name:p.name, newStock:newLevel, delta, mode:adjMode });
+  await fireWebhook(WEBHOOK_ADJUST, { event:'adjust_part', action:'adjust_part', partId:adjId, partName:p.name, name:p.name, newStock:newLevel, delta, mode:adjMode });
   setTimeout(loadParts, 4000);
 }
 
