@@ -263,7 +263,7 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 const WEBHOOK_ADD    = 'https://hook.us2.make.com/5pvo9kq93lubiokehk39wiv3ybfaz95z';  // LeadCRM-Add
 const WEBHOOK_UPDATE = 'https://hook.us2.make.com/ym5ytt8bfzujzz93fo6824oe79dx6oj5';  // LeadCRM-UpdateStatus
-const WEBHOOK_DELETE = '';                                                               // LeadCRM-Delete (paste URL after building Make.com scenario)
+const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
 // ── STATE ──
 let leads = [];
@@ -522,18 +522,16 @@ async function deleteLead() {
   if (!confirm('Delete this lead? This cannot be undone.')) return;
   const lead = leads.find(l => l.id === currentLeadId);
   if (WEBHOOK_DELETE && lead) {
-    if (!lead.__row) {
-      toast('Row number missing — delete from sheet manually.');
-    } else {
-      try {
-        await fetch(WEBHOOK_DELETE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', leadId: lead.id, rowNumber: lead.__row })
-        });
-        toast('Lead deleted');
-      } catch(e) { toast('Sheet delete failed — check Make.com.'); }
-    }
+    try {
+      let ph = String(lead.phone || '').replace(/\D/g, '');
+      if (ph.startsWith('0')) ph = '27' + ph.slice(1);
+      await fetch(WEBHOOK_DELETE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_lead', leadId: lead.id, phone: ph, name: lead.name })
+      });
+      toast('Lead deleted');
+    } catch(e) { toast('Sheet delete failed — check Make.com.'); }
   } else {
     toast('Lead deleted');
   }
