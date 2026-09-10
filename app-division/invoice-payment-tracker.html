@@ -244,6 +244,7 @@ let currentFilter = 'all';
 
 async function loadInvoices() {
   try {
+    try { localStorage.removeItem('nexinvoices_deleted'); } catch(e) {}
     const res  = await fetch(`${SHEETS_SCRIPT_URL}?tab=Invoices&key=NexOS-PE`);
     const rows = await res.json();
     invoices = rows
@@ -267,7 +268,6 @@ async function loadInvoices() {
         paidDate:    String(r['Paid Date'] || '') || null,
         items:       [],
       }));
-    const _del=new Set(JSON.parse(localStorage.getItem('nexinvoices_deleted')||'[]'));invoices=invoices.filter(inv=>!_del.has(inv.invNo));
     checkOverdue();
     render();
   } catch(e) {
@@ -386,7 +386,6 @@ async function deleteInvoice(invNo) {
     toast('Invoice deleted');
   }
   invoices = invoices.filter(i => i.invNo !== decoded);
-  const _del=JSON.parse(localStorage.getItem('nexinvoices_deleted')||'[]');if(!_del.includes(decoded)){_del.push(decoded);localStorage.setItem('nexinvoices_deleted',JSON.stringify(_del));}
   if (document.getElementById('detailOverlay').classList.contains('open')) closeModal('detailOverlay');
   render();
 }
