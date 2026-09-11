@@ -161,7 +161,7 @@ table.tbl tbody tr.clickable:hover{background:var(--bg)}
 </head>
 <body>
 
-<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+<button class="nex-burger" type="button" id="nexBurger" aria-label="Menu">☰</button>
 <div class="nex-dim" id="nexDim"></div>
 <div class="nex-gate" id="nexGate">
   <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
@@ -271,7 +271,7 @@ function pgNew(){
 }
 function pgAll(){
   const jobs=filtered();
-  return`<div style="max-width:960px"><div class="pg-header"><div><div class="pg-title">All Jobs</div><div class="pg-sub">${S.jobs.length} total job cards</div></div><button class="btn btn-primary" data-nav="new-job">${IC.plus} New Job Card</button></div><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap"><input id="search-box" class="search-input" placeholder="Search by client, tech, job ID…" value="${esc(S.searchQuery)}"><div class="chips">${['all','Pending','In Progress','Done'].map(f=>`<div class="chip${S.filterStatus===f?' active':''}" data-filter="${f}">${f==='all'?'All':f}</div>`).join('')}</div></div><div class="card">${jobs.length===0?`<div class="empty"><div class="empty-icon"></div><div class="empty-title">No jobs found</div><div class="empty-sub">Try adjusting your search or filter.</div></div>`:`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Job #</th><th>Client</th><th>Description</th><th>Technician</th><th>Status</th><th>Date</th></tr></thead><tbody>${jobs.map(j=>`<tr class="clickable" data-job="${esc(j.id)}"><td><span class="job-num">${esc(j.id)}</span></td><td><div class="client-name">${esc(j.clientName)}</div><div class="client-phone">${esc(j.clientPhone)}</div></td><td><div class="job-desc">${esc(j.jobDescription)}</div></td><td>${esc(j.technician)}</td><td>${badge(j.status)}</td><td class="date-cell">${fmtDate(j.date)}</td></tr>`).join('')}</tbody></table></div>`}</div></div>`;
+  return`<div style="max-width:960px"><button class="back-btn" data-nav="dashboard">${IC.back} Dashboard</button><div class="pg-header"><div><div class="pg-title">All Jobs</div><div class="pg-sub">${S.jobs.length} total job cards</div></div><button class="btn btn-primary" data-nav="new-job">${IC.plus} New Job Card</button></div><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap"><input id="search-box" class="search-input" placeholder="Search by client, tech, job ID…" value="${esc(S.searchQuery)}"><div class="chips">${['all','Pending','In Progress','Done'].map(f=>`<div class="chip${S.filterStatus===f?' active':''}" data-filter="${f}">${f==='all'?'All':f}</div>`).join('')}</div></div><div class="card">${jobs.length===0?`<div class="empty"><div class="empty-icon"></div><div class="empty-title">No jobs found</div><div class="empty-sub">Try adjusting your search or filter.</div></div>`:`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Job #</th><th>Client</th><th>Description</th><th>Technician</th><th>Status</th><th>Date</th></tr></thead><tbody>${jobs.map(j=>`<tr class="clickable" data-job="${esc(j.id)}"><td><span class="job-num">${esc(j.id)}</span></td><td><div class="client-name">${esc(j.clientName)}</div><div class="client-phone">${esc(j.clientPhone)}</div></td><td><div class="job-desc">${esc(j.jobDescription)}</div></td><td>${esc(j.technician)}</td><td>${badge(j.status)}</td><td class="date-cell">${fmtDate(j.date)}</td></tr>`).join('')}</tbody></table></div>`}</div></div>`;
 }
 function pgDetail(){
   const job=S.jobs.find(j=>j.id===S.selectedJobId);
@@ -301,7 +301,18 @@ function pgSettings(){
 }`;
   return`<div style="max-width:580px"><div class="pg-header"><div><div class="pg-title">Settings</div><div class="pg-sub">Configure NexTrack for your business</div></div></div><form id="settings-form"><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Business Details</div><div class="field"><label>Business Name</label><input name="businessName" value="${esc(c.businessName)}" placeholder="e.g. Pete's Auto Workshop"></div><div class="field" style="margin-bottom:0"><label>Technicians <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--subtle)">(one per line)</span></label><textarea name="technicianList" rows="4" placeholder="Andile&#10;Sipho&#10;James">${esc((c.technicianList||[]).join('\n'))}</textarea></div></div><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Make.com Webhook</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Fires when a job is marked Done — triggers WhatsApp notification to client via Make.com.</div><div class="field" style="margin-bottom:0"><label>Webhook URL</label><input name="makeWebhookUrl" value="${esc(c.makeWebhookUrl)}" placeholder="https://hook.us2.make.com/…"></div></div><div class="card" style="padding:22px;margin-bottom:14px"><div class="section-label">Google Sheets Sync <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--subtle)">(optional)</span></div><div style="font-size:.8rem;color:var(--muted);margin-bottom:14px">NexTrack syncs every job create, update, and delete to your sheet in real time. Uses a Google Apps Script web app as a relay — no OAuth needed.</div><div class="field" style="margin-bottom:14px"><label>Apps Script URL</label><input name="sheetsScriptUrl" value="${esc(c.sheetsScriptUrl||'')}" placeholder="https://script.google.com/macros/s/…/exec"></div><details style="margin-bottom:0"><summary style="font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--muted);cursor:pointer;user-select:none;padding:8px 0">How to set this up (one-time, 3 minutes)</summary><div style="margin-top:12px;font-size:.8rem;color:var(--muted);line-height:1.7"><ol style="padding-left:18px;margin-bottom:12px"><li>Open your Google Sheet → Extensions → Apps Script</li><li>Delete any existing code, paste the script below</li><li>Click Deploy → New deployment → Web app</li><li>Set "Execute as" = Me, "Who has access" = Anyone</li><li>Click Deploy, copy the URL, paste it above</li></ol><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:.72rem;white-space:pre;overflow-x:auto;color:var(--text)">${esc(scriptCode)}</div></div></details></div><button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;margin-bottom:10px">Save Settings</button></form><button id="sync-all-btn" class="btn btn-secondary" style="width:100%;justify-content:center;padding:10px;margin-bottom:18px">Sync All Jobs to Sheets Now</button><div class="card" style="padding:18px 22px;border-color:rgba(220,38,38,0.2)"><div style="font-size:.82rem;font-weight:700;color:var(--red);margin-bottom:6px">Danger Zone</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Permanently delete all job cards stored on this device.</div><button id="clear-all-btn" class="btn btn-danger btn-sm">Clear All Jobs</button></div></div>`;
 }
+function wireNav(){
+  const side=document.querySelector('.sidebar');
+  const dim=document.getElementById('nexDim');
+  const burger=document.getElementById('nexBurger');
+  function close(){ if(side) side.classList.remove('open'); if(dim) dim.classList.remove('on'); }
+  function toggle(e){ if(e) e.stopPropagation(); if(!side) return; const on=!side.classList.contains('open'); side.classList.toggle('open',on); if(dim) dim.classList.toggle('on',on); }
+  if(burger) burger.onclick=toggle;
+  if(dim) dim.onclick=close;
+  document.querySelectorAll('.sidebar .nav-item').forEach(el=>el.addEventListener('click', close));
+}
 function bind(){
+  wireNav();
   document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>set({page:el.dataset.nav})));
   document.querySelectorAll('[data-job]').forEach(el=>el.addEventListener('click',()=>set({page:'job-detail',selectedJobId:el.dataset.job})));
   document.querySelectorAll('[data-status]').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();setStatus(el.dataset.jobid,el.dataset.status);}));
@@ -348,16 +359,7 @@ function nexUnlock(e){
 if(nexUnlocked()){
   document.getElementById('nexGate').classList.add('ok');
 }
-(function(){
-  const side=document.querySelector('.sidebar');
-  const dim=document.getElementById('nexDim');
-  const burger=document.querySelector('.nex-burger');
-  function close(){ if(side) side.classList.remove('open'); if(dim) dim.classList.remove('on'); }
-  function toggle(){ if(!side) return; side.classList.toggle('open'); if(dim) dim.classList.toggle('on', side.classList.contains('open')); }
-  if(burger) burger.onclick=toggle;
-  if(dim) dim.onclick=close;
-  document.querySelectorAll('.sidebar .nav-item').forEach(el=>el.addEventListener('click', close));
-})();
+wireNav();
 </script>
 
 </body>
