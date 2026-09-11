@@ -222,12 +222,15 @@ function fmt(v) {
 
 // Format date (ISO or dd/mm/yyyy → readable)
 function fmtDate(d) {
-  if (!d) return '—';
-  try {
-    const dt = new Date(d);
-    if (isNaN(dt)) return d;
+  if (d == null || d === '') return '—';
+  const n = Number(d);
+  if (!isNaN(n) && n > 20000 && n < 80000) {
+    const dt = new Date(Date.UTC(1899, 11, 30) + Math.round(n) * 86400000);
     return dt.toLocaleDateString('en-ZA', {day:'numeric', month:'short', year:'numeric'});
-  } catch { return d; }
+  }
+  const dt = new Date(d);
+  if (!isNaN(dt.getTime())) return dt.toLocaleDateString('en-ZA', {day:'numeric', month:'short', year:'numeric'});
+  return String(d);
 }
 
 function isClosed(status) {
