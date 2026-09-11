@@ -251,7 +251,7 @@ async function loadInvoices() {
       .map((r, i) => ({...r, __rowFallback: i + 2}))
       .filter(r => r['Invoice No'])
       .map(r => ({
-        invNo:       String(r['Invoice No'] || '').trim().replace(/^AQ-/, 'INV-'),
+        invNo:       String(r['Invoice No'] || '').trim(),
         __row:       r.__row != null ? Number(r.__row) : r.__rowFallback,
         client:      String(r['Client']    || ''),
         phone:       String(r['Phone']     || ''),
