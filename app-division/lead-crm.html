@@ -227,10 +227,16 @@ label.form-label span{font-weight:400;color:var(--subtle);margin-left:4px}
   .nav-item{min-height:44px}
   .btn,.btn-primary,.btn-secondary,button.btn{min-height:44px}
   input,select,textarea{font-size:16px !important}
-  .tbl-wrap,table.tbl{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl-wrap{overflow:visible}
+  table.tbl thead{display:none}
+  table.tbl,table.tbl tbody,table.tbl tr,table.tbl td{display:block;width:100%}
+  table.tbl tbody tr{border:1px solid var(--border);border-radius:8px;margin:0 0 12px;padding:12px 14px;background:var(--surface)}
+  table.tbl td{border:0;padding:3px 0}
+  .hide-m{display:none !important}
   .stat-grid{grid-template-columns:repeat(2,1fr) !important}
   .panel-grid{grid-template-columns:1fr !important}
   .pg-header{flex-direction:column;align-items:flex-start}
+  .filter-bar{flex-wrap:wrap}
 }
 </style>
 </head>
