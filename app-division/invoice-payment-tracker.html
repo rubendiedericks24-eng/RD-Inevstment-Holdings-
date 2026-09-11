@@ -198,6 +198,14 @@ textarea{resize:vertical;min-height:70px}
   .stat-grid{grid-template-columns:repeat(2,1fr) !important}
   .panel-grid{grid-template-columns:1fr !important}
   .pg-header{flex-direction:column;align-items:flex-start}
+  .tbl-wrap{overflow-x:visible}
+  table.tbl thead{display:none}
+  table.tbl,table.tbl tbody,table.tbl tr,table.tbl td{display:block;width:100%}
+  table.tbl tbody tr{border-bottom:1px solid var(--border);padding:12px 12px 14px}
+  table.tbl td{padding:2px 0;border:0;white-space:normal;max-width:none !important}
+  table.tbl td.row-actions{margin-top:10px}
+  table.tbl td.row-actions .btn{display:block;width:100%;margin:0 0 8px;text-align:center}
+  table.tbl td.row-actions .btn:last-child{margin-bottom:0}
 }
 </style>
 </head>
@@ -409,7 +417,7 @@ function render() {
     const btns = inv.status!=='Paid'
       ? `<button class="btn btn-sm btn-pay" onclick="markPaid('${esc(inv.invNo)}');event.stopPropagation()">Mark Paid</button> <button class="btn btn-sm btn-remind" onclick="sendReminder('${esc(inv.invNo)}');event.stopPropagation()" style="margin-left:6px">Remind</button> <button class="btn btn-sm" onclick="deleteInvoice('${esc(inv.invNo)}');event.stopPropagation()" style="margin-left:6px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`
       : `${inv.paidDate ? `<span style="font-family:var(--mono);font-size:.72rem;color:var(--green)">${inv.paidDate}</span>` : ''} <button class="btn btn-sm" onclick="deleteInvoice('${esc(inv.invNo)}');event.stopPropagation()" style="margin-left:8px;background:var(--red,#dc2626);color:#fff;border:none">Delete</button>`;
-    return `<tr onclick="openDetail('${inv.invNo}')"> <td><span class="inv-num">${inv.invNo}</span></td> <td><div class="client-name">${inv.client}</div><div class="client-detail">${inv.phone}</div></td> <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem">${inv.itemsSummary}</td> <td class="amount-cell">${fmt(inv.total)}</td> <td class="date-cell">${inv.dueDate||'—'}</td> <td><span class="badge ${bc}">${inv.status}</span></td> <td>${btns}</td> </tr>`;
+    return `<tr onclick="openDetail('${inv.invNo}')"> <td><span class="inv-num">${inv.invNo}</span></td> <td><div class="client-name">${inv.client}</div><div class="client-detail">${inv.phone}</div></td> <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.8rem">${inv.itemsSummary}</td> <td class="amount-cell">${fmt(inv.total)}</td> <td class="date-cell">${inv.dueDate||'—'}</td> <td><span class="badge ${bc}">${inv.status}</span></td> <td class="row-actions">${btns}</td> </tr>`;
   }).join('');
 }
 
