@@ -146,7 +146,7 @@ table.tbl tbody tr.clickable:hover{background:var(--bg)}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.overlay.hidden{display:none}
+.overlay.hidden,.hidden{display:none !important}
 .modal{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
 .modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:var(--surface);z-index:1}
 .modal-title{font-family:var(--disp);font-weight:900;font-size:1.05rem;color:var(--navy)}
