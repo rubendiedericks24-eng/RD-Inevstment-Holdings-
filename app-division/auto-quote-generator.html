@@ -524,7 +524,7 @@ window.onload = () => {
   if(biz.validity) document.getElementById('validNote').value = biz.validity;
 
   const settings = DB.loadSettings();
-  const defaultWebhook = 'https://hook.us2.make.com/rxat8rcnbnvi77y8rjlsnaf1a58tppet';
+  const defaultWebhook = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
   document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl || defaultWebhook;
 
   addItem();
@@ -882,6 +882,7 @@ async function syncToSheets(q, action='upsert') {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
+        event: action === 'upsert' ? 'floor_quote' : action,
         action, __row: q.__row || null,
         num:q.num, clientName:q.clientName,
         clientEmail:q.clientEmail||'', clientPhone:phone, reference:q.reference||'',
