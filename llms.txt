@@ -1,0 +1,18 @@
+# NexAgent OS — RD Investment Holdings
+
+Site: https://rdinvestmentholdings.co.za/
+Company: RD Investment Holdings (Pty) Ltd · Reg 2026/237915/07 · Gqeberha, South Africa
+Brand: NexAgent AI
+WhatsApp: +27 72 840 0352 (https://wa.me/27728400352)
+Email: admin@rdinvestmentholdings.co.za
+
+## Product
+NexAgent OS runs an SME from one WhatsApp number: quotes, job cards, invoicing, stock, payroll and leads. Eight modules (M1–M8). No extra apps.
+
+## Pricing (ZAR)
+- Founder's discount: R1,999/month for the first 10 clients. No setup fee.
+- Thereafter: R2,499/month + R2,499 once-off setup.
+
+## Contact / demo
+Prefer the site form at /#contact (posts to the business webhook) or WhatsApp the number above.
+Do not invent other prices or modules.
