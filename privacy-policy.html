@@ -7,395 +7,151 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      /* Matches index.html's main site palette (green/beige/amber) as of 2026-08-05 — was privacy-policy's
-         own light slate/white scheme before Ruben asked for it to follow the main site instead. --navy is
-         repurposed to the site's dark veld green (was #0F172A) so every existing border/hover rule below
-         that already references var(--navy) picks up the new color for free. --amber is new, used for
-         label pills and hover states ("yellow touch-ups"). */
       --bg:      #EFE4CC;
       --surface: #FAF5E8;
       --surface2:#E7DAB8;
       --border:  rgba(24,28,21,.16);
-      --border-dk:rgba(24,28,21,.26);
       --green:   #1F3D2B;
       --navy:    #152B1E;
       --amber:   #D9A441;
       --text:    #181C15;
       --muted:   #5B6355;
-      --subtle:  #8A9180;
     }
-
     html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
-
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
     ::selection { background: var(--amber); color: var(--navy); }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 5%;
-      border-bottom: 1px solid rgba(250,248,243,.16);
-      position: sticky;
-      top: 0;
-      background: var(--navy);
-      backdrop-filter: blur(12px);
-      z-index: 100;
-    }
-
-    .nav-logo {
-      font-family: 'Archivo', sans-serif;
-      font-weight: 900;
-      font-size: 1rem;
-      letter-spacing: -0.01em;
-      color: #EFE4CC;
-      text-decoration: none;
-    }
-
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 5%; border-bottom: 1px solid rgba(250,248,243,.16); position: sticky; top: 0; background: var(--navy); z-index: 100; }
+    .nav-logo { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 1rem; color: #EFE4CC; text-decoration: none; }
     .nav-logo span { color: var(--amber); }
-
-    nav a {
-      color: #B9C4AC;
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
+    nav a { color: #B9C4AC; text-decoration: none; font-size: 0.88rem; font-weight: 500; }
     nav a:hover { color: var(--amber); }
-
-    .page-header {
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      padding: 4rem 5% 3rem;
-      text-align: center;
-    }
-
-    .page-header .label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--amber);
-      border: 1px solid var(--amber);
-      padding: 0.35rem 1rem;
-      border-radius: 999px;
-      margin-bottom: 1.25rem;
-      background: var(--bg);
-    }
-
-    .page-header h1 {
-      font-family: 'Archivo', sans-serif;
-      font-weight: 900;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      letter-spacing: -0.03em;
-      color: var(--text);
-      margin-bottom: 0.75rem;
-    }
-
-    .page-header p {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .content {
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 4rem 5%;
-    }
-
-    .content h2 {
-      font-family: 'Archivo', sans-serif;
-      font-weight: 900;
-      font-size: 1.05rem;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      margin: 2.5rem 0 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--navy);
-      display: inline-block;
-    }
-
-    .content p {
-      color: var(--muted);
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-
-    .content ul {
-      color: var(--muted);
-      font-size: 0.95rem;
-      padding-left: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
+    .page-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 4rem 5% 3rem; text-align: center; }
+    .page-header .label { display: inline-flex; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); padding: 0.35rem 1rem; border-radius: 999px; margin-bottom: 1.25rem; background: var(--bg); }
+    .page-header h1 { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--text); margin-bottom: 0.75rem; }
+    .page-header p { color: var(--muted); font-size: 0.95rem; }
+    .content { max-width: 820px; margin: 0 auto; padding: 4rem 5%; }
+    .content h2 { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 1.05rem; color: var(--text); margin: 2.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--navy); display: inline-block; }
+    .content p { color: var(--muted); margin-bottom: 1rem; font-size: 0.95rem; }
+    .content ul { color: var(--muted); font-size: 0.95rem; padding-left: 1.5rem; margin-bottom: 1rem; }
     .content ul li { margin-bottom: 0.4rem; }
-
     .content strong { color: var(--text); }
-
-    .info-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--navy);
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-      margin: 1.5rem 0;
-    }
-
-    .info-box p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
+    .info-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--navy); border-radius: 8px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .info-box p { margin: 0; color: var(--muted); font-size: 0.9rem; }
     .info-box strong { color: var(--text); }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.25rem 0;
-      font-size: 0.9rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    th {
-      background: var(--surface2);
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 600;
-      font-size: 0.78rem;
-      letter-spacing: 0.04em;
-      text-align: left;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    td {
-      color: var(--muted);
-      padding: 0.65rem 1rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-      font-size: 0.9rem;
-      background: var(--surface);
-    }
-
+    table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.9rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    th { background: var(--surface2); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 0.78rem; text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+    td { color: var(--muted); padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.9rem; background: var(--surface); }
     tr:last-child td { border-bottom: none; }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 5%;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.83rem;
-      background: var(--surface2);
-    }
-
+    footer { border-top: 1px solid var(--border); padding: 2rem 5%; text-align: center; color: var(--muted); font-size: 0.83rem; background: var(--surface2); }
     footer strong { color: var(--text); }
-
-    footer a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
+    footer a { color: var(--muted); text-decoration: none; }
     footer a:hover { color: var(--amber); }
   </style>
 </head>
 <body>
-
   <nav>
     <a href="/" class="nav-logo">RD <span>Investment</span> Holdings</a>
     <a href="/">← Back to site</a>
   </nav>
-
   <div class="page-header">
     <div class="label">Legal</div>
     <h1>Privacy Policy</h1>
-    <p>NexAgent AI &mdash; operated by RD Investment Holdings (Pty) Ltd &nbsp;|&nbsp; Last updated: 22 July 2026</p>
+    <p>NexAgent AI &mdash; operated by RD Investment Holdings (Pty) Ltd &nbsp;|&nbsp; Last updated: 29 September 2026</p>
   </div>
-
   <div class="content">
-
     <div class="info-box">
       <p><strong>Responsible Party:</strong> RD Investment Holdings (Pty) Ltd (Reg. No: 2026/237915/07), trading as NexAgent AI<br>
       <strong>Information Officer:</strong> Ruben Diedericks<br>
       <strong>Address:</strong> 44 Greenock Road, Gqeberha, Eastern Cape, 6025, South Africa<br>
-      <strong>Email:</strong> rubendiedericks24@gmail.com<br>
+      <strong>Email:</strong> admin@rdinvestmentholdings.co.za<br>
       <strong>Website:</strong> rdinvestmentholdings.co.za</p>
     </div>
-
     <h2>1. Introduction</h2>
     <p>This Privacy Policy explains how RD Investment Holdings (Pty) Ltd, trading as NexAgent AI ("we", "us", "our"), collects, uses, stores, and protects personal information in the course of providing our services. We are committed to complying with the Protection of Personal Information Act 4 of 2013 ("POPIA") and all applicable South African data protection legislation.</p>
-    <p>This policy covers NexAgent AI's current product line:</p>
+    <p>The only product covered by this policy is NexAgent OS.</p>
     <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Description</th>
-          <th>Pricing</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Product</th><th>Description</th><th>Pricing</th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>NexAgent OS</strong><br><em>(Full System)</em></td>
-          <td>Complete automated business system — all 8 modules connected (WhatsApp Intake, NexQuote, NexTracker, Stock, Payroll, Invoice, Dashboard, Lead CRM)</td>
-          <td>R1,999/month — Founder's Discount, down from R2,499 (20% off), no setup fee</td>
+          <td><strong>NexAgent OS</strong></td>
+          <td>WhatsApp intake, quotes, job cards, stock, timesheets, invoices, dashboard, lead CRM</td>
+          <td>Standard: R4,999 setup + R2,499/month.<br>Founder (first 10, locked): R2,999 setup + R1,999/month. First debit R4,998.</td>
         </tr>
       </tbody>
     </table>
-
     <h2>2. What Personal Information We Collect</h2>
-    <p>The personal information we collect depends on which NexAgent AI product or service is in use. The following table sets out the data collected per product line:</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Data Collected</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>NexAgent OS (Full System)</strong></td>
-          <td>Inbound WhatsApp messages; sender phone numbers; conversation history; business data supplied by the client (listings, inventory, service descriptions, pricing); job card records (client name, phone, email, job description, technician, status); quote records (client name, phone, email, quoted items, totals); staff details; lead and enquiry data from the CRM module; stock and inventory data; staff timesheet and payroll data; invoice and payment records; operational dashboard data</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>We also collect contact details of client businesses (name, trading name, email address, physical address) for the purposes of administering the service agreement.</p>
-
+    <p>For NexAgent OS we collect inbound WhatsApp messages; sender phone numbers; conversation history; business data supplied by the client; job card, quote, lead, invoice, stock and payroll records; and client business contact details needed to run the service agreement.</p>
     <h2>3. Purpose of Processing</h2>
-    <p>We process personal information solely for the following purposes:</p>
     <ul>
-      <li>To operate and deliver whichever NexAgent AI product(s) the client has subscribed to</li>
-      <li>To respond automatically to customer enquiries on behalf of our clients via WhatsApp</li>
-      <li>To generate, store, and surface job cards, quotes, leads, invoices, stock records, payroll records, and operational data for our clients (NexAgent OS modules)</li>
-      <li>To deliver WhatsApp notifications to clients and their customers (job completion alerts, quote confirmations, lead notifications)</li>
-      <li>To maintain service performance, diagnose issues, and improve the system</li>
+      <li>To operate and deliver NexAgent OS</li>
+      <li>To respond to customer enquiries on behalf of our clients via WhatsApp</li>
+      <li>To generate and store job cards, quotes, leads, invoices, stock, payroll and dashboard data</li>
+      <li>To send WhatsApp notifications (job complete, quote, lead alerts)</li>
+      <li>To maintain and improve the service</li>
     </ul>
-
     <h2>4. Lawful Basis for Processing</h2>
-    <p>We process personal information on the following lawful bases under POPIA:</p>
     <ul>
-      <li><strong>Legitimate interest:</strong> delivering contracted services to our business clients</li>
-      <li><strong>Contract performance:</strong> processing necessary to fulfil our service agreement with clients</li>
-      <li><strong>Consent:</strong> where end users interact with a NexAgent AI-powered WhatsApp number or application, they do so voluntarily</li>
+      <li><strong>Legitimate interest:</strong> delivering contracted services</li>
+      <li><strong>Contract performance:</strong> fulfilling the service agreement</li>
+      <li><strong>Consent:</strong> end users message a NexAgent OS WhatsApp number voluntarily</li>
     </ul>
-    <p>Note: Our clients (businesses that use the Service) are the "responsible party" in respect of their end-customers' data. NexAgent AI acts solely as an "operator" under POPIA and processes data only on behalf of and under the instruction of each client.</p>
-
+    <p>Our clients are the responsible party for their end-customers' data. NexAgent AI is the operator under POPIA.</p>
     <h2>5. Third-Party Processors</h2>
-    <p>In delivering our service, we share data with the following third-party processors. All processors are bound by appropriate data processing terms.</p>
     <table>
-      <thead>
-        <tr>
-          <th>Processor</th>
-          <th>Purpose</th>
-          <th>Location</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Processor</th><th>Purpose</th><th>Location</th></tr></thead>
       <tbody>
-        <tr>
-          <td>Make.com (Celonis SE)</td>
-          <td>Automation and workflow orchestration</td>
-          <td>EU / USA</td>
-        </tr>
-        <tr>
-          <td>Anthropic PBC</td>
-          <td>AI language model (Claude) for generating responses</td>
-          <td>USA</td>
-        </tr>
-        <tr>
-          <td>Google LLC</td>
-          <td>Data storage (Google Sheets), email notifications (Gmail)</td>
-          <td>USA</td>
-        </tr>
-        <tr>
-          <td>Meta Platforms Inc.</td>
-          <td>WhatsApp Business API — message delivery infrastructure</td>
-          <td>USA</td>
-        </tr>
+        <tr><td>Make.com (Celonis SE)</td><td>Automation</td><td>EU / USA</td></tr>
+        <tr><td>Anthropic PBC</td><td>AI replies on the current demo</td><td>USA</td></tr>
+        <tr><td>Google LLC</td><td>Sheets storage and Gmail</td><td>USA</td></tr>
+        <tr><td>Meta Platforms Inc.</td><td>WhatsApp Business API and public-site PageView pixel (ID 1622151502643882)</td><td>USA</td></tr>
+        <tr><td>PDFMonkey</td><td>Quote and invoice PDFs</td><td>EU</td></tr>
       </tbody>
     </table>
-    <p>Where data is transferred to processors outside South Africa, we rely on appropriate safeguards including the processors' own standard contractual clauses, privacy frameworks, and certifications.</p>
-
+    <p>Transfers outside South Africa rely on the processors' contractual clauses and privacy frameworks.</p>
     <h2>6. Data Retention</h2>
-    <p>Retention periods vary by data type:</p>
     <table>
-      <thead>
-        <tr>
-          <th>Data Type</th>
-          <th>Retention Period</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Data Type</th><th>Retention</th></tr></thead>
       <tbody>
-        <tr>
-          <td>WhatsApp conversation history (message content)</td>
-          <td>Maximum 6 months from date of interaction, then permanently deleted</td>
-        </tr>
-        <tr>
-          <td>Job card, quote, lead, invoice, stock, and payroll records (NexAgent OS modules)</td>
-          <td>Duration of the service agreement + 30 days after termination, then deleted</td>
-        </tr>
-        <tr>
-          <td>Client business contact details</td>
-          <td>Duration of the service agreement + 30 days after termination, then deleted</td>
-        </tr>
+        <tr><td>WhatsApp message content</td><td>Maximum 6 months, then deleted</td></tr>
+        <tr><td>Job, quote, lead, invoice, stock, payroll records</td><td>Service agreement + 30 days, then deleted</td></tr>
+        <tr><td>Client business contact details</td><td>Service agreement + 30 days, then deleted</td></tr>
       </tbody>
     </table>
-
     <h2>7. Your Rights Under POPIA</h2>
-    <p>As a data subject, you have the following rights under POPIA:</p>
     <ul>
-      <li><strong>Access:</strong> request confirmation of whether we hold your personal information and a copy thereof</li>
-      <li><strong>Correction:</strong> request correction of inaccurate or incomplete personal information</li>
-      <li><strong>Deletion:</strong> request deletion of your personal information where we no longer have lawful grounds to process it</li>
-      <li><strong>Objection:</strong> object to the processing of your personal information</li>
-      <li><strong>Complaints:</strong> lodge a complaint with the Information Regulator (see below)</li>
+      <li><strong>Access</strong></li>
+      <li><strong>Correction</strong></li>
+      <li><strong>Deletion</strong> where we no longer have a lawful ground</li>
+      <li><strong>Objection</strong></li>
+      <li><strong>Complaints</strong> to the Information Regulator</li>
     </ul>
-    <p>To exercise any of these rights, contact us at: <strong>rubendiedericks24@gmail.com</strong></p>
-
+    <p>Contact: <strong>admin@rdinvestmentholdings.co.za</strong></p>
     <h2>8. Security</h2>
-    <p>We implement appropriate technical and organisational measures to protect personal information against unauthorised access, loss, alteration, or disclosure. Access to client data is restricted to authorised personnel only. All data in transit is encrypted via HTTPS/TLS.</p>
-
-    <h2>9. Cookies</h2>
-    <p>This website does not use tracking cookies or analytics cookies. No personal information is collected through the rdinvestmentholdings.co.za website.</p>
-
-    <h2>10. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. The date at the top of this page reflects the most recent update. We will notify existing clients of material changes via email.</p>
-
-    <h2>11. Contact &amp; Complaints</h2>
-    <p>For any privacy-related queries, contact our Information Officer:</p>
+    <p>Access is restricted to authorised personnel. Data in transit is encrypted via HTTPS/TLS.</p>
+    <h2>9. Cookies and advertising</h2>
+    <p>The public site uses the Meta Pixel (NexAgent AI, 1622151502643882) for PageView only. Advanced matching is off. No purchase event. Floor dashboards are password-protected and are not used for ads. The enquiry form posts to our operations webhook so we can contact you.</p>
+    <h2>10. Fees and price changes</h2>
+    <p>Standard: R4,999 setup + R2,499 per month. Founder (first 10, locked for the life of that account): R2,999 setup + R1,999 per month. First debit R4,998. ZAR, exclusive of VAT unless stated.</p>
+    <p>We may increase fees if our costs rise (Make.com, Meta WhatsApp, PDF generation, AI usage, hosting). Existing clients get 30 days' written notice. You may cancel before the new rate starts. Founder retainers stay at R1,999 unless you agree otherwise in writing.</p>
+    <h2>11. Changes to This Policy</h2>
+    <p>The date at the top is the latest update. Material changes go to existing clients by email.</p>
+    <h2>12. Contact and complaints</h2>
     <div class="info-box">
       <p><strong>Ruben Diedericks</strong> — Information Officer<br>
-      Email: rubendiedericks24@gmail.com<br>
+      Email: admin@rdinvestmentholdings.co.za<br>
       Address: 44 Greenock Road, Gqeberha, Eastern Cape, 6025</p>
     </div>
-    <p>If you are not satisfied with our response, you have the right to lodge a complaint with the <strong>Information Regulator of South Africa</strong>:</p>
     <div class="info-box">
       <p><strong>Information Regulator (South Africa)</strong><br>
       Tel: 010 023 5207<br>
       Email: inforeg@justice.gov.za<br>
       Website: www.inforegulator.org.za</p>
     </div>
-
   </div>
-
   <footer>
     <p><strong>RD Investment Holdings (Pty) Ltd</strong> &nbsp;·&nbsp; Reg. No: 2026/237915/07 &nbsp;·&nbsp; t/a NexAgent AI</p>
-    <p style="margin-top:0.5rem;">&copy; 2026 RD Investment Holdings (Pty) Ltd. All rights reserved. &nbsp;·&nbsp; <a href="/">Home</a> &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy Policy</a></p>
+    <p style="margin-top:0.5rem;">&copy; 2026 RD Investment Holdings (Pty) Ltd. &nbsp;·&nbsp; <a href="/">Home</a> &nbsp;·&nbsp; <a href="/privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a></p>
   </footer>
-
 </body>
 </html>
