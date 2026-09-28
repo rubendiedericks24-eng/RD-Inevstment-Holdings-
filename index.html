@@ -98,43 +98,39 @@
 <input type="email" name="email" placeholder="Email" required aria-label="Email">
 <input type="tel" name="phone" placeholder="Phone" required aria-label="Phone">
 <input type="text" name="business" placeholder="Business name" required aria-label="Business name">
-<select name="industry" required aria-label="Industry">
-<option value="">What do you run?</option>
-<option>Auto workshop</option>
-<option>Panel beater</option>
-<option>Plumber</option>
-<option>Electrician</option>
-<option>Cleaning company</option>
-<option>Other trade</option>
+<select name="industry" id="industry" required aria-label="Business type">
+<option value="">Business type</option>
+<option>Workshop / Panel beater</option>
+<option>Plumber / Electrician</option>
+<option>Cleaning services</option>
+<option>Other</option>
 </select>
-<select name="bottleneck" required aria-label="Bottleneck">
-<option value="">What is eating your time?</option>
-<option>Quotes take too long</option>
-<option>Invoices and chasing payment</option>
-<option>Job cards on paper or WhatsApp</option>
-<option>Stock goes missing</option>
-<option>Staff hours are a mess</option>
-<option>Leads get lost</option>
-<option>Not sure yet</option>
+<input type="text" name="industryOther" id="industryOther" placeholder="Other — please specify" aria-label="Other business type" style="display:none">
+<select name="bottleneck" required aria-label="Primary time drain">
+<option value="">Primary time drain</option>
+<option>Admin overhead (quotes and invoices)</option>
+<option>Operations (job cards and scheduling)</option>
+<option>Inventory (stock control)</option>
+<option>Labor (tracking hours and timesheets)</option>
+<option>Growth (lost leads and follow-ups)</option>
 </select>
-<select name="firstJob" required aria-label="First job for the system">
-<option value="">What should it do first?</option>
-<option>Send quotes on WhatsApp</option>
-<option>Send invoices when the job is done</option>
-<option>Open and close job cards</option>
-<option>Track stock</option>
-<option>Log staff hours</option>
-<option>Catch every lead</option>
+<select name="firstJob" required aria-label="Immediate priority">
+<option value="">Immediate priority</option>
+<option>Streamlining quotes and invoices</option>
+<option>Managing job cards and dispatching</option>
+<option>Tracking stock and inventory</option>
+<option>Logging hours and payroll</option>
+<option>Capturing and converting leads</option>
 </select>
 <select name="weeklyVolume" required aria-label="Weekly volume">
-<option value="">How many jobs or quotes a week?</option>
-<option>Under 5</option>
-<option>5 to 15</option>
-<option>16 to 40</option>
-<option>More than 40</option>
+<option value="">Weekly volume</option>
+<option>Micro: under 5</option>
+<option>Small: 5 to 15</option>
+<option>Medium: 16 to 40</option>
+<option>High: more than 40</option>
 </select>
 <select name="monthlyBudget" required aria-label="Monthly budget">
-<option value="">What can you spend a month to fix it?</option>
+<option value="">Monthly budget</option>
 <option>Under R1,999</option>
 <option>R1,999 to R2,499</option>
 <option>R2,500 to R4,999</option>
@@ -157,6 +153,7 @@ addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passi
 (function(){const v=document.getElementById('heroVid');if(!v)return;v.muted=true;v.loop=true;const play=()=>v.play().catch(()=>{});play();v.addEventListener('canplay',play);document.addEventListener('touchstart',play,{once:true,passive:true});})();
 (function(){const els=document.querySelectorAll('.reveal');const io=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.2});els.forEach(e=>io.observe(e));})();
 function initChatSequence(chatId,replayId){const chatEl=document.getElementById(chatId);if(!chatEl)return;const msgs=[...chatEl.querySelectorAll('.msg')];function play(){msgs.forEach(m=>m.classList.remove('show'));msgs.forEach((m,i)=>setTimeout(()=>m.classList.add('show'),350+i*650));}new IntersectionObserver(e=>{if(e[0].isIntersecting)play()},{threshold:.3}).observe(chatEl);const b=document.getElementById(replayId);if(b)b.onclick=play;}initChatSequence('chat-sme','replay-sme');
+(function(){const ind=document.getElementById('industry'),other=document.getElementById('industryOther');if(ind&&other)ind.addEventListener('change',()=>{const on=ind.value==='Other';other.style.display=on?'block':'none';other.required=on;if(!on)other.value='';});})();
 (function(){const WEBHOOK_URL='https://hook.us2.make.com/1jwaheml9625nibctelkwe4ahs42pcgp';const form=document.getElementById('leadform'),ok=document.getElementById('formok');form.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));if(!form.reportValidity())return;data.source='website';data.submitted=new Date().toISOString();try{await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(err){location.href='https://wa.me/27728400352?text='+encodeURIComponent('Enquiry: '+data.name);return;}form.reset();ok.style.display='block';});})();
 </script>
 </body></html>
