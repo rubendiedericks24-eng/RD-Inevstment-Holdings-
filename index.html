@@ -153,8 +153,8 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <option>Medium: 16 to 40</option>
 <option>High: more than 40</option>
 </select>
-<select name="monthlyBudget" required aria-label="Amount you would be willing to invest to solve this">
-<option value="">Amount you would be willing to invest to solve this</option>
+<select name="monthlyBudget" required aria-label="What you would invest to solve this">
+<option value="">What you would invest to solve this</option>
 <option>Under R1,999</option>
 <option>R1,999 to R2,499</option>
 <option>R2,500 to R4,999</option>
@@ -174,7 +174,7 @@ scrollTo(0,0);
 addEventListener('load',()=>scrollTo(0,0));
 const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
-(function(){const v=document.getElementById('heroVid');const box=document.querySelector('.hero-video');if(!v||!box)return;v.muted=true;v.defaultMuted=true;v.loop=true;v.controls=false;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');const play=()=>{v.controls=false;return v.play().then(()=>box.classList.add('is-playing')).catch(()=>{});};play();v.addEventListener('playing',()=>box.classList.add('is-playing'));v.addEventListener('canplay',play);document.addEventListener('touchstart',play,{passive:true});document.addEventListener('click',play,{passive:true});})();
+(function(){const v=document.getElementById('heroVid');const box=document.querySelector('.hero-video');if(!v||!box)return;v.muted=true;v.defaultMuted=true;v.loop=true;v.controls=false;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');const play=()=>{v.controls=false;return v.play().then(()=>box.classList.add('is-playing')).catch(()=>{});};const hide=()=>box.classList.remove('is-playing');play();v.addEventListener('playing',()=>box.classList.add('is-playing'));v.addEventListener('canplay',play);v.addEventListener('pause',hide);v.addEventListener('waiting',hide);v.addEventListener('ended',()=>{hide();v.currentTime=0;play();});v.addEventListener('timeupdate',()=>{if(v.duration&&v.duration-v.currentTime<0.2){v.currentTime=0.05;}});document.addEventListener('touchstart',play,{passive:true});document.addEventListener('click',play,{passive:true});})();
 (function(){const els=document.querySelectorAll('.reveal');const io=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.2});els.forEach(e=>io.observe(e));})();
 function initChatSequence(chatId,replayId){const chatEl=document.getElementById(chatId);if(!chatEl)return;const msgs=[...chatEl.querySelectorAll('.msg')];function play(){msgs.forEach(m=>m.classList.remove('show'));msgs.forEach((m,i)=>setTimeout(()=>m.classList.add('show'),350+i*650));}new IntersectionObserver(e=>{if(e[0].isIntersecting)play()},{threshold:.3}).observe(chatEl);const b=document.getElementById(replayId);if(b)b.onclick=play;}initChatSequence('chat-sme','replay-sme');
 (function(){const ind=document.getElementById('industry'),other=document.getElementById('industryOther');if(ind&&other)ind.addEventListener('change',()=>{const on=ind.value==='Other';other.style.display=on?'block':'none';other.required=on;if(!on)other.value='';});})();
