@@ -38,8 +38,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:1
 .sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-family:var(--mono);font-size:.62rem;color:var(--subtle);letter-spacing:.04em}
 
 /* ── MAIN ── */
-.main{margin-left:var(--sidebar);min-height:100vh;padding:32px 36px}
-@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:56px 16px 20px}}
+.main{margin-left:0;min-height:100vh;padding:32px 36px}
+@media(max-width:700px){.sidebar{display:flex;transform:translateX(-110%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:16px 16px 20px}}
 
 /* ── PAGE HEADER ── */
 .pg-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
@@ -125,11 +125,7 @@ table.tbl tbody tr:hover{background:var(--bg)}
 .nex-burger{display:none;position:fixed;top:12px;left:12px;z-index:220;width:44px;height:44px;border:1px solid #E2E8F0;background:#fff;border-radius:4px;font-size:20px;cursor:pointer}
 .nex-dim{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:150}
 @media(max-width:700px){
-  .nex-burger{display:block}
-  .nex-dim.on{display:block}
-  .sidebar{display:flex !important;transform:translateX(-110%);transition:transform .2s;z-index:210;width:min(280px,86vw)}
-  .sidebar.open{transform:translateX(0);box-shadow:8px 0 32px rgba(15,23,42,.18)}
-  .main{margin-left:0;padding:56px 12px 24px}
+  .main{margin-left:0;padding:16px 12px 24px}
   .nav-item{min-height:44px}
   .btn,.btn-primary,.btn-secondary,button.btn{min-height:44px}
   input,select,textarea{font-size:16px !important}
@@ -142,8 +138,6 @@ table.tbl tbody tr:hover{background:var(--bg)}
 </head>
 <body>
 
-<button class="nex-burger" type="button" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
-<div class="nex-dim" id="nexDim"></div>
 <div class="nex-gate" id="nexGate">
   <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
     <h2>Auto Workshop PE</h2>
@@ -155,10 +149,9 @@ table.tbl tbody tr:hover{background:var(--bg)}
 </div>
  <!-- LOADING -->
 <div class="loading" id="loadingOverlay"> <div class="spinner"></div> Loading live data from Google Sheets…
-</div> <!-- SIDEBAR -->
-<aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Operations Dashboard</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</div> <a class="nav-item" href="job-card-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Job Cards</a> <a class="nav-item" href="auto-quote-generator.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Quotes</a> <a class="nav-item" href="invoice-payment-tracker.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Invoices</a> <a class="nav-item" href="lead-crm.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Lead CRM</a> <a class="nav-item" href="inventory-stock-manager.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Inventory &amp; Stock</a> <a class="nav-item" href="staff-timesheet-payroll.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Timesheet &amp; Payroll</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
-</aside> <!-- MAIN -->
-<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Job Cards</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts &amp; Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary (from localStorage — written by Inventory & Stock Manager) --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:var(--mono);font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Job Cards</div> <a class="card-link" href="job-card-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
+</div>  <!-- MAIN -->
+<main class="main"> <div class="alert-banner" id="errorBanner"></div> <div class="pg-header"> <div> <div class="pg-label">NexAgent OS</div> <div class="pg-title">Operations Dashboard</div> <div class="pg-sub" id="lastRefresh">Connecting to Google Sheets…</div> </div> <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button> </div> <!-- STAT TILES --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Open Job Cards</div> <div class="stat-val v-amber" id="statJobs">—</div> <div class="stat-sub" id="subJobs">via WhatsApp AI</div> </div> <div class="stat-cell"> <div class="stat-label">Pending Quotes</div> <div class="stat-val v-navy" id="statQuotes">—</div> <div class="stat-sub" id="subQuotes">awaiting acceptance</div> </div> <div class="stat-cell"> <div class="stat-label">Unpaid Total</div> <div class="stat-val v-red" id="statInvoices">—</div> <div class="stat-sub" id="subInvoices">outstanding + overdue</div> </div> <div class="stat-cell"> <div class="stat-label">New Leads</div> <div class="stat-val v-green" id="statLeads">—</div> <div class="stat-sub" id="subLeads">uncontacted</div> </div> <div class="stat-cell"> <div class="stat-label">Hours This Week</div> <div class="stat-val v-blue" id="statTimesheetHours">—</div> <div class="stat-sub" id="subTimesheetHours">staff hours</div> </div> <div class="stat-cell"> <div class="stat-label">Week Payroll</div> <div class="stat-val v-navy" id="statTimesheetPay">—</div> <div class="stat-sub" id="subTimesheetPay">week-to-date</div> </div> </div> <!-- ROW 1: Unpaid Invoices + Stock Alerts --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Unpaid Invoices</div> <a class="card-link" href="invoice-payment-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Invoice</th> <th>Client</th> <th>Total</th> <th>Due</th> <th>Status</th> </tr> </thead> <tbody id="invoiceBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Stock Alerts</div> <span class="card-link" style="cursor:default">Parts & Stock tab</span> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part Name</th> <th>Category</th> <th>Stock Level</th> </tr> </thead> <tbody id="stockBody"> <tr class="empty-row"><td colspan="3">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- QUOTES -->
+<div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Quotes</div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Quote</th> <th>Client</th> <th>Job</th> <th>Total</th> <th>Status</th> </tr> </thead> <tbody id="quotesBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 1b: Inventory Summary (from localStorage — written by Inventory & Stock Manager) --> <div class="panel-grid" id="inventoryRow"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Inventory — Stock Alerts</div> <a class="card-link" href="inventory-stock-manager.html">Open Inventory →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Part</th><th>Category</th><th>Stock</th><th>Reorder At</th><th>Supplier</th><th>Status</th></tr></thead> <tbody id="invStockBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--subtle);font-family:var(--mono);font-size:.75rem">Open Inventory & Stock Manager first to load data</td></tr></tbody> </table> </div> </div> </div> <!-- ROW 2: Recent Leads + Open Bookings --> <div class="panel-grid"> <div class="card"> <div class="card-head"> <div class="card-title">Recent Leads</div> <a class="card-link" href="lead-crm.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Name</th> <th>Contact</th> <th>Enquiry</th> <th>Status</th> </tr> </thead> <tbody id="leadsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> <div class="card"> <div class="card-head"> <div class="card-title">Job Cards</div> <a class="card-link" href="job-card-tracker.html">Open app →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Date</th> <th>Customer</th> <th>Vehicle</th> <th>Job Type</th> <th>Status</th> </tr> </thead> <tbody id="jobsBody"> <tr class="empty-row"><td colspan="5">Loading…</td></tr> </tbody> </table> </div> </div> </div> <!-- ROW 3: Timesheet Summary --> <div class="panel-grid"> <div class="card" style="grid-column:1/-1"> <div class="card-head"> <div class="card-title">Recent Timesheet Entries</div> <a class="card-link" href="staff-timesheet-payroll.html">Open Timesheet →</a> </div> <div class="tbl-wrap"> <table class="tbl"> <thead><tr><th>Date</th><th>Staff Member</th><th>Hours</th><th>Day Pay</th><th>Job Ref</th></tr></thead> <tbody id="timesheetBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody> </table> </div> </div> </div>
 </main> <script>
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
@@ -241,7 +234,7 @@ function badge(status) {
   return `<span class="badge badge-open">${esc(status)}</span>`;
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>'); }
 
 // ── RENDER — called with cached or fresh data ─────────────────────────────────
 function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
@@ -355,6 +348,22 @@ function renderDashboard({ jobs, quotes, invoices, leads, stock, timesheet }) {
         const jobType = gf(j,'Job Type','jobType','type','Type');
         const status  = gf(j,'Status','status');
         return `<tr> <td class="muted-text">${fmtDate(date)}</td> <td style="font-weight:600">${esc(name)||'—'}</td> <td class="muted-text">${esc(vehicle)||'—'}</td> <td class="muted-text">${esc(jobType)||'—'}</td> <td>${badge(status||'Open')}</td> </tr>`;
+      }).join('');
+    }
+
+
+    const quotesBody = document.getElementById('quotesBody');
+    const recentQuotes = [...quotes].reverse().slice(0, 12);
+    if (!recentQuotes.length) {
+      quotesBody.innerHTML = '<tr class="empty-row"><td colspan="5">No quotes yet</td></tr>';
+    } else {
+      quotesBody.innerHTML = recentQuotes.map(q => {
+        const no = gf(q,'Quote No','quoteNo','Quote','quote');
+        const client = gf(q,'Client','client','Customer Name','customerName','name','Name');
+        const job = gf(q,'Job','job','Job Type','jobType','Description','description','Items','items');
+        const total = gf(q,'Total','total','Grand Total','grand','Amount','amount');
+        const status = gf(q,'Status','status');
+        return `<tr><td><span class="mono">${esc(no)||'—'}</span></td><td style="font-weight:600">${esc(client)||'—'}</td><td class="muted-text">${esc(job)||'—'}</td><td style="font-family:var(--disp);font-weight:700">${total ? fmt(total) : '—'}</td><td>${badge(status)}</td></tr>`;
       }).join('');
     }
 
@@ -487,16 +496,7 @@ function nexUnlock(e){
 if(nexUnlocked()){
   document.getElementById('nexGate').classList.add('ok');
 }
-(function(){
-  const side=document.querySelector('.sidebar');
-  const dim=document.getElementById('nexDim');
-  const burger=document.querySelector('.nex-burger');
-  function close(){ if(side) side.classList.remove('open'); if(dim) dim.classList.remove('on'); }
-  function toggle(){ if(!side) return; side.classList.toggle('open'); if(dim) dim.classList.toggle('on', side.classList.contains('open')); }
-  if(burger) burger.onclick=toggle;
-  if(dim) dim.onclick=close;
-  document.querySelectorAll('.sidebar .nav-item').forEach(el=>el.addEventListener('click', close));
-})();
+
 </script>
 
 </body>
