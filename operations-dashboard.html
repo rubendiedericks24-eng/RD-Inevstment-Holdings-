@@ -28,7 +28,8 @@
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span class="badge-pill">View only · WhatsApp for actions</span>
-      <button class="btn" type="button" onclick="refreshAll(false)">↻ Refresh</button>
+      <span id="refreshChip" class="refresh-chip" hidden>Refreshing…</span>
+      <button class="btn" type="button" onclick="refreshAll(true)">↻ Refresh</button>
     </div>
   </div>
   <div class="note">Pull-tabs read live from the Google Sheet. Tap a row to expand full details. No Open app / Manage — change data via WhatsApp.</div>
