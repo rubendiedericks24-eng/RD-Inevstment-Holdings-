@@ -76,3 +76,30 @@ td.mono{font-family:var(--mono);font-size:.78rem}
 .nex-gate-err{color:#DC2626;font-size:.8rem;min-height:1.1em;margin:0 0 8px}
 .empty{text-align:center;padding:28px 12px;color:var(--subtle);font-family:var(--mono);font-size:.75rem}
 .sheet-map{font-size:.72rem;color:var(--subtle);margin-top:10px;font-family:var(--mono)}
+
+.refresh-chip{
+  display:none;
+  align-items:center;
+  gap:6px;
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--muted);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:5px 10px;
+}
+.refresh-chip.show{display:inline-flex}
+.refresh-chip::before{
+  content:'';
+  width:10px;height:10px;
+  border:2px solid var(--border-dk);
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+}
+.tab-error{
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  padding:18px 12px;color:var(--red);font-family:var(--mono);font-size:.75rem;
+}
+.tab-retry{padding:6px 12px;font-size:.75rem}
