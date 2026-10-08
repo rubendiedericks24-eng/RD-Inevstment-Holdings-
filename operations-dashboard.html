@@ -41,6 +41,12 @@
     <div class="stat-cell"><div class="stat-label">Hours week</div><div class="stat-val v-blue" id="statTimesheetHours">—</div><div class="stat-sub" id="subTimesheetHours">Timesheet</div></div>
     <div class="stat-cell"><div class="stat-label">Low stock</div><div class="stat-val v-amber" id="statLowStock">—</div><div class="stat-sub" id="subLowStock">Parts & Stock</div></div>
   </div>
+  <section class="usage" id="usagePanel" aria-labelledby="usageTitle">
+    <div class="usage-head"><h2 id="usageTitle">Usage this month</h2><span class="usage-month" id="usageMonth">—</span></div>
+    <p class="hint">Each month includes 300 AI chats and 60 jobs (a job is one quote-to-paid cycle). Amber at 80%, red at 100%. Soft limit: the AI keeps replying. Top-ups R350 per 250 chats or per 50 jobs, added to the next invoice.</p>
+    <div class="usage-list" id="usageList"><div class="empty">Loading usage…</div></div>
+    <div class="sheet-map" id="usageSrc">Sheet → Usage</div>
+  </section>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-tab="quotes">Quotes</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="invoices">Invoices</button>

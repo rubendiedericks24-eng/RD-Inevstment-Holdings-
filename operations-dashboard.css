@@ -103,3 +103,27 @@ td.mono{font-family:var(--mono);font-size:.78rem}
   padding:18px 12px;color:var(--red);font-family:var(--mono);font-size:.75rem;
 }
 .tab-retry{padding:6px 12px;font-size:.75rem}
+
+/* Usage panel — phone-first, one card per workshop */
+.usage{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;box-shadow:var(--shadow);margin-bottom:16px}
+.usage-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.usage-head h2{font-family:var(--disp);font-size:1.05rem;margin:0}
+.usage-month{font-family:var(--mono);font-size:.72rem;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em}
+.usage-list{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.usage-list{grid-template-columns:repeat(2,1fr)}}
+.u-card{border:1px solid var(--border);border-radius:8px;background:#fff;padding:12px 14px;display:grid;gap:10px}
+.u-card-amber{border-color:var(--amber-border)}
+.u-card-red{border-color:var(--red-border)}
+.u-metric{display:grid;gap:5px}
+.u-mhead{display:flex;justify-content:space-between;gap:8px;font-size:.82rem}
+.u-num{font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.u-num.u-amber{color:var(--amber)}.u-num.u-red{color:var(--red)}
+.u-bar{height:10px;background:var(--surface2);border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.u-bar i{display:block;height:100%;background:var(--green);border-radius:999px;transition:width .3s ease}
+.u-bar.u-amber i{background:var(--amber)}
+.u-bar.u-red i{background:var(--red)}
+.u-foot{display:flex;justify-content:space-between;gap:6px 12px;flex-wrap:wrap;font-family:var(--mono);font-size:.72rem;color:var(--muted);border-top:1px solid var(--border);padding-top:8px}
+.u-owed b{color:var(--text)}
+.u-soft{font-size:.78rem;color:var(--red);background:var(--red-lt);border:1px solid var(--red-border);border-radius:6px;padding:8px 10px}
+.u-unavail{color:var(--muted)}
+.u-unavail span{display:inline-block;margin-top:6px;color:var(--subtle)}

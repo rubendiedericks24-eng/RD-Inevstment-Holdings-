@@ -9,9 +9,14 @@ Email: admin@rdinvestmentholdings.co.za
 ## Product
 NexAgent OS runs an SME from one WhatsApp number: quotes, job cards, invoicing, stock, payroll and leads. Eight modules (M1–M8). No extra apps.
 
-## Pricing (ZAR)
-- Founder's discount: R1,999/month for the first 10 clients. No setup fee.
-- Thereafter: R2,499/month + R2,499 once-off setup.
+## Pricing (ZAR, excl. VAT) — one plan only
+- Founder (first 10 clients): R2,999 setup + R1,999/month, locked for 12 months, then R2,499/month with 30 days' notice.
+- Standard: R4,999 once-off setup + R2,499/month.
+- Included every month: 300 AI chats and 60 jobs (a job is one quote-to-paid cycle).
+- Top-ups: R350 per 250 chats or per 50 jobs, added to the next invoice.
+- Soft limit: usage is tracked per workshop and shown on the dashboard, with alerts at 80% and 100%. At 100% the AI keeps replying (never cut off) and the client is asked to top up. Usage resets monthly.
+- The client pays its own WhatsApp (Meta) messaging fees on its own Meta billing card.
+- Terms: https://rdinvestmentholdings.co.za/terms.html#fair-use
 
 ## Contact / demo
 Prefer the site form at /#contact (posts to the business webhook) or WhatsApp the number above.
