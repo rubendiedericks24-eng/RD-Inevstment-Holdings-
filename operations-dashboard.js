@@ -19,13 +19,15 @@
 
 /* Usage + company panels (display-only). Read sheet tabs "Usage", "Top-ups Ledger" and "Reconciliation"
    from the same Apps Script feed. Live load every refresh; localStorage cache is only a fallback when live
-   fails. A tab that does not exist shows "unavailable", never an error. */
+   fails. A tab that does not exist shows "unavailable", never an error.
+   Top-ups: ONE pack = R350 = +250 chats AND +50 jobs. Pack counts, limits and R totals are computed from the
+   Ledger itself (Void + TEST rows excluded) and cross-checked against the Usage tab; a difference shows a warning. */
 (function(){
   if(window.__nexUsage) return; window.__nexUsage=1;
   var FEED='https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
   var KEY='NexOS-PE', TIMEOUT_MS=12000, TZ='Africa/Johannesburg';
   var TABS={usage:'Usage', ledger:'Top-ups Ledger', recon:'Reconciliation'};
-  var CACHE={usage:'nexos_pe_usage_v1', ledger:'nexos_pe_topups_v1', recon:'nexos_pe_recon_v1'};
+  var CACHE={usage:'nexos_pe_usage_v1', ledger:'nexos_pe_topups_v2', recon:'nexos_pe_recon_v1'};
   var INCL_CHATS=300, INCL_JOBS=60, PACK_CHATS=250, PACK_JOBS=50, PACK_PRICE=350;
   var inFlight=null, lastLoad=0;
 
@@ -64,30 +66,61 @@
     var m=String(ym).match(/^(\d{4})-(\d{2})$/); if(!m) return ym;
     try{ return new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString('en-ZA',{month:'long',year:'numeric',timeZone:'UTC'}); }catch(e){ return ym; }
   }
-  function pct(used,limit,pctCol){
-    if(!isNaN(used)&&!isNaN(limit)&&limit>0) return used/limit*100;
-    var p=num(pctCol); if(isNaN(p)) return NaN;
-    if(String(pctCol).indexOf('%')<0 && p<=1.5 && p>0 && p!==Math.round(p)) p=p*100;
-    return p;
-  }
   function level(p){ return isNaN(p)?'':(p>=100?'red':(p>=80?'amber':'')); }
-  function packs(v,size){ var n=num(v); if(isNaN(n)||n<=0) return {packs:0,units:0};
-    if(n>=size && n%size===0) return {packs:n/size,units:n};
-    return {packs:n,units:n*size}; }
   function plural(n,w){ return n+' '+w+(n===1?'':'s'); }
   function fmtTime(ts){ try{ return new Date(ts).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return '—'; } }
+  function normShop(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
 
-  /* ---------- usage rows (shared by both panels) ---------- */
-  function usageFor(r){
+  /* ---------- Ledger -> packs (the single source of truth for top-ups) ---------- */
+  function ledgerMonth(x){
+    var mo=monthOf(get(x,'timestamp'));
+    if(/^\d{4}-\d{2}$/.test(mo)) return mo;
+    var id=String(get(x,'topup_id')||'').trim(), m=id.match(/^TU-?(\d{2})(\d{2})\d{2}/i)||id.match(/^(\d{2})(\d{2})\d{8}$/);
+    return m?('20'+m[1]+'-'+m[2]):'';
+  }
+  function isTestRow(x){
+    var id=String(get(x,'topup_id')||'').trim(), via=String(get(x,'requested_via')||'').trim(), type=String(get(x,'type')||'').trim();
+    return /^_keep$/i.test(id) || /^test/i.test(via) || /^test/i.test(String(get(x,'workshop')||'')) || /sentinel/i.test(type) || /sentinel/i.test(via);
+  }
+  function statusKey(x){ var st=String(get(x,'status')||'').trim(); return st.charAt(0).toUpperCase()+st.slice(1).toLowerCase(); }
+  function summariseLedger(rows,ym){
+    var out={total:{packs:0,rand:0}, split:{Pending:{n:0,r:0},Invoiced:{n:0,r:0},Paid:{n:0,r:0},Other:{n:0,r:0}}, shops:{}, excludedVoid:0, excludedTest:0};
+    (rows||[]).forEach(function(x){
+      if(ledgerMonth(x)!==ym) return;
+      if(isTestRow(x)){ out.excludedTest++; return; }
+      var key=statusKey(x);
+      if(key==='Void'){ out.excludedVoid++; return; }
+      var price=num(get(x,'price')); if(isNaN(price)) price=PACK_PRICE;
+      out.total.packs++; out.total.rand+=price;
+      (out.split[key]||out.split.Other).n++; (out.split[key]||out.split.Other).r+=price;
+      var shopKey=normShop(get(x,'workshop'));
+      var sh=out.shops[shopKey]||(out.shops[shopKey]={name:String(get(x,'workshop')||'').trim(),packs:0,rand:0});
+      sh.packs++; sh.rand+=price;
+    });
+    return out;
+  }
+
+  /* ---------- per-workshop usage (used from Usage tab; limits/owed from Ledger, cross-checked) ---------- */
+  function usageFor(r,led){
     var cu=num(get(r,'Chats Used')), ju=num(get(r,'Jobs Used'));
-    var cl=num(get(r,'Chats Limit')), jl=num(get(r,'Jobs Limit'));
-    var tc=packs(get(r,'Top-ups Chats'),PACK_CHATS), tj=packs(get(r,'Top-ups Jobs'),PACK_JOBS);
-    if(isNaN(cl)) cl=INCL_CHATS+tc.units;
-    if(isNaN(jl)) jl=INCL_JOBS+tj.units;
-    var owed=num(get(r,'Top-up Amount Owed')); if(isNaN(owed)) owed=(tc.packs+tj.packs)*PACK_PRICE;
-    var cp=pct(cu,cl,get(r,'Chats %')), jp=pct(ju,jl,get(r,'Jobs %'));
-    return {shop:get(r,'Workshop'), mgr:get(r,'Manager Number'), cu:cu, ju:ju, cl:cl, jl:jl, tc:tc, tj:tj, owed:owed, cp:cp, jp:jp,
-      worst:Math.max(isNaN(cp)?0:cp, isNaN(jp)?0:jp)};
+    var tabCl=num(get(r,'Chats Limit')), tabJl=num(get(r,'Jobs Limit')), tabOwed=num(get(r,'Top-up Amount Owed'));
+    var shop=get(r,'Workshop'), v={shop:shop, mgr:get(r,'Manager Number'), cu:cu, ju:ju, warn:''};
+    if(led){
+      var s=led.shops[normShop(shop)]||{packs:0,rand:0};
+      v.packs=s.packs; v.rand=s.rand; v.cl=INCL_CHATS+PACK_CHATS*s.packs; v.jl=INCL_JOBS+PACK_JOBS*s.packs; v.src='Ledger';
+      var diffs=[];
+      if(!isNaN(tabCl)&&tabCl!==v.cl) diffs.push('chats limit '+tabCl+' vs '+v.cl);
+      if(!isNaN(tabJl)&&tabJl!==v.jl) diffs.push('jobs limit '+tabJl+' vs '+v.jl);
+      if(!isNaN(tabOwed)&&Math.round(tabOwed*100)!==Math.round(v.rand*100)) diffs.push('owed '+rands(tabOwed)+' vs '+rands(v.rand));
+      if(diffs.length) v.warn='Usage tab differs from Ledger ('+diffs.join('; ')+'). Showing Ledger figures.';
+    } else {
+      v.cl=isNaN(tabCl)?INCL_CHATS:tabCl; v.jl=isNaN(tabJl)?INCL_JOBS:tabJl;
+      v.packs=Math.max(0,Math.round((v.cl-INCL_CHATS)/PACK_CHATS)); v.rand=isNaN(tabOwed)?v.packs*PACK_PRICE:tabOwed; v.src='Usage tab';
+      v.warn='Ledger unavailable, so limits come from the Usage tab.';
+    }
+    v.cp=(!isNaN(cu)&&v.cl>0)?cu/v.cl*100:NaN; v.jp=(!isNaN(ju)&&v.jl>0)?ju/v.jl*100:NaN;
+    v.worst=Math.max(isNaN(v.cp)?0:v.cp, isNaN(v.jp)?0:v.jp);
+    return v;
   }
   function rowsForMonth(rows,ym){
     var byShop={};
@@ -108,32 +141,33 @@
     '</div>';
   }
   function unavailableHtml(msg){ return '<div class="empty u-unavail">'+esc(msg.title)+(msg.sub?'<br><span>'+esc(msg.sub)+'</span>':'')+'</div>'; }
+  function warnHtml(t){ return t?'<div class="u-warn">⚠ '+esc(t)+'</div>':''; }
 
-  function renderUsage(st,ym){
+  function renderUsage(state,ym,led){
     var list=$('usageList'); if(!list) return;
+    var st=state.usage;
     $('usageMonth').textContent=monthLabel(ym);
     var src=$('usageSrc');
     if(!st.rows){ list.innerHTML=unavailableHtml({title:'Usage data unavailable', sub:st.reason}); if(src) src.textContent='Sheet → Usage'; return; }
     var mine=rowsForMonth(st.rows,ym);
     if(!mine.length) list.innerHTML='<div class="empty">No usage rows for '+esc(monthLabel(ym))+' yet.</div>';
     else list.innerHTML=mine.map(function(r){
-      var u=usageFor(r), lv=level(u.worst);
+      var u=usageFor(r,led), lv=level(u.worst);
       var pill=lv==='red'?'<span class="pill bad">Over limit · top up</span>':(lv==='amber'?'<span class="pill warn">80%+ used</span>':'<span class="pill ok">OK</span>');
-      var tu=[];
-      tu.push(u.tc.packs?(plural(u.tc.packs,'chat pack')+' (+'+u.tc.units.toLocaleString('en-ZA')+' chats)'):'0 chat packs');
-      tu.push(u.tj.packs?(plural(u.tj.packs,'job pack')+' (+'+u.tj.units.toLocaleString('en-ZA')+' jobs)'):'0 job packs');
+      var tu=u.packs?(plural(u.packs,'top-up pack')+' (+'+(PACK_CHATS*u.packs).toLocaleString('en-ZA')+' chats, +'+(PACK_JOBS*u.packs).toLocaleString('en-ZA')+' jobs)'):'0 top-up packs';
       return '<article class="u-card'+(lv?' u-card-'+lv:'')+'">'+
         '<div class="top"><div><div class="name" style="margin-top:0">'+(esc(u.shop)||'—')+'</div>'+(u.mgr!==''?'<div class="meta">'+esc(u.mgr)+' · manager</div>':'')+'</div>'+pill+'</div>'+
         bar('AI chats',u.cu,u.cl,u.cp)+bar('Jobs',u.ju,u.jl,u.jp)+
-        '<div class="u-foot"><span>Top-ups this month: '+esc(tu.join(' · '))+'</span><span class="u-owed">Top-ups owed: <b>'+rands(u.owed)+'</b></span></div>'+
-        (lv==='red'?'<div class="u-soft">Soft limit — the AI keeps replying. Ask the workshop to top up (R350 per 250 chats or per 50 jobs, added to the next invoice).</div>':'')+
+        '<div class="u-foot"><span>Top-ups this month: '+esc(tu)+'</span><span class="u-owed">Top-ups owed: <b>'+rands(u.rand)+'</b></span></div>'+
+        warnHtml(u.warn)+
+        (lv==='red'?'<div class="u-soft">Soft limit — the AI keeps replying. Ask the workshop to top up: one R350 pack adds +250 chats and +50 jobs, one charge on the next invoice.</div>':'')+
       '</article>';
     }).join('');
-    if(src) src.textContent='Sheet → Usage · '+st.note;
+    if(src) src.textContent='Sheet → Usage'+(led?' + Top-ups Ledger':'')+' · '+st.note;
   }
 
   /* ---------- company panel ---------- */
-  function renderCompany(state,ym){
+  function renderCompany(state,ym,led){
     if(!$('companyPanel')) return;
     $('companyMonth').textContent=monthLabel(ym);
 
@@ -158,38 +192,36 @@
     }
     $('coReconSrc').textContent='Sheet → Reconciliation'+(r.rows?' · '+r.note:'');
 
-    /* Top-ups this month (Void excluded) */
+    /* Top-up packs this month (from the Ledger; Void + TEST excluded), cross-checked with Usage tab owed */
     var tl=$('coTopups'), l=state.ledger;
-    if(!l.rows) tl.innerHTML=unavailableHtml({title:'Top-ups unavailable', sub:l.reason});
+    if(!led) tl.innerHTML=unavailableHtml({title:'Top-ups unavailable', sub:l.reason});
     else{
-      var split={Pending:{n:0,r:0},Invoiced:{n:0,r:0},Paid:{n:0,r:0}}, other={n:0,r:0}, n=0, total=0;
-      l.rows.forEach(function(x){
-        var st=String(get(x,'status')||'').trim(), key=st.charAt(0).toUpperCase()+st.slice(1).toLowerCase();
-        if(key==='Void') return;
-        var mo=monthOf(get(x,'timestamp'));
-        if(!/^\d{4}-\d{2}$/.test(mo)){ var id=String(get(x,'topup_id')||'').match(/^TU-(\d{2})(\d{2})/); mo=id?('20'+id[1]+'-'+id[2]):''; }
-        if(mo!==ym) return;
-        var price=num(get(x,'price')); if(isNaN(price)) price=PACK_PRICE;
-        n++; total+=price;
-        var b=split[key]||other; b.n++; b.r+=price;
-      });
-      tl.innerHTML='<div class="co-big"><b>'+n+'</b> top-up'+(n===1?'':'s')+' · <b>'+rands(total)+'</b></div>'+
+      var sp=led.split, warn='';
+      if(state.usage.rows){
+        var tabOwed=0, tabHas=false;
+        rowsForMonth(state.usage.rows,ym).forEach(function(x){ var o=num(get(x,'Top-up Amount Owed')); if(!isNaN(o)){ tabOwed+=o; tabHas=true; } });
+        if(tabHas && Math.round(tabOwed*100)!==Math.round(led.total.rand*100)) warn='Usage tab owed '+rands(tabOwed)+' ≠ Ledger '+rands(led.total.rand)+'. Showing Ledger.';
+        var known={}; rowsForMonth(state.usage.rows,ym).forEach(function(x){ known[normShop(get(x,'Workshop'))]=1; });
+        var orphan=Object.keys(led.shops).filter(function(k){ return !known[k]; });
+        if(orphan.length) warn+=(warn?' ':'')+'Ledger has packs for a workshop with no Usage row: '+orphan.map(function(k){return led.shops[k].name||k;}).join(', ')+'.';
+      }
+      tl.innerHTML='<div class="co-big"><b>'+led.total.packs+'</b> top-up pack'+(led.total.packs===1?'':'s')+' · <b>'+rands(led.total.rand)+'</b></div>'+
         '<div class="co-split">'+
-          '<span class="pill warn">Pending '+split.Pending.n+' · '+rands(split.Pending.r)+'</span>'+
-          '<span class="pill info">Invoiced '+split.Invoiced.n+' · '+rands(split.Invoiced.r)+'</span>'+
-          '<span class="pill ok">Paid '+split.Paid.n+' · '+rands(split.Paid.r)+'</span>'+
-          (other.n?'<span class="pill">Other '+other.n+' · '+rands(other.r)+'</span>':'')+
-        '</div><div class="u-num" style="white-space:normal;margin-top:6px">Void excluded</div>';
+          '<span class="pill warn">Pending '+sp.Pending.n+' · '+rands(sp.Pending.r)+'</span>'+
+          '<span class="pill info">Invoiced '+sp.Invoiced.n+' · '+rands(sp.Invoiced.r)+'</span>'+
+          '<span class="pill ok">Paid '+sp.Paid.n+' · '+rands(sp.Paid.r)+'</span>'+
+          (sp.Other.n?'<span class="pill">Other '+sp.Other.n+' · '+rands(sp.Other.r)+'</span>':'')+
+        '</div><div class="u-num" style="white-space:normal;margin-top:6px">1 pack = R350 = +250 chats and +50 jobs · Void and TEST rows excluded</div>'+warnHtml(warn);
     }
     $('coTopupsSrc').textContent='Sheet → Top-ups Ledger'+(l.rows?' · '+l.note:'');
 
-    /* Per-workshop usage % (same Usage data as the panel below) */
+    /* Per-workshop usage % (same figures as the Usage panel) */
     var ul=$('coUsage'), u=state.usage;
     if(!u.rows) ul.innerHTML=unavailableHtml({title:'Usage data unavailable', sub:u.reason});
     else{
       var mine=rowsForMonth(u.rows,ym);
       ul.innerHTML=mine.length?mine.map(function(x){
-        var v=usageFor(x);
+        var v=usageFor(x,led);
         var p=function(label,val){ var lv=level(val); return '<span class="co-pct'+(lv?' u-'+lv:'')+'">'+label+' '+(isNaN(val)?'—':Math.round(val)+'%')+'</span>'; };
         return '<div class="co-row"><span class="co-shop">'+(esc(v.shop)||'—')+'</span><span>'+p('Chats',v.cp)+p('Jobs',v.jp)+'</span></div>';
       }).join(''):'<div class="empty">No usage rows for '+esc(monthLabel(ym))+' yet.</div>';
@@ -241,8 +273,10 @@
         var ym=currentMonth();
         var out=await Promise.all([loadOne('usage'),loadOne('ledger'),loadOne('recon')]);
         var state={usage:out[0], ledger:out[1], recon:out[2]};
-        try{ renderUsage(state.usage,ym); }catch(e){ console.warn('usage render',e); }
-        try{ renderCompany(state,ym); }catch(e){ console.warn('company render',e); }
+        var led=state.ledger.rows?summariseLedger(state.ledger.rows,ym):null;
+        window.__nexUsageState={month:ym, ledger:led};
+        try{ renderUsage(state,ym,led); }catch(e){ console.warn('usage render',e); }
+        try{ renderCompany(state,ym,led); }catch(e){ console.warn('company render',e); }
       }finally{ inFlight=null; }
     })();
     return inFlight;

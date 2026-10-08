@@ -145,3 +145,4 @@ td.mono{font-family:var(--mono);font-size:.78rem}
 .co-shop{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .co-pct{font-family:var(--mono);font-size:.74rem;color:var(--green);margin-left:10px;white-space:nowrap}
 .co-pct.u-amber{color:var(--amber)}.co-pct.u-red{color:var(--red)}
+.u-warn{font-size:.74rem;color:var(--amber);background:var(--amber-lt);border:1px solid var(--amber-border);border-radius:6px;padding:6px 9px;margin-top:6px}
