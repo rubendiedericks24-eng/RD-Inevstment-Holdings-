@@ -41,6 +41,14 @@
     <div class="stat-cell"><div class="stat-label">Hours week</div><div class="stat-val v-blue" id="statTimesheetHours">—</div><div class="stat-sub" id="subTimesheetHours">Timesheet</div></div>
     <div class="stat-cell"><div class="stat-label">Low stock</div><div class="stat-val v-amber" id="statLowStock">—</div><div class="stat-sub" id="subLowStock">Parts & Stock</div></div>
   </div>
+  <section class="usage company" id="companyPanel" aria-labelledby="companyTitle">
+    <div class="usage-head"><h2 id="companyTitle">Company overview</h2><span class="usage-month" id="companyMonth">—</span></div>
+    <div class="co-grid">
+      <div class="co-block"><div class="co-label">Latest reconciliation</div><div id="coRecon"><div class="empty">Loading…</div></div><div class="sheet-map" id="coReconSrc">Sheet → Reconciliation</div></div>
+      <div class="co-block"><div class="co-label">Top-ups this month</div><div id="coTopups"><div class="empty">Loading…</div></div><div class="sheet-map" id="coTopupsSrc">Sheet → Top-ups Ledger</div></div>
+      <div class="co-block"><div class="co-label">Usage % by workshop</div><div id="coUsage"><div class="empty">Loading…</div></div><div class="sheet-map">Sheet → Usage</div></div>
+    </div>
+  </section>
   <section class="usage" id="usagePanel" aria-labelledby="usageTitle">
     <div class="usage-head"><h2 id="usageTitle">Usage this month</h2><span class="usage-month" id="usageMonth">—</span></div>
     <p class="hint">Each month includes 300 AI chats and 60 jobs (a job is one quote-to-paid cycle). Amber at 80%, red at 100%. Soft limit: the AI keeps replying. Top-ups R350 per 250 chats or per 50 jobs, added to the next invoice.</p>
