@@ -49,7 +49,7 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
   <div class="wrap">
     <div class="kicker">NexAgent AI · SME Operations</div>
     <h1 class="h-giant">Run your business<br>from WhatsApp.</h1>
-    <p class="sub">NexAgent OS handles quotes, job cards, invoicing, stock, payroll and leads — the same proven AI-and-WhatsApp approach used for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
+    <p class="sub">NexAgent OS handles quotes, job cards, invoicing, stock, timesheets and leads — AI and WhatsApp built for South African SME owners: workshops, dealerships, cleaning companies, and more.</p>
     <div class="wa-stack" aria-hidden="true">
       <div class="wa-msg in"><span class="who">Customer</span>Can I get a quote for brake pads — VW Polo 2019</div>
       <div class="wa-msg out"><span class="who">NexAgent OS</span>Quote ready — R1,450 incl VAT. Want me to open the job card?</div>
@@ -62,7 +62,7 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <div class="tele"><div class="n"><em>0</em></div><div class="l">Apps to install</div></div>
 <div class="tele"><div class="n">24<em>/</em>7</div><div class="l">WhatsApp intake</div></div>
 <div class="tele"><div class="n">15<em>%</em></div><div class="l">VAT calculated on every quote</div></div>
-<div class="tele"><div class="n">1<em>×</em></div><div class="l">Confirm before it writes anything</div></div>
+<div class="tele"><div class="n">1<em>×</em></div><div class="l">WhatsApp number for customers and staff</div></div>
 </div></div>
 <section class="panel" id="sme-details"><div class="wrap"><div class="reveal">
 <div class="kicker">SME operations · eight modules</div>
@@ -73,10 +73,10 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <div><b>M2</b> Quote Generator — VAT-compliant, sent in seconds</div>
 <div><b>M3</b> Job Card Tracker — opens on acceptance, notifies on completion</div>
 <div><b>M4</b> Inventory & Stock Manager — live stock levels</div>
-<div><b>M5</b> Staff Timesheet & Payroll</div>
+<div><b>M5</b> Staff Timesheet — clock in / out on WhatsApp</div>
 <div><b>M6</b> Invoice & Payments</div>
 <div><b>M7</b> Operations Dashboard</div>
-<div><b>M8</b> Lead CRM</div>
+<div><b>M8</b> Lead capture — website enquiries</div>
 </div>
 <div class="price-line">
 <span>R1,999/mo + R2,999 setup</span>
@@ -86,28 +86,26 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <p class="save">First 10: 40% off setup (R4,999 → R2,999) · 20% off the monthly (R2,499 → R1,999), locked for 12 months — then R2,499/mo with 30 days' notice</p>
 <p class="was">Every month includes 300 AI chats and 60 jobs (a job is one quote-to-paid cycle). Need more? One R350 top-up pack adds +250 chats and +50 jobs, one charge on your next invoice. Usage shows on your dashboard, with alerts at 80% and 100% — the AI keeps replying, it never cuts off.</p>
 <p class="was">WhatsApp messaging fees are included.</p>
-<p class="compare">Most “WhatsApp AI” you get sold is a lead chatbot. NexAgent OS is an automated flow system for the whole floor: a message becomes a quote, a yes becomes a job card, hours become payroll, a finished job becomes an invoice — without another app and without you retyping it.</p>
+<p class="compare">Most “WhatsApp AI” you get sold is a lead chatbot. NexAgent OS is an automated flow system for the whole floor: a message becomes a quote, a yes becomes a job card, hours land on the timesheet, a finished job becomes an invoice — without another app and without you retyping it.</p>
 <a class="btn btn-solid" href="#contact">Book a demo</a>
 </div></div></section>
 <section class="panel alt" id="sme-sequence"><div class="wrap seq-grid">
 <div class="reveal">
 <div class="kicker">The owner talks. The agent does the admin.</div>
 <h2 class="h-panel">Tell your agent.<br>It's sent.</h2>
-<p class="sub">You WhatsApp your agent: send this quote, log James's hours. Admin happens while you're still on the floor.</p>
+<p class="sub">You WhatsApp your agent: send this quote, clock James in and out. Admin happens while you're still on the floor.</p>
 </div>
 <div class="reveal">
 <div class="phone">
 <div class="phone-top"><div class="avatar">NA</div><div><div class="who">NexAgent OS</div><div class="status">YOUR AGENT · WHATSAPP</div></div></div>
 <div class="chat" id="chat-sme">
   <div class="msg out">Send Thabo the quote for the Polo brake pads — R1,450 incl VAT</div>
-  <div class="msg in">On it. Quote to Thabo Dlamini now?</div>
-  <div class="msg out">Yes send it</div>
   <div class="msg sys"><b>SENT ✓</b> Quote PDF to Thabo · <span class="money">R1,450</span></div>
   <div class="msg in">Done. He has the quote. Job card is sitting on your dashboard if he accepts.</div>
   <div class="msg out">James arrived 09:00</div>
   <div class="msg out">James left 17:00</div>
-  <div class="msg sys"><b>TIMESHEET ✓</b> James · 8h · R50/h · <span class="money">R400</span></div>
-  <div class="msg in">Logged. James 09:00–17:00, 8 hours at R50/h — R400 on payroll.</div>
+  <div class="msg sys"><b>TIMESHEET ✓</b> James · 09:00–17:00</div>
+  <div class="msg in">Logged. James 09:00–17:00 is on the timesheet.</div>
 </div>
 <button class="replay" id="replay-sme" type="button">↻ Replay</button>
 </div></div></div></section>
@@ -136,7 +134,7 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <select name="bottleneck" required aria-label="Primary time drain">
 <option value="">Primary time drain</option>
 <option>Admin overhead (quotes and invoices)</option>
-<option>Operations (job cards and scheduling)</option>
+<option>Operations (job cards)</option>
 <option>Inventory (stock control)</option>
 <option>Labor (tracking hours and timesheets)</option>
 <option>Growth (lost leads and follow-ups)</option>
@@ -144,9 +142,9 @@ src="https://www.facebook.com/tr?id=1622151502643882&ev=PageView&noscript=1"
 <select name="firstJob" required aria-label="Immediate priority">
 <option value="">Immediate priority</option>
 <option>Streamlining quotes and invoices</option>
-<option>Managing job cards and dispatching</option>
+<option>Managing job cards</option>
 <option>Tracking stock and inventory</option>
-<option>Logging hours and payroll</option>
+<option>Logging staff hours</option>
 <option>Capturing and converting leads</option>
 </select>
 <select name="weeklyVolume" required aria-label="Weekly volume">

@@ -127,25 +127,3 @@ td.mono{font-family:var(--mono);font-size:.78rem}
 .u-soft{font-size:.78rem;color:var(--red);background:var(--red-lt);border:1px solid var(--red-border);border-radius:6px;padding:8px 10px}
 .u-unavail{color:var(--muted)}
 .u-unavail span{display:inline-block;margin-top:6px;color:var(--subtle)}
-
-/* Company overview panel */
-.co-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
-@media(min-width:900px){.co-grid{grid-template-columns:repeat(3,1fr)}}
-.co-block{border:1px solid var(--border);border-radius:8px;background:#fff;padding:12px 14px;min-width:0}
-.co-label{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin-bottom:8px}
-.co-recon{display:grid;gap:8px}
-.co-dl{grid-template-columns:96px 1fr}
-.co-detail{font-size:.78rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;word-break:break-word}
-.co-detail-bad{color:var(--red);background:var(--red-lt);border-color:var(--red-border)}
-.co-big{font-family:var(--disp);font-size:1.15rem}
-.co-big b{font-weight:900}
-.co-split{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.co-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.84rem}
-.co-row:last-child{border-bottom:0}
-.co-shop{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.co-pct{font-family:var(--mono);font-size:.74rem;color:var(--green);margin-left:10px;white-space:nowrap}
-.co-pct.u-amber{color:var(--amber)}.co-pct.u-red{color:var(--red)}
-.u-warn{font-size:.74rem;color:var(--amber);background:var(--amber-lt);border:1px solid var(--amber-border);border-radius:6px;padding:6px 9px;margin-top:6px}
-.usage.company[hidden]{display:none}
-.co-muted{color:var(--subtle)}
-.co-internal{font-family:var(--mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);border:1px solid var(--border);border-radius:999px;padding:2px 7px;vertical-align:middle;margin-left:6px}
