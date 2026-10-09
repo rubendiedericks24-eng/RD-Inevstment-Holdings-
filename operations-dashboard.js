@@ -110,7 +110,7 @@
       var pill=lv==='red'?'<span class="pill bad">Over limit · top up</span>':(lv==='amber'?'<span class="pill warn">80%+ used</span>':'<span class="pill ok">OK</span>');
       var tu=u.packs?(plural(u.packs,'top-up pack')+' (+'+(PACK_CHATS*u.packs).toLocaleString('en-ZA')+' chats, +'+(PACK_JOBS*u.packs).toLocaleString('en-ZA')+' jobs)'):'0 top-up packs';
       return '<article class="u-card'+(lv?' u-card-'+lv:'')+'">'+
-        '<div class="top"><div><div class="name" style="margin-top:0">'+(esc(u.shop)||'—')+'</div>'+'<div class="meta">Workshop account · all client and manager chats counted</div>'+'</div>'+pill+'</div>'+
+        '<div class="top"><div><div class="name" style="margin-top:0">'+(esc(u.shop)||'—')+'</div>'+'<div class="meta">Workshop account · all client chats counted</div>'+'</div>'+pill+'</div>'+
         bar('AI chats',u.cu,u.cl,u.cp)+bar('Jobs',u.ju,u.jl,u.jp)+
         '<div class="u-foot"><span>Top-ups this month: '+esc(tu)+'</span><span class="u-owed">Top-ups owed: <b>'+rands(u.rand)+'</b></span></div>'+
         (lv==='red'?'<div class="u-soft">Soft limit — the AI keeps replying. To top up, send TOPUP on WhatsApp: one R350 pack adds +250 chats and +50 jobs, one charge on the next invoice.</div>':'')+
