@@ -30,6 +30,28 @@
   var CACHE={usage:'nexos_pe_usage_v1', ledger:'nexos_pe_topups_v2', recon:'nexos_pe_recon_v1'};
   var INCL_CHATS=300, INCL_JOBS=60, PACK_CHATS=250, PACK_JOBS=50, PACK_PRICE=350;
   var inFlight=null, lastLoad=0;
+  /* Internal mode (company overview: reconciliation + Top-ups Ledger). Off by default: this dashboard is client-facing.
+     Turn on with ?internal=<code>; only the SHA-256 of the code is here. Remembered for this tab only (sessionStorage).
+     ?internal=off turns it off. In client mode the Ledger and Reconciliation tabs are never fetched. */
+  var INTERNAL_HASH='0f68bfd2e5f338fa75874ee38094039cf990c9385e53796a5029d7d015ea7220', INTERNAL_KEY='nexos_internal_v1';
+  async function sha256hex(t){
+    var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
+    return Array.prototype.map.call(new Uint8Array(buf),function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+  }
+  var internalReady=(async function(){
+    var on=false;
+    try{ on=sessionStorage.getItem(INTERNAL_KEY)===INTERNAL_HASH; }catch(e){}
+    try{
+      var u=new URL(location.href), code=u.searchParams.get('internal');
+      if(code!==null){
+        if(code==='off'){ on=false; try{ sessionStorage.removeItem(INTERNAL_KEY); }catch(e){} }
+        else if(window.crypto&&crypto.subtle&&(await sha256hex(code))===INTERNAL_HASH){ on=true; try{ sessionStorage.setItem(INTERNAL_KEY,INTERNAL_HASH); }catch(e){} }
+        u.searchParams.delete('internal');   /* keep the code out of the address bar / screenshots */
+        try{ history.replaceState(null,'',u.pathname+(u.search||'')+u.hash); }catch(e){}
+      }
+    }catch(e){}
+    return on;
+  })();
 
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -69,6 +91,11 @@
   function level(p){ return isNaN(p)?'':(p>=100?'red':(p>=80?'amber':'')); }
   function plural(n,w){ return n+' '+w+(n===1?'':'s'); }
   function fmtTime(ts){ try{ return new Date(ts).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return '—'; } }
+  function getStart(row,prefix){
+    var want=String(prefix).toLowerCase();
+    for(var k in row){ if(Object.prototype.hasOwnProperty.call(row,k) && String(k).toLowerCase().trim().indexOf(want)===0) return row[k]; }
+    return '';
+  }
   function normShop(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
 
   /* ---------- Ledger -> packs (the single source of truth for top-ups) ---------- */
@@ -101,7 +128,7 @@
   }
 
   /* ---------- per-workshop usage (used from Usage tab; limits/owed from Ledger, cross-checked) ---------- */
-  function usageFor(r,led){
+  function usageFor(r,led,internal){
     var cu=num(get(r,'Chats Used')), ju=num(get(r,'Jobs Used'));
     var tabCl=num(get(r,'Chats Limit')), tabJl=num(get(r,'Jobs Limit')), tabOwed=num(get(r,'Top-up Amount Owed'));
     var shop=get(r,'Workshop'), v={shop:shop, mgr:get(r,'Manager Number'), cu:cu, ju:ju, warn:''};
@@ -116,7 +143,7 @@
     } else {
       v.cl=isNaN(tabCl)?INCL_CHATS:tabCl; v.jl=isNaN(tabJl)?INCL_JOBS:tabJl;
       v.packs=Math.max(0,Math.round((v.cl-INCL_CHATS)/PACK_CHATS)); v.rand=isNaN(tabOwed)?v.packs*PACK_PRICE:tabOwed; v.src='Usage tab';
-      v.warn='Ledger unavailable, so limits come from the Usage tab.';
+      v.warn=internal?'Ledger unavailable, so limits come from the Usage tab.':'';
     }
     v.cp=(!isNaN(cu)&&v.cl>0)?cu/v.cl*100:NaN; v.jp=(!isNaN(ju)&&v.jl>0)?ju/v.jl*100:NaN;
     v.worst=Math.max(isNaN(v.cp)?0:v.cp, isNaN(v.jp)?0:v.jp);
@@ -143,7 +170,7 @@
   function unavailableHtml(msg){ return '<div class="empty u-unavail">'+esc(msg.title)+(msg.sub?'<br><span>'+esc(msg.sub)+'</span>':'')+'</div>'; }
   function warnHtml(t){ return t?'<div class="u-warn">⚠ '+esc(t)+'</div>':''; }
 
-  function renderUsage(state,ym,led){
+  function renderUsage(state,ym,led,internal){
     var list=$('usageList'); if(!list) return;
     var st=state.usage;
     $('usageMonth').textContent=monthLabel(ym);
@@ -152,7 +179,7 @@
     var mine=rowsForMonth(st.rows,ym);
     if(!mine.length) list.innerHTML='<div class="empty">No usage rows for '+esc(monthLabel(ym))+' yet.</div>';
     else list.innerHTML=mine.map(function(r){
-      var u=usageFor(r,led), lv=level(u.worst);
+      var u=usageFor(r,led,internal), lv=level(u.worst);
       var pill=lv==='red'?'<span class="pill bad">Over limit · top up</span>':(lv==='amber'?'<span class="pill warn">80%+ used</span>':'<span class="pill ok">OK</span>');
       var tu=u.packs?(plural(u.packs,'top-up pack')+' (+'+(PACK_CHATS*u.packs).toLocaleString('en-ZA')+' chats, +'+(PACK_JOBS*u.packs).toLocaleString('en-ZA')+' jobs)'):'0 top-up packs';
       return '<article class="u-card'+(lv?' u-card-'+lv:'')+'">'+
@@ -179,12 +206,14 @@
       r.rows.forEach(function(x){ var d=dayOf(get(x,'date'))||String(get(x,'date')||''); if(d && d>=bestDay){ best=x; bestDay=d; } });
       if(!best) rc.innerHTML='<div class="empty">No check yet</div>';
       else{
-        var stt=String(get(best,'status')||'').trim().toUpperCase(), ok=stt==='OK';
-        var me=get(best,'make_errors');
+        var stt=String(get(best,'status')||getStart(best,'status')||'').trim().toUpperCase(), ok=stt==='OK';
+        var me=get(best,'make_errors'), ci=String(get(best,'chats inbound')).trim();
+        var notChecked=(ci===''||/^(n\/a|not checked)$/i.test(ci));
+        var chatsHtml=notChecked?('log '+esc(get(best,'chats log'))+' · <span class="co-muted">not checked</span>'):('log '+esc(get(best,'chats log'))+' · inbound '+esc(ci));
         rc.innerHTML='<div class="co-recon '+(ok?'co-ok':'co-bad')+'">'+
           '<div class="top"><span class="pill '+(ok?'ok':'bad')+'">'+(ok?'OK':esc(stt||'MISMATCH'))+'</span><span class="u-num">'+esc(bestDay)+'</span></div>'+
           '<dl class="co-dl"><dt>Jobs</dt><dd>log '+esc(get(best,'jobs log'))+' · quotes '+esc(get(best,'jobs quotes'))+'</dd>'+
-          '<dt>Chats</dt><dd>log '+esc(get(best,'chats log'))+' · inbound '+esc(get(best,'chats inbound'))+'</dd>'+
+          '<dt>Chats</dt><dd>'+chatsHtml+'</dd>'+
           '<dt>Make errors</dt><dd>'+esc(me===''?'—':me)+'</dd></dl>'+
           (get(best,'detail')!==''?'<div class="co-detail'+(ok?'':' co-detail-bad')+'">'+esc(get(best,'detail'))+'</div>':'')+
         '</div>';
@@ -221,7 +250,7 @@
     else{
       var mine=rowsForMonth(u.rows,ym);
       ul.innerHTML=mine.length?mine.map(function(x){
-        var v=usageFor(x,led);
+        var v=usageFor(x,led,true);
         var p=function(label,val){ var lv=level(val); return '<span class="co-pct'+(lv?' u-'+lv:'')+'">'+label+' '+(isNaN(val)?'—':Math.round(val)+'%')+'</span>'; };
         return '<div class="co-row"><span class="co-shop">'+(esc(v.shop)||'—')+'</span><span>'+p('Chats',v.cp)+p('Jobs',v.jp)+'</span></div>';
       }).join(''):'<div class="empty">No usage rows for '+esc(monthLabel(ym))+' yet.</div>';
@@ -270,13 +299,15 @@
     lastLoad=Date.now();
     inFlight=(async function(){
       try{
-        var ym=currentMonth();
-        var out=await Promise.all([loadOne('usage'),loadOne('ledger'),loadOne('recon')]);
+        var ym=currentMonth(), internal=await internalReady;
+        var cp=$('companyPanel'); if(cp) cp.hidden=!internal;
+        var none=Promise.resolve({rows:null, reason:'internal only'});
+        var out=await Promise.all([loadOne('usage'), internal?loadOne('ledger'):none, internal?loadOne('recon'):none]);
         var state={usage:out[0], ledger:out[1], recon:out[2]};
         var led=state.ledger.rows?summariseLedger(state.ledger.rows,ym):null;
-        window.__nexUsageState={month:ym, ledger:led};
-        try{ renderUsage(state,ym,led); }catch(e){ console.warn('usage render',e); }
-        try{ renderCompany(state,ym,led); }catch(e){ console.warn('company render',e); }
+        window.__nexUsageState={month:ym, internal:internal, ledger:led};
+        try{ renderUsage(state,ym,led,internal); }catch(e){ console.warn('usage render',e); }
+        if(internal){ try{ renderCompany(state,ym,led); }catch(e){ console.warn('company render',e); } }
       }finally{ inFlight=null; }
     })();
     return inFlight;
