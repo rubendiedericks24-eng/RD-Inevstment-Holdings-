@@ -86,7 +86,8 @@ function gf(obj,...keys){
   return '';
 }
 function fmt(v){const n=parseFloat(String(v).replace(/[^0-9.]/g,''))||0;return 'R'+n.toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function fmtDate(d){if(!d)return '—';try{const dt=new Date(d);if(isNaN(dt))return esc(d);return dt.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});}catch{return esc(d);}}
+function sheetDate(d){var s=String(d).trim();if(/^\d{4,5}(\.\d+)?$/.test(s)){var n=+s;if(n>20000&&n<80000){var x=new Date(Math.round((n-25569)*86400000));return new Date(x.getUTCFullYear(),x.getUTCMonth(),x.getUTCDate());}}if(/^\d{4}-\d{2}-\d{2}$/.test(s)){var q=s.split('-');return new Date(+q[0],+q[1]-1,+q[2]);}return new Date(d);}
+function fmtDate(d){if(!d)return '—';try{const dt=sheetDate(d);if(isNaN(dt))return esc(d);return dt.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'});}catch{return esc(d);}}
 function isClosed(s){return CLOSED.includes(String(s||'').toLowerCase().trim());}
 function pillClass(status){
   const s=String(status||'').toLowerCase();
@@ -237,7 +238,7 @@ function updateStats({jobs,quotes,invoices,leads,stock,timesheet}){
   const weekEntries=(timesheet||[]).filter(t=>{
     const raw=String(gf(t,'Date','date'));
     const d=raw.match(/^(\d{4}-\d{2}-\d{2})/) ? raw.slice(0,10) : raw;
-    return new Date(d)>=weekStart;
+    return sheetDate(d)>=weekStart;
   });
   const weekHours=weekEntries.reduce((s,t)=>s+(parseFloat(String(gf(t,'Hours Worked','hours')).replace(/[^0-9.]/g,''))||0),0);
   document.getElementById('statJobs').textContent=openJobs.length;
