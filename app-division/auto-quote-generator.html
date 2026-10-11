@@ -207,6 +207,7 @@ details[open] .setup-block summary::before{content:'▾'}
   .pg-header{flex-direction:column;align-items:flex-start}
 }
 </style>
+<script src="/nex-pin.js"></script>
 </head>
 <body>
 
@@ -215,9 +216,9 @@ details[open] .setup-block summary::before{content:'▾'}
 <div class="nex-gate" id="nexGate">
   <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
     <h2>Auto Workshop PE</h2>
-    <p>Staff login. Clients do not use this page.</p>
+    <p>Enter your dashboard PIN.</p>
     <p class="nex-gate-err" id="nexGateErr"></p>
-    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <input id="nexGatePw" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="PIN" autocomplete="off" aria-label="Dashboard PIN">
     <button type="submit">Open</button>
   </form>
 </div>
@@ -473,7 +474,7 @@ const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5f
 
 async function fetchQuoteRow(num) {
   try {
-    const res = await fetch(`${SHEETS_SCRIPT_URL}?tab=Quotes&key=NexOS-PE`);
+    const res = await nexFetchTab('Quotes');
     const rows = await res.json();
     if (!Array.isArray(rows)) return null;
     // Find by quote number — handles leading-tab artifacts from Make.com Add a Row
@@ -488,7 +489,7 @@ async function fetchQuoteRow(num) {
 // Sync status + __row from Google Sheets back into localStorage (silent, runs on page load)
 async function syncStatusFromSheet() {
   try {
-    const res = await fetch(`${SHEETS_SCRIPT_URL}?tab=Quotes&key=NexOS-PE`);
+    const res = await nexFetchTab('Quotes');
     const rows = await res.json();
     if (!Array.isArray(rows)) return;
     let changed = false;
@@ -913,23 +914,7 @@ function toast(msg, type='') {
 </script>
 
 <script>
-const NEX_GATE_KEY = 'nexagent_pe_gate_v1';
-const NEX_GATE_PW = 'NexOS-PE';
-function nexUnlocked(){ try { return sessionStorage.getItem(NEX_GATE_KEY) === '1'; } catch(e){ return false; } }
-function nexUnlock(e){
-  e.preventDefault();
-  const v = (document.getElementById('nexGatePw').value || '').trim();
-  if(v === NEX_GATE_PW){
-    sessionStorage.setItem(NEX_GATE_KEY,'1');
-    document.getElementById('nexGate').classList.add('ok');
-  } else {
-    document.getElementById('nexGateErr').textContent = 'Wrong password';
-  }
-  return false;
-}
-if(nexUnlocked()){
-  document.getElementById('nexGate').classList.add('ok');
-}
+/* gate: /nex-pin.js (PIN session) */
 (function(){
   const side=document.querySelector('.sidebar');
   const dim=document.getElementById('nexDim');
