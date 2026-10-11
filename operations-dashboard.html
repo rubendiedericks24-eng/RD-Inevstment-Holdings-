@@ -11,9 +11,9 @@
 <div class="nex-gate" id="nexGate">
   <form class="nex-gate-box" onsubmit="return nexUnlock(event)">
     <h2>Auto Workshop PE</h2>
-    <p>Staff login.</p>
-    <p class="nex-gate-err" id="nexGateErr"></p>
-    <input id="nexGatePw" type="password" placeholder="Password" autocomplete="current-password">
+    <p>Enter your dashboard PIN.</p>
+    <p class="nex-gate-err" id="nexGateErr" aria-live="polite"></p>
+    <input id="nexGatePw" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="PIN" autocomplete="off" aria-label="Dashboard PIN">
     <button type="submit">Open</button>
   </form>
 </div>
