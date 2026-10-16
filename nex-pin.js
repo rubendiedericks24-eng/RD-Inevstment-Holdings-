@@ -27,7 +27,7 @@
   /* Response-like wrapper so existing page code (`const res = await nexFetchTab(tab); const rows = await res.json();`) keeps working. */
   window.nexFetchTab=async function(tab){
     if(!authed()){ gate(true); throw new Error('PIN required'); }
-    var data=await post({action:'tab',token:token(),tab:tab},15000);
+    var data; try{ data=await post({action:'tab',token:token(),tab:tab},30000); }catch(x){ /* cold start / transient: one retry */ data=await post({action:'tab',token:token(),tab:tab},30000); }
     if(data&&data.error==='Unauthorized'){ try{ sessionStorage.removeItem(TOKEN_KEY); }catch(e){} gate(true,'Session ended. Enter your PIN again.'); throw new Error('Session ended'); }
     return { ok:true, status:200, json:async function(){ return data; } };
   };
