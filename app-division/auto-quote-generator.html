@@ -342,19 +342,10 @@ details[open] .setup-block summary::before{content:'▾'}
         </div>
       </div>
       <div class="btn-row print-hide">
-        <button class="btn btn-primary" onclick="saveQuote()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Quote
-        </button>
-        <button class="btn btn-ghost" onclick="sendEmail()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Email to Client
-        </button>
         <button class="btn btn-ghost" onclick="window.print()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print / PDF
         </button>
-        <button class="btn btn-danger" onclick="clearForm()">Clear</button>
       </div>
     </div>
 
@@ -362,30 +353,10 @@ details[open] .setup-block summary::before{content:'▾'}
     <div class="section print-hide">
       <div class="section-head">
         <span class="section-title">Saved Quotes</span>
-        <div style="display:flex;gap:6px"><button class="btn btn-ghost" style="padding:4px 12px;font-size:.75rem" onclick="syncStatusFromSheet().then(()=>{renderHistory();toast('Refreshed')})">↻ Refresh</button><button class="btn btn-ghost" style="padding:4px 12px;font-size:.75rem" onclick="clearHistory()">Clear all</button></div>
+        <div style="display:flex;gap:6px"><button class="btn btn-ghost" style="padding:4px 12px;font-size:.75rem" onclick="syncStatusFromSheet().then(()=>{renderHistory();toast('Refreshed')})">↻ Refresh</button></div>
       </div>
       <div class="section-body" id="histWrap">
         <div class="hist-empty">No quotes saved yet.</div>
-      </div>
-    </div>
-
-    <!-- Google Sheets Sync -->
-    <div class="section print-hide">
-      <div class="section-head">
-        <span class="section-title">Google Sheets Sync</span>
-        <span style="font-family:var(--mono);font-size:.65rem;color:var(--subtle)">Optional</span>
-      </div>
-      <div class="section-body">
-        <div class="field">
-          <label>Webhook URL (Make.com)</label>
-          <input id="sheetsScriptUrl" placeholder="https://hook.us2.make.com/…" oninput="saveSettings()">
-        </div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn btn-ghost" style="font-size:.8rem;padding:7px 14px" onclick="syncAll()">Sync All Quotes Now</button>
-        </div>
-        <div style="margin-top:10px;font-size:.8rem;color:var(--muted);line-height:1.7">
-          Powered by Make.com. The webhook URL above is pre-configured — quotes sync automatically when saved or sent.
-        </div>
       </div>
     </div>
 
@@ -469,22 +440,7 @@ let iCount = 0;
 // ── APPS SCRIPT (read-only — gets __row after save) ───────────────────────────
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
 
-// ── DELETE WEBHOOK — paste NexQuote-DeleteQuote URL here after building Make.com scenario ──
-const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
-async function fetchQuoteRow(num) {
-  try {
-    const res = await nexFetchTab('Quotes');
-    const rows = await res.json();
-    if (!Array.isArray(rows)) return null;
-    // Find by quote number — handles leading-tab artifacts from Make.com Add a Row
-    const found = rows.find(r => {
-      const v = String(r['Quote No'] || r['num'] || r['Quote Number'] || r['Num'] || '').trim();
-      return v === num.trim();
-    });
-    return found ? found.__row : null;
-  } catch { return null; }
-}
 
 // Sync status + __row from Google Sheets back into localStorage (silent, runs on page load)
 async function syncStatusFromSheet() {
@@ -524,9 +480,6 @@ window.onload = () => {
   if(biz.vat) document.getElementById('bizVat').value = biz.vat;
   if(biz.validity) document.getElementById('validNote').value = biz.validity;
 
-  const settings = DB.loadSettings();
-  const defaultWebhook = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-  document.getElementById('sheetsScriptUrl').value = settings.sheetsScriptUrl || defaultWebhook;
 
   addItem();
   renderHistory();
@@ -544,9 +497,6 @@ function saveBiz() {
   DB.saveBiz({ name:v('bizName'), phone:v('bizPhone'), email:v('bizEmail'), vat:v('bizVat'), validity:v('validNote') });
 }
 
-function saveSettings() {
-  DB.saveSettings({ sheetsScriptUrl: v('sheetsScriptUrl') });
-}
 
 // ── PRESETS ───────────────────────────────────────────────────────────────────
 const PRESETS = {
@@ -693,35 +643,6 @@ function sync() {
 }
 
 // ── SAVE / LOAD / DELETE ──────────────────────────────────────────────────────
-function saveQuote() {
-  if(!v('clientName')){ toast('Add a client name first.', 'error'); return; }
-  const items = getItems();
-  if(!items.length){ toast('Add at least one line item.', 'error'); return; }
-  const {sub, vat, grand} = calcTotals();
-  const q = {
-    num: 'AQ-'+String(S.qNum).padStart(4,'0'),
-    __row: null,
-    clientName: v('clientName'), clientPhone: v('clientPhone'),
-    reference: v('reference'), bizName: v('bizName'),
-    jobType: v('jobType'), scopeNotes: v('scopeNotes'),
-    clientEmail: v('clientEmail'),
-    items, sub, vat, grand, status: 'draft',
-    date: fmtDate(new Date())
-  };
-  S.quotes.unshift(q);
-  S.qNum++;
-  DB.save(S);
-  renderHistory();
-  syncToSheets(q, 'upsert');
-  toast('Quote '+q.num+' saved.', 'success');
-  // Background: resolve sheet row number so Accept can send __row to Make.com
-  fetchQuoteRow(q.num).then(row => {
-    if (row) {
-      const idx = S.quotes.findIndex(x => x.num === q.num);
-      if (idx >= 0) { S.quotes[idx].__row = row; DB.save(S); }
-    }
-  });
-}
 
 function loadQuote(idx) {
   const q = S.quotes[idx];
@@ -739,62 +660,15 @@ function loadQuote(idx) {
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-async function deleteQuote(idx, e) {
-  e.stopPropagation();
-  if(!confirm('Delete this quote?')) return;
-  const q = S.quotes[idx];
-  if (WEBHOOK_DELETE) {
-    if (!q.__row) {
-      toast('Row number missing — delete from sheet manually.', 'error');
-    } else {
-      try {
-        await fetch(WEBHOOK_DELETE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event: 'delete_quote', quoteNum: q.num, rowNumber: q.__row })
-        });
-        toast('Quote deleted.', 'success');
-      } catch(err) { toast('Sheet delete failed — check Make.com.', 'error'); }
-    }
-  } else {
-    toast('Quote deleted.');
-  }
-  S.quotes.splice(idx, 1);
-  DB.save(S);
-  renderHistory();
-}
 
-function markAccepted(idx, e) {
-  e.stopPropagation();
-  S.quotes[idx].status = 'accepted';
-  DB.save(S);
-  syncToSheets(S.quotes[idx], 'upsert');
-  renderHistory();
-  toast('Marked as accepted.', 'success');
-}
 
-function clearForm() {
-  if(!confirm('Clear this quote?')) return;
-  ['clientName','clientPhone','reference','scopeNotes'].forEach(id => document.getElementById(id).value='');
-  document.getElementById('jobType').selectedIndex = 0;
-  document.getElementById('itemsBody').innerHTML = '';
-  iCount = 0;
-  addItem(); sync();
-}
 
-function clearHistory() {
-  if(!S.quotes.length) return;
-  if(!confirm('Clear all saved quotes?')) return;
-  S.quotes = [];
-  DB.save(S);
-  renderHistory();
-}
 
 // ── RENDER HISTORY ────────────────────────────────────────────────────────────
 function renderHistory() {
   const el = document.getElementById('histWrap');
   if(!S.quotes.length){
-    el.innerHTML = '<div class="hist-empty">No quotes saved yet. Fill in the form and click Save Quote.</div>';
+    el.innerHTML = '<div class="hist-empty">No quotes on this device. Quotes are created on WhatsApp (create quote).</div>';
     return;
   }
   el.innerHTML = S.quotes.map((q,i) => `
@@ -807,101 +681,17 @@ function renderHistory() {
       <div style="text-align:right;flex-shrink:0;margin-left:12px">
         <div class="h-total">${R(q.grand)}</div>
         <div style="margin-top:4px"><span class="badge badge-${q.status}">${q.status}</span></div>
-        <div class="h-actions">
-          ${q.status!=='accepted'?`<button class="h-act-btn h-act-accept" onclick="markAccepted(${i},event)">Accept</button>`:''}
-          <button class="h-act-btn h-act-del" onclick="deleteQuote(${i},event)">Delete</button>
-        </div>
       </div>
     </div>
   `).join('');
 }
 
 // ── WHATSAPP ──────────────────────────────────────────────────────────────────
-function sendWA() {
-  if(!v('clientPhone')){ toast('Add client phone number first.', 'error'); return; }
-  const items = getItems();
-  if(!items.length){ toast('Add at least one line item.', 'error'); return; }
-  const {sub, vat, grand} = calcTotals();
-  const biz = v('bizName') || 'Us';
-  const cname = v('clientName') || 'there';
-  const ref = v('reference');
-  const num = 'AQ-'+String(S.qNum).padStart(4,'0');
-
-  let msg = `*QUOTE ${num}*\n*${biz}*\nDate: ${fmtDate(new Date())}\n\nHi ${cname}! Please find your quote below:\n`;
-  if(ref) msg += `_Ref: ${ref}_\n`;
-  msg += `\n*Items:*\n`;
-  items.forEach(i => msg += `• ${i.d} × ${i.q} @ ${R(i.p)} = *${R(i.t)}*\n`);
-  msg += `\n———\nSubtotal: ${R(sub)}\nVAT (15%): ${R(vat)}\n*TOTAL: ${R(grand)}*`;
-  const note = v('validNote');
-  if(note) msg += `\n\n_${note}_`;
-  msg += `\n\nPlease confirm to proceed. Thank you!`;
-
-  let ph = v('clientPhone').replace(/\D/g,'');
-  if(ph.startsWith('0')) ph = '27'+ph.slice(1);
-  window.open(`https://wa.me/${ph}?text=${encodeURIComponent(msg)}`, '_blank');
-
-  const existing = S.quotes.find(q => q.clientName === cname && q.status === 'draft');
-  if(existing){ existing.status = 'sent'; DB.save(S); syncToSheets(existing, 'upsert'); renderHistory(); }
-  toast('WhatsApp opened — message pre-filled.');
-}
 
 // ── EMAIL TO CLIENT ───────────────────────────────────────────────────────────
-async function sendEmail() {
-  if(!v('clientEmail')){ toast('Add client email address first.', 'error'); return; }
-  if(!v('clientName')){ toast('Add client name first.', 'error'); return; }
-  const items = getItems();
-  if(!items.length){ toast('Add at least one line item.', 'error'); return; }
-  const {sub, vat, grand} = calcTotals();
-  const url = v('sheetsScriptUrl');
-  if(!url){ toast('No webhook URL configured.', 'error'); return; }
-  const q = {
-    action: 'send',
-    num: 'AQ-'+String(S.qNum).padStart(4,'0'),
-    clientName: v('clientName'), clientEmail: v('clientEmail'),
-    clientPhone: v('clientPhone'), reference: v('reference'),
-    bizName: v('bizName'),
-    itemsSummary: items.map(i=>`${i.d}×${i.q}`).join(', '),
-    sub: sub.toFixed(2), vat: vat.toFixed(2), grand: grand.toFixed(2),
-    status: 'sent', date: fmtDate(new Date())
-  };
-  try {
-    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(q) });
-    toast('Quote emailed to '+v('clientEmail'), 'success');
-  } catch(e) { toast('Email send failed.', 'error'); }
-}
 
 // ── SHEETS SYNC ───────────────────────────────────────────────────────────────
-async function syncToSheets(q, action='upsert') {
-  const url = v('sheetsScriptUrl');
-  if(!url || !q) return;
-  if(!q.clientPhone) return;
-  // Format phone for Meta WhatsApp API (must be 27XXXXXXXXX — no +, no leading 0)
-  let phone = q.clientPhone.replace(/\D/g, '');
-  if(phone.startsWith('0')) phone = '27' + phone.slice(1);
-  try {
-    await fetch(url, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        event: action === 'upsert' ? 'floor_quote' : action,
-        action, __row: q.__row || null,
-        num:q.num, clientName:q.clientName,
-        clientEmail:q.clientEmail||'', clientPhone:phone, reference:q.reference||'',
-        itemsSummary:q.items.map(i=>`${i.d}×${i.q}`).join(', '),
-        sub:q.sub.toFixed(2), vat:q.vat.toFixed(2), grand:q.grand.toFixed(2),
-        status:q.status, date:q.date
-      })
-    });
-  } catch(e) {}
-}
 
-async function syncAll() {
-  const url = v('sheetsScriptUrl');
-  if(!url){ toast('No Sheets script URL configured.', 'error'); return; }
-  if(!S.quotes.length){ toast('No quotes to sync.', 'error'); return; }
-  for(const q of S.quotes) await syncToSheets(q, 'upsert');
-  toast('All quotes synced to Sheets.', 'success');
-}
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function toast(msg, type='') {

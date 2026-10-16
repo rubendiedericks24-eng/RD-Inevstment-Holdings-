@@ -182,16 +182,11 @@ tr:hover td{background:var(--bg)}
  <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Staff Timesheet & Payroll</div> </div> <nav class="sidebar-nav"> <a class="nav-item active" onclick="setView('all')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Entries</a> <a class="nav-item" onclick="setView('today')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Today</a> <a class="nav-item" onclick="setView('week')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><rect x="7" y="14" width="3" height="3" fill="currentColor" stroke="none"/><rect x="11" y="14" width="3" height="3" fill="currentColor" stroke="none"/></svg> This Week</a> <a class="nav-item" onclick="setView('payroll')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Payroll Summary</a> <a class="nav-item" href="operations-dashboard.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </aside> <!-- MAIN -->
-<main class="main"> <div class="pg-header"> <div> <div class="pg-label">Module 5</div> <div class="pg-title">Staff Timesheet & Payroll</div> <div class="pg-sub" id="pgSub">Loading entries…</div> </div> <button class="btn btn-primary" onclick="openModal()">+ Log Entry</button> </div> <!-- STAT GRID --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Entries</div> <div class="stat-value" id="statTotal">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Hours (Week)</div> <div class="stat-value" id="statHours">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Payroll (Week)</div> <div class="stat-value" id="statPay">—</div> </div> <div class="stat-cell"> <div class="stat-label">Staff on Sheet</div> <div class="stat-value" id="statStaff">—</div> </div> </div> <!-- PAYROLL SUMMARY (hidden unless payroll view) --> <div id="payrollSection" style="display:none"> <div class="payroll-card"> <h3>Payroll Summary — This Week</h3> <div id="payrollRows"></div> </div> </div> <!-- TOOLBAR --> <div class="toolbar" id="mainToolbar"> <div class="toolbar-left"> <input class="search-input" id="searchInput" placeholder="Search staff…" oninput="renderEntries()"> <select class="filter-select" id="filterStaff" onchange="renderEntries()"> <option value="">All Staff</option> </select> </div> </div> <!-- TABLE --> <div class="table-wrap" id="tableSection"> <table> <thead> <tr> <th>Date</th> <th>Staff Name</th> <th>Clock In</th> <th>Clock Out</th> <th>Hours</th> <th class="hide-m">Rate (R/hr)</th> <th>Day Pay</th> <th class="hide-m">Job Ref</th> <th class="hide-m">Notes</th> <th></th> </tr> </thead> <tbody id="entriesTbody"></tbody> </table> </div>
-</main> <!-- ADD / EDIT MODAL -->
-<div class="modal-overlay" id="entryModal"> <div class="modal"> <div class="modal-header"> <span class="modal-title" id="modalTitle">Log Entry</span> <button class="modal-close" onclick="closeModal()">&#x2715;</button> </div> <div class="modal-body"> <div class="form-grid"> <div class="form-group"> <label>Date *</label> <input type="date" id="fDate"> </div> <div class="form-group"> <label>Staff Name *</label> <input type="text" id="fName" placeholder="e.g. John Smith"> </div> <div class="form-group"> <label>Clock In *</label> <input type="time" id="fClockIn" oninput="autoCalc()"> </div> <div class="form-group"> <label>Clock Out *</label> <input type="time" id="fClockOut" oninput="autoCalc()"> </div> <div class="form-group"> <label>Hourly Rate (R) *</label> <input type="number" id="fRate" placeholder="e.g. 85" min="0" oninput="autoCalc()"> </div> <div class="form-group"> <label>Job Ref</label> <input type="text" id="fJobRef" placeholder="e.g. JOB-004"> </div> <div class="form-group form-full"> <label>Notes</label> <input type="text" id="fNotes" placeholder="Optional notes"> </div> <div class="form-group"> <label>Hours Worked (auto)</label> <input type="text" id="fHours" readonly style="background:var(--surface2);color:var(--muted)"> </div> <div class="form-group"> <label>Day Pay (auto)</label> <input type="text" id="fDayPay" readonly style="background:var(--surface2);color:var(--muted)"> </div> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal()">Cancel</button> <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button> </div> </div>
-</div> <!-- TOAST -->
+<main class="main"> <div class="pg-header"> <div> <div class="pg-label">Module 5</div> <div class="pg-title">Staff Timesheet & Payroll</div> <div class="pg-sub" id="pgSub">Loading entries…</div> </div> </div> <!-- STAT GRID --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Entries</div> <div class="stat-value" id="statTotal">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Hours (Week)</div> <div class="stat-value" id="statHours">—</div> </div> <div class="stat-cell"> <div class="stat-label">Total Payroll (Week)</div> <div class="stat-value" id="statPay">—</div> </div> <div class="stat-cell"> <div class="stat-label">Staff on Sheet</div> <div class="stat-value" id="statStaff">—</div> </div> </div> <!-- PAYROLL SUMMARY (hidden unless payroll view) --> <div id="payrollSection" style="display:none"> <div class="payroll-card"> <h3>Payroll Summary — This Week</h3> <div id="payrollRows"></div> </div> </div> <!-- TOOLBAR --> <div class="toolbar" id="mainToolbar"> <div class="toolbar-left"> <input class="search-input" id="searchInput" placeholder="Search staff…" oninput="renderEntries()"> <select class="filter-select" id="filterStaff" onchange="renderEntries()"> <option value="">All Staff</option> </select> </div> </div> <!-- TABLE --> <div class="table-wrap" id="tableSection"> <table> <thead> <tr> <th>Date</th> <th>Staff Name</th> <th>Clock In</th> <th>Clock Out</th> <th>Hours</th> <th class="hide-m">Rate (R/hr)</th> <th>Day Pay</th> <th class="hide-m">Job Ref</th> <th class="hide-m">Notes</th> </tr> </thead> <tbody id="entriesTbody"></tbody> </table> </div>
+</main> <!-- TOAST -->
 <div class="toast" id="toast"></div> <script>
 // ── CONFIG ──
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
-const WEBHOOK_ADD    = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-const WEBHOOK_EDIT   = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
 let entries = [];
 let editingId = null;
@@ -233,12 +228,6 @@ async function loadEntries(){
 }
 
 // ── FIRE WEBHOOK ──
-async function fireWebhook(url, payload){
-  if (!url || url.startsWith('PASTE')){ console.warn('Webhook not configured:', url); return; }
-  try {
-    await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-  } catch(e){ console.error('Webhook failed:', e); toast('Webhook error — check Make.com'); }
-}
 
 // ── TOAST ──
 function toast(msg){
@@ -293,7 +282,7 @@ function renderEntries(){
   }
   tbody.innerHTML = filtered.map(e => {
     const payBadge = e.dayPay > 0 ? `<span class="badge badge-green">R${e.dayPay.toFixed(2)}</span>` : '—';
-    return `<tr> <td><span style="font-family:var(--mono);font-size:.78rem">${formatDate(e.date)}</span></td> <td><strong>${e.staffName}</strong></td> <td>${e.clockIn || '—'}</td> <td>${e.clockOut || '—'}</td> <td><span class="badge badge-blue">${e.hours.toFixed(1)}h</span></td> <td class="hide-m">R${e.rate}/hr</td> <td>${payBadge}</td> <td class="hide-m">${e.jobRef ? `<span class="badge badge-amber">${e.jobRef}</span>` : '—'}</td> <td class="hide-m" style="color:var(--muted);font-size:.8rem">${e.notes || '—'}</td> <td><div class="actions-cell"> <button class="act-btn" onclick="openEdit('${e.id}')" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button> <button class="act-btn del" onclick="deleteEntry('${e.id}')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button> </div></td> </tr>`;
+    return `<tr> <td><span style="font-family:var(--mono);font-size:.78rem">${formatDate(e.date)}</span></td> <td><strong>${e.staffName}</strong></td> <td>${e.clockIn || '—'}</td> <td>${e.clockOut || '—'}</td> <td><span class="badge badge-blue">${e.hours.toFixed(1)}h</span></td> <td class="hide-m">R${e.rate}/hr</td> <td>${payBadge}</td> <td class="hide-m">${e.jobRef ? `<span class="badge badge-amber">${e.jobRef}</span>` : '—'}</td> <td class="hide-m" style="color:var(--muted);font-size:.8rem">${e.notes || '—'}</td> </tr>`;
   }).join('');
 }
 
@@ -377,96 +366,18 @@ function calcHours(clockIn, clockOut){
 }
 
 // ── MODAL AUTO-CALC ──
-function autoCalc(){
-  const clockIn  = document.getElementById('fClockIn').value;
-  const clockOut = document.getElementById('fClockOut').value;
-  const rate     = parseFloat(document.getElementById('fRate').value) || 0;
-  const hours    = calcHours(clockIn, clockOut);
-  const dayPay   = Math.round(hours * rate * 100)/100;
-  document.getElementById('fHours').value  = hours > 0 ? hours.toFixed(1) + ' hrs' : '';
-  document.getElementById('fDayPay').value = dayPay > 0 ? 'R' + dayPay.toFixed(2) : '';
-}
 
 // ── OPEN MODAL ──
-function openModal(){
-  editingId = null;
-  document.getElementById('modalTitle').textContent = 'Log Entry';
-  document.getElementById('fDate').value     = new Date().toISOString().slice(0,10);
-  document.getElementById('fName').value     = '';
-  document.getElementById('fClockIn').value  = '';
-  document.getElementById('fClockOut').value = '';
-  document.getElementById('fRate').value     = '';
-  document.getElementById('fJobRef').value   = '';
-  document.getElementById('fNotes').value    = '';
-  document.getElementById('fHours').value    = '';
-  document.getElementById('fDayPay').value   = '';
-  document.getElementById('entryModal').classList.add('open');
-}
 
 // ── OPEN EDIT ──
-function openEdit(id){
-  const e = entries.find(x => x.id === id);
-  if(!e) return;
-  editingId = id;
-  document.getElementById('modalTitle').textContent = 'Edit Entry';
-  document.getElementById('fDate').value     = e.date;
-  document.getElementById('fName').value     = e.staffName;
-  document.getElementById('fClockIn').value  = e.clockIn;
-  document.getElementById('fClockOut').value = e.clockOut;
-  document.getElementById('fRate').value     = e.rate;
-  document.getElementById('fJobRef').value   = e.jobRef;
-  document.getElementById('fNotes').value    = e.notes;
-  autoCalc();
-  document.getElementById('entryModal').classList.add('open');
-}
 
 // ── CLOSE MODAL ──
-function closeModal(){ document.getElementById('entryModal').classList.remove('open'); }
 
 // ── SAVE ENTRY ──
-async function saveEntry(){
-  const date    = document.getElementById('fDate').value;
-  const name    = document.getElementById('fName').value.trim();
-  const clockIn = document.getElementById('fClockIn').value;
-  const clockOut= document.getElementById('fClockOut').value;
-  const rate    = parseFloat(document.getElementById('fRate').value) || 0;
-  if(!date || !name || !clockIn || !clockOut || !rate){ toast('Fill in all required fields'); return; }
-  const hours  = calcHours(clockIn, clockOut);
-  const dayPay = Math.round(hours * rate * 100)/100;
-  const data = { date, staffName:name, clockIn, clockOut, hours, rate, dayPay, jobRef:document.getElementById('fJobRef').value.trim(), notes:document.getElementById('fNotes').value.trim() };
-
-  if(editingId){
-    const existing = entries.find(e => e.id===editingId);
-    entries = entries.map(e => e.id===editingId ? {...e,...data} : e);
-    closeModal(); updateStats(); renderEntries();
-    toast('Entry updated — syncing to sheet…');
-    await fireWebhook(WEBHOOK_EDIT, { action:'edit', id:editingId, rowNumber: existing?.__row, ...data });
-  } else {
-    const newEntry = { id:nextId(), ...data };
-    entries.unshift(newEntry);
-    closeModal(); updateStats(); renderEntries(); populateStaffFilter();
-    toast('Entry logged — syncing to sheet…');
-    await fireWebhook(WEBHOOK_ADD, { action:'add', ...newEntry });
-  }
-  setTimeout(loadEntries, 4000);
-}
 
 // ── DELETE ENTRY ──
-async function deleteEntry(id){
-  const e = entries.find(x=>x.id===id);
-  if(!e) return;
-  if(!confirm(`Delete entry for ${e.staffName} on ${formatDate(e.date)}? This cannot be undone.`)) return;
-  entries = entries.filter(x=>x.id!==id);
-  updateStats(); renderEntries();
-  toast('Entry deleted — syncing to sheet…');
-  await fireWebhook(WEBHOOK_DELETE, { action:'delete', id, rowNumber: e.__row, staffName:e.staffName, date:e.date });
-  setTimeout(loadEntries, 4000);
-}
 
 // ── AUTO-CALC ON INPUT ──
-document.getElementById('fClockIn').addEventListener('input', autoCalc);
-document.getElementById('fClockOut').addEventListener('input', autoCalc);
-document.getElementById('fRate').addEventListener('input', autoCalc);
 
 window.onload = loadEntries;
 </script>

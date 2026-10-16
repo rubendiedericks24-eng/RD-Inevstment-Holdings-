@@ -205,18 +205,11 @@ textarea{resize:vertical;min-height:60px}
  <!-- SIDEBAR -->
 <aside class="sidebar"> <div class="sidebar-brand"> <div class="brand-name">Auto Workshop PE</div> <div class="brand-sub">Inventory & Stock</div> <div style="margin-top:8px;font-size:10px;color:#94A3B8;font-family:monospace">Powered by NexAgent AI</div> </div> <nav class="sidebar-nav"> <div class="nav-item active" onclick="setView('all')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg> All Parts</div> <div class="nav-item" onclick="setView('low')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Low Stock</div> <div class="nav-item" onclick="setView('out')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Out of Stock</div> <a class="nav-item" href="operations-dashboard.html"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Dashboard</a> </nav> <div class="sidebar-footer">Powered by NexAgent AI</div>
 </aside> <!-- MAIN -->
-<main class="main"> <div class="pg-header"> <div> <div class="pg-label">App Division</div> <div class="pg-title">Inventory &amp; Stock Manager</div> <div class="pg-sub" id="pgSub">Loading stock…</div> </div> <button class="btn btn-primary" onclick="openAdd()">+ Add Part</button> </div> <!-- STATS --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Parts</div> <div class="stat-val v-navy" id="statTotal">0</div> </div> <div class="stat-cell"> <div class="stat-label">Low Stock</div> <div class="stat-val v-amber" id="statLow">0</div> </div> <div class="stat-cell"> <div class="stat-label">Out of Stock</div> <div class="stat-val v-red" id="statOut">0</div> </div> <div class="stat-cell"> <div class="stat-label">Stock Value</div> <div class="stat-val v-green" id="statValue">R0</div> </div> </div> <!-- REORDER ALERT --> <div class="reorder-banner" id="reorderBanner"> <span class="reorder-banner-icon"></span> <span class="reorder-banner-text" id="reorderText">Items need reordering</span> </div> <!-- PARTS TABLE --> <div class="card"> <div class="card-head"> <div class="card-title">Parts &amp; Stock</div> <div class="toolbar"> <input class="search-input" type="text" id="searchInput" placeholder="Search parts…" oninput="render()"> <select class="filter-select" id="catFilter" onchange="render()"> <option value="">All Categories</option> </select> </div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part</th> <th>Category</th> <th>Stock</th> <th class="hide-m">Reorder At</th> <th class="hide-m">Supplier</th> <th class="hide-m">Cost Price</th> <th class="hide-m">Status</th> <th></th> </tr> </thead> <tbody id="partsBody"></tbody> </table> </div> </div>
-</main> <!-- ADD / EDIT MODAL -->
-<div class="modal-overlay" id="partModal"> <div class="modal"> <div class="modal-head"> <h2 id="modalTitle">Add Part</h2> <button class="modal-close" onclick="closeModal('partModal')"></button> </div> <div class="form-grid"> <div class="form-group span2"> <label>Part Name *</label> <input type="text" id="fName" placeholder="e.g. Brake Pads (Front)"> </div> <div class="form-group"> <label>Category *</label> <input type="text" id="fCategory" placeholder="e.g. Brakes" list="catList"> <datalist id="catList"></datalist> </div> <div class="form-group"> <label>Supplier</label> <input type="text" id="fSupplier" placeholder="e.g. AutoZone"> </div> <div class="form-group"> <label>Stock Level *</label> <input type="number" id="fStock" min="0" placeholder="0"> </div> <div class="form-group"> <label>Reorder Level *</label> <input type="number" id="fReorder" min="0" placeholder="5"> </div> <div class="form-group"> <label>Cost Price (R)</label> <input type="number" id="fCost" min="0" step="0.01" placeholder="0.00"> </div> <div class="form-group"> <label>Selling Price Range</label> <input type="text" id="fPriceRange" placeholder="e.g. R350–R800"> </div> <div class="form-group span2"> <label>Description / Notes</label> <textarea id="fDesc" placeholder="Optional notes about this part"></textarea> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal('partModal')">Cancel</button> <button class="btn btn-primary" onclick="savePart()">Save Part</button> </div> </div>
-</div> <!-- ADJUST STOCK MODAL -->
-<div class="modal-overlay" id="adjModal"> <div class="modal" style="max-width:400px"> <div class="modal-head"> <h2>Adjust Stock</h2> <button class="modal-close" onclick="closeModal('adjModal')"></button> </div> <div class="adj-body"> <div class="adj-part-name" id="adjPartName"></div> <div class="adj-current" id="adjCurrent"></div> <div class="adj-tabs"> <button class="adj-tab active" id="tabReceive" onclick="setAdjMode('receive')">+ Receive Stock</button> <button class="adj-tab" id="tabUse" onclick="setAdjMode('use')">− Use Stock</button> </div> <div class="adj-input-row"> <input type="number" id="adjQty" min="1" value="1" placeholder="Quantity"> <span id="adjLabel">units to add</span> </div> </div> <div class="form-footer"> <button class="btn btn-outline" onclick="closeModal('adjModal')">Cancel</button> <button class="btn btn-primary" onclick="confirmAdj()">Confirm</button> </div> </div>
-</div> <div class="toast" id="toast"></div> <script>
+<main class="main"> <div class="pg-header"> <div> <div class="pg-label">App Division</div> <div class="pg-title">Inventory &amp; Stock Manager</div> <div class="pg-sub" id="pgSub">Loading stock…</div> </div> </div> <!-- STATS --> <div class="stat-grid"> <div class="stat-cell"> <div class="stat-label">Total Parts</div> <div class="stat-val v-navy" id="statTotal">0</div> </div> <div class="stat-cell"> <div class="stat-label">Low Stock</div> <div class="stat-val v-amber" id="statLow">0</div> </div> <div class="stat-cell"> <div class="stat-label">Out of Stock</div> <div class="stat-val v-red" id="statOut">0</div> </div> <div class="stat-cell"> <div class="stat-label">Stock Value</div> <div class="stat-val v-green" id="statValue">R0</div> </div> </div> <!-- REORDER ALERT --> <div class="reorder-banner" id="reorderBanner"> <span class="reorder-banner-icon"></span> <span class="reorder-banner-text" id="reorderText">Items need reordering</span> </div> <!-- PARTS TABLE --> <div class="card"> <div class="card-head"> <div class="card-title">Parts &amp; Stock</div> <div class="toolbar"> <input class="search-input" type="text" id="searchInput" placeholder="Search parts…" oninput="render()"> <select class="filter-select" id="catFilter" onchange="render()"> <option value="">All Categories</option> </select> </div> </div> <div class="tbl-wrap"> <table class="tbl"> <thead> <tr> <th>Part</th> <th>Category</th> <th>Stock</th> <th class="hide-m">Reorder At</th> <th class="hide-m">Supplier</th> <th class="hide-m">Cost Price</th> <th class="hide-m">Status</th> </tr> </thead> <tbody id="partsBody"></tbody> </table> </div> </div>
+</main> 
+<div class="toast" id="toast"></div> <script>
 // ── CONFIG — paste URLs here once Make.com scenarios + Apps Script are deployed ──
 const SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcv7Cbp_JeBZiCUTCWVEDkV6BvO4d3tDz8ivx-HR5qHos-xTROolb8F146G2SCyUPk/exec';
-const WEBHOOK_ADD    = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-const WEBHOOK_EDIT   = 'https://hook.us2.make.com/v84g3iwkdkl0q4g1qmwffnd3l9yial88';
-const WEBHOOK_DELETE = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
-const WEBHOOK_ADJUST = 'https://hook.us2.make.com/b87t3jq9ek60abusvn767oi7cklp5fxu';
 
 let parts = [];
 
@@ -281,22 +274,6 @@ async function loadParts(){
 }
 
 // ── FIRE MAKE.COM WEBHOOK ──
-async function fireWebhook(url, payload){
-  if (!url || url.startsWith('PASTE')){
-    console.warn('Webhook not configured yet:', url);
-    return;
-  }
-  try {
-    await fetch(url, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload)
-    });
-  } catch(e){
-    console.error('Webhook error:', e);
-    toast('Webhook error — check Make.com');
-  }
-}
 
 // ── SIDEBAR VIEW ──
 function setView(v){
@@ -317,7 +294,6 @@ function render(){
   const curCat = catSel.value;
   catSel.innerHTML = '<option value="">All Categories</option>' +
     cats.map(c=>`<option value="${esc(c)}" ${c===curCat?'selected':''}>${esc(c)}</option>`).join('');
-  document.getElementById('catList').innerHTML = cats.map(c=>`<option value="${esc(c)}">`).join('');
 
   const filtered = parts.filter(p => {
     const matchQ   = !q || p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q) || (p.supplier||'').toLowerCase().includes(q);
@@ -349,7 +325,7 @@ function render(){
 
   const tbody = document.getElementById('partsBody');
   if (!filtered.length){
-    tbody.innerHTML = `<tr><td colspan="8" class="empty-row">No parts found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-row">No parts found.</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(p => {
@@ -357,124 +333,22 @@ function render(){
     const rowCls = st==='out'?'row-out':st==='low'?'row-low':'';
     const numCls = st==='out'?'out':st==='low'?'low':'ok';
     return `<tr class="${rowCls}"> <td> <div class="part-name">${esc(p.name)}</div> ${p.description?`<div class="part-desc">${esc(p.description)}</div>`:''}
-      </td> <td style="color:var(--muted);font-size:.82rem">${esc(p.category)||'—'}</td> <td> <div class="stock-ctrl"> <button class="btn-adj" onclick="quickAdj('${p.id}',-1)" title="Use 1">−</button> <span class="stock-num ${numCls}">${p.stockLevel}</span> <button class="btn-adj" onclick="quickAdj('${p.id}',1)" title="Receive 1">+</button> </div> </td> <td class="hide-m" style="font-family:var(--mono);font-size:.8rem;color:var(--muted)">${p.reorderLevel}</td> <td class="hide-m" style="font-size:.82rem;color:var(--muted)">${esc(p.supplier)||'—'}</td> <td class="hide-m" style="font-family:var(--disp);font-weight:700">${p.costPrice?fmt(p.costPrice):'—'}</td> <td class="hide-m">${badge(st)}</td> <td> <div class="row-actions"> <button class="btn btn-sm btn-outline" onclick="openAdj('${p.id}')">Adjust</button> <button class="btn btn-sm btn-outline" onclick="openEdit('${p.id}')">Edit</button> <button class="btn btn-sm btn-danger" onclick="deletePart('${p.id}')">Delete</button> </div> </td> </tr>`;
+      </td> <td style="color:var(--muted);font-size:.82rem">${esc(p.category)||'—'}</td> <td> <div class="stock-ctrl"> <span class="stock-num ${numCls}">${p.stockLevel}</span> </div> </td> <td class="hide-m" style="font-family:var(--mono);font-size:.8rem;color:var(--muted)">${p.reorderLevel}</td> <td class="hide-m" style="font-size:.82rem;color:var(--muted)">${esc(p.supplier)||'—'}</td> <td class="hide-m" style="font-family:var(--disp);font-weight:700">${p.costPrice?fmt(p.costPrice):'—'}</td> <td class="hide-m">${badge(st)}</td> </tr>`;
   }).join('');
 }
 
 // ── ADD / EDIT MODAL ──
-function openAdd(){
-  editingId = null;
-  document.getElementById('modalTitle').textContent = 'Add Part';
-  ['fName','fCategory','fSupplier','fPriceRange','fDesc'].forEach(id=>document.getElementById(id).value='');
-  ['fStock','fCost'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fReorder').value = 5;
-  document.getElementById('partModal').classList.add('open');
-  document.getElementById('fName').focus();
-}
 
-function openEdit(id){
-  const p = parts.find(x=>x.id===id); if(!p) return;
-  editingId = id;
-  document.getElementById('modalTitle').textContent  = 'Edit Part';
-  document.getElementById('fName').value             = p.name;
-  document.getElementById('fCategory').value         = p.category||'';
-  document.getElementById('fSupplier').value         = p.supplier||'';
-  document.getElementById('fStock').value            = p.stockLevel;
-  document.getElementById('fReorder').value          = p.reorderLevel;
-  document.getElementById('fCost').value             = p.costPrice||'';
-  document.getElementById('fPriceRange').value       = p.priceRange||'';
-  document.getElementById('fDesc').value             = p.description||'';
-  document.getElementById('partModal').classList.add('open');
-}
 
-async function savePart(){
-  const name    = document.getElementById('fName').value.trim();
-  const cat     = document.getElementById('fCategory').value.trim();
-  const stock   = parseInt(document.getElementById('fStock').value)||0;
-  const reorder = parseInt(document.getElementById('fReorder').value)||0;
-  if (!name){ toast('Part name required'); return; }
-  if (!cat){  toast('Category required');  return; }
 
-  const data = {
-    name, category: cat,
-    supplier:     document.getElementById('fSupplier').value.trim(),
-    stockLevel:   stock,
-    reorderLevel: reorder,
-    costPrice:    parseFloat(document.getElementById('fCost').value)||0,
-    priceRange:   document.getElementById('fPriceRange').value.trim(),
-    description:  document.getElementById('fDesc').value.trim(),
-  };
-
-  if (editingId){
-    const existing = parts.find(p => p.id===editingId);
-    parts = parts.map(p => p.id===editingId ? {...p,...data} : p);
-    closeModal('partModal'); render(); toast('Part updated — syncing to sheet…');
-    await fireWebhook(WEBHOOK_EDIT, { action:'edit', id:editingId, rowNumber: existing?.__row, ...data });
-  } else {
-    const newPart = { id:nextId(), ...data };
-    parts.unshift(newPart);
-    closeModal('partModal'); render(); toast('Part added — syncing to sheet…');
-    await fireWebhook(WEBHOOK_ADD, { event:'add_part', action:'add_part', partId:newPart.id, partName:newPart.name, name:newPart.name, category:newPart.category, description:newPart.description, priceRange:newPart.priceRange, stockLevel:newPart.stockLevel, reorderLevel:newPart.reorderLevel, supplier:newPart.supplier, costPrice:newPart.costPrice });
-  }
-  setTimeout(loadParts, 4000); // refresh from sheet after Make.com writes
-}
-
-async function deletePart(id){
-  const p = parts.find(x=>x.id===id); if(!p) return;
-  if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
-  parts = parts.filter(x=>x.id!==id);
-  render(); toast('Part deleted — syncing to sheet…');
-  await fireWebhook(WEBHOOK_DELETE, { event:'delete_part', action:'delete_part', partId:id, partName:p.name, name:p.name });
-  setTimeout(loadParts, 4000);
-}
 
 // ── QUICK ADJUST (+/−) ──
-async function quickAdj(id, delta){
-  const part = parts.find(p=>p.id===id); if(!part) return;
-  const newLevel = Math.max(0, part.stockLevel + delta);
-  parts = parts.map(p => p.id===id ? {...p, stockLevel:newLevel} : p);
-  render();
-  const p = parts.find(x=>x.id===id);
-  toast(delta>0 ? `+1 received — ${p.name}: ${p.stockLevel} in stock` : `−1 used — ${p.name}: ${p.stockLevel} remaining`);
-  await fireWebhook(WEBHOOK_ADJUST, { event:'adjust_part', action:'adjust_part', partId:id, partName:p.name, name:p.name, newStock:newLevel, delta, mode:delta>0?'receive':'use' });
-  setTimeout(loadParts, 4000);
-}
 
 // ── ADJUST MODAL ──
-function openAdj(id){
-  const p = parts.find(x=>x.id===id); if(!p) return;
-  adjId   = id;
-  adjMode = 'receive';
-  document.getElementById('adjPartName').textContent = p.name;
-  document.getElementById('adjCurrent').textContent  = `Current stock: ${p.stockLevel} units (reorder at ${p.reorderLevel})`;
-  document.getElementById('adjQty').value = 1;
-  setAdjMode('receive');
-  document.getElementById('adjModal').classList.add('open');
-}
 
-function setAdjMode(mode){
-  adjMode = mode;
-  document.getElementById('tabReceive').classList.toggle('active', mode==='receive');
-  document.getElementById('tabUse').classList.toggle('active', mode==='use');
-  document.getElementById('adjLabel').textContent = mode==='receive' ? 'units to add' : 'units to use';
-}
 
-async function confirmAdj(){
-  const qty = parseInt(document.getElementById('adjQty').value)||0;
-  if (qty <= 0){ toast('Enter a valid quantity'); return; }
-  const delta    = adjMode==='receive' ? qty : -qty;
-  const part     = parts.find(p=>p.id===adjId); if(!part) return;
-  const newLevel = Math.max(0, part.stockLevel + delta);
-  parts = parts.map(p => p.id===adjId ? {...p, stockLevel:newLevel} : p);
-  closeModal('adjModal'); render();
-  const p = parts.find(x=>x.id===adjId);
-  toast(adjMode==='receive' ? `+${qty} received — ${p.name}: ${p.stockLevel} in stock` : `${qty} used — ${p.name}: ${p.stockLevel} remaining`);
-  await fireWebhook(WEBHOOK_ADJUST, { event:'adjust_part', action:'adjust_part', partId:adjId, partName:p.name, name:p.name, newStock:newLevel, delta, mode:adjMode });
-  setTimeout(loadParts, 4000);
-}
 
 // ── MODAL CLOSE ──
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 // ── INIT ──
 window.onload = loadParts;
