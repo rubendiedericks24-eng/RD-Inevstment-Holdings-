@@ -19,7 +19,6 @@ NexAgent OS runs an SME from one WhatsApp number: quotes, job cards, invoicing, 
 - Cancel any time: 20 working days' written notice by email to admin@rdinvestmentholdings.co.za. No cancellation fee. The 12-month Founder lock fixes the price only, not the contract.
 - Pro rata: client pays only up to the last day of the notice period. Prepaid days after the end date are refunded.
 - Setup fee: refunded on written request within 30 calendar days of go-live (first purchase only). Service stops and the SIM comes back.
-- 7-day cooling-off on online sign-ups can't be removed (ECTA) and covers the first month's fee.
 - Terms: https://rdinvestmentholdings.co.za/terms.html#fair-use
 
 ## Legal
