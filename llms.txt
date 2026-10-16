@@ -11,7 +11,7 @@ NexAgent OS runs an SME from one WhatsApp number: quotes, job cards, invoicing, 
 
 ## Pricing (ZAR) — one plan only. Not VAT registered: prices are final, no VAT is added.
 - Founder (first 10 clients): R2,999 setup + R1,999/month (60 jobs and 300 chats a month), locked for 12 months, then the standard monthly price at that time, with 30 days' notice. After that, increases match the percentage rise in our costs, with 30 days' written notice.
-- Standard: R4,999 once-off setup + R2,499/month.
+- Standard: R8,999 once-off setup + R2,999/month.
 - Included every month: 300 AI chats and 60 jobs (a job is one quote-to-paid cycle).
 - Top-ups: one R350 top-up pack adds +250 chats AND +50 jobs, one charge on the next invoice. No chat-only or job-only top-ups.
 - Soft limit: usage is tracked per workshop and shown on the dashboard, with alerts at 80% and 100%. At 100% the AI keeps replying (never cut off) and the client is asked to top up. Usage resets monthly.
