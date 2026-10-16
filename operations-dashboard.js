@@ -253,7 +253,12 @@ function updateStats({jobs,quotes,invoices,leads,stock,timesheet}){
   document.getElementById('subLeads').textContent=`${newLeads.length} new · Leads`;
   document.getElementById('subTimesheetHours').textContent=`${weekEntries.length} shifts · Timesheet`;
   document.getElementById('subLowStock').textContent=`at/below reorder · Parts & Stock`;
+  nexMarkFailed();
 }
+/* failed tab => '!' + 'Could not load' instead of a misleading 0 */
+const NEX_FAILED=new Set();
+const NEX_STAT_IDS={jobs:['statJobs','subJobs'],quotes:['statQuotes','subQuotes'],invoices:['statInvoices','subInvoices'],leads:['statLeads','subLeads'],timesheets:['statTimesheetHours','subTimesheetHours'],stock:['statLowStock','subLowStock']};
+function nexMarkFailed(){ NEX_FAILED.forEach(k=>{const ids=NEX_STAT_IDS[k]; if(!ids) return; const a=document.getElementById(ids[0]), b=document.getElementById(ids[1]); if(a) a.textContent='!'; if(b) b.textContent='Could not load · refresh to retry';}); }
 
 const loaded = {};
 async function loadModule(key, {force=false, silent=false}={}){
@@ -333,7 +338,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
 /* Speed overlay: paint cache first; always refresh live. Cache (sessionStorage) is fallback only. */
 (function(){
   if(window.__nexDashFast) return; window.__nexDashFast=1;
-  const STORAGE_KEY='nexos_pe_dash_v1', FETCH_TIMEOUT_MS=12000, AUTO_REFRESH_MS=180000;
+  const STORAGE_KEY='nexos_pe_dash_v1', FETCH_TIMEOUT_MS=30000, AUTO_REFRESH_MS=180000;
   const TAB_KEYS=['quotes','invoices','jobs','stock','timesheets','leads'];
   const loadedAt={}; let refreshInFlight=0;
   function showChip(on){const c=document.getElementById('refreshChip'); if(!c) return; c.hidden=!on; c.classList.toggle('show',!!on);}
@@ -359,7 +364,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
       await Promise.allSettled(TAB_KEYS.map(async (key)=>{
         try{
           const rows=await fetchTab(SHEET[key]);
-          loaded[key]=rows; loadedAt[key]=Date.now();
+          loaded[key]=rows; loadedAt[key]=Date.now(); NEX_FAILED.delete(key);
           if(key==='quotes') renderQuotes(rows);
           if(key==='invoices') renderInvoices(rows);
           if(key==='jobs') renderJobs(rows);
@@ -368,7 +373,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
           if(key==='stock') renderStock(rows);
           updateStats(loaded); bindExpand(document); saveCache();
           document.getElementById('lastRefresh').textContent='Live from Google Sheets · '+fmtTime(Date.now());
-        }catch(err){ console.warn(key, err); }
+        }catch(err){ console.warn(key, err); if(!loaded[key]){ NEX_FAILED.add(key); updateStats(loaded); } }
       }));
     } finally { endRefresh(); }
   };
