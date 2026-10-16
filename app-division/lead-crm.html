@@ -295,7 +295,6 @@ async function loadLeads() {
     renderTable();
   } catch(e) {
     console.error('loadLeads error:', e);
-    var h=document.querySelector('.pg-sub'); if(h) h.textContent='Could not load leads — refresh to retry';
   }
 }
 
