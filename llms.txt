@@ -36,7 +36,7 @@ Manager chat: the owner says "Send Thabo the quote for the Polo brake pads" and 
 The demos do not show prices.
 
 ## Pricing — one plan only. Not VAT registered: no VAT is added.
-- Free trial: 14-day free trial. We cover the setup. You only pay if you choose to continue after the trial, and nothing is charged automatically. The trial simply ends unless you say yes. We'll give you the price before your trial starts.
+- Free trial: 14-day free trial. We cover the setup. You only pay if you choose to continue after the trial, and nothing is charged automatically. The trial simply ends unless you say yes.
 - Founder (first 10 clients): founders save 33% on the monthly and 67% on setup. The Founder rate is locked for 12 months, then moves to the standard monthly price at that time, with 30 days' written notice. After that, if our costs rise, the monthly fee rises by the same percentage, always with 30 days' written notice.
 - Included every month: 60 jobs and 300 chats (a job is one quote-to-paid cycle). WhatsApp messaging fees are included.
 - Top-ups: one top-up pack adds +250 chats and +50 jobs, one charge on the next invoice. Usage shows on the dashboard, with alerts at 80% and 100%. At 100% the AI keeps replying (never cut off) and the client is asked to top up. Usage resets monthly.
