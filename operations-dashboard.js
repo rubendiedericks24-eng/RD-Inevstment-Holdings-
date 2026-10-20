@@ -1,4 +1,4 @@
-/* NexAgent OS operations dashboard (self-contained; no external core, no access key in this file).
+/* NexAgent AI operations dashboard (self-contained; no external core, no access key in this file).
    Access: the client enters the PIN Ruben gave them. The PIN is sent once (POST body, never in a URL) to the
    feed, which checks it server-side (hashed + peppered, rate-limited) and returns a session token (6 h).
    Only that token is kept, in sessionStorage (this tab only). No sheet data is fetched before the PIN is
@@ -395,7 +395,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
 
 /* Usage panel (display-only, client view). Reads sheet tab "Usage" from the same feed (PIN session). Live load every
    refresh; sessionStorage cache is only a fallback when live fails. A missing tab shows "unavailable", never an error.
-   Top-ups: ONE pack = R350 = +250 chats AND +50 jobs. Limits and amount owed come from the Usage tab. */
+   Top-ups: one pack adds +250 chats AND +50 jobs. Limits come from the Usage tab. */
 (function(){
   if(window.__nexUsage) return; window.__nexUsage=1;
   var TIMEOUT_MS=12000, TZ='Africa/Johannesburg';
@@ -488,7 +488,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
         '<div class="top"><div><div class="name" style="margin-top:0">'+(esc(u.shop)||'—')+'</div>'+'<div class="meta">Workshop account · all client chats counted</div>'+'</div>'+pill+'</div>'+
         bar('AI chats',u.cu,u.cl,u.cp)+bar('Jobs',u.ju,u.jl,u.jp)+
         '<div class="u-foot"><span>Top-ups this month: '+esc(tu)+'</span><span class="u-owed">Top-ups owed: <b>'+rands(u.rand)+'</b></span></div>'+
-        (lv==='red'?'<div class="u-soft">Soft limit — the AI keeps replying. To top up, send TOPUP on WhatsApp: one R350 pack adds +250 chats and +50 jobs, one charge on the next invoice.</div>':'')+
+        (lv==='red'?'<div class="u-soft">Soft limit — the AI keeps replying. To top up, send TOPUP on WhatsApp: one top-up pack adds +250 chats and +50 jobs, one charge on the next invoice.</div>':'')+
       '</article>';
     }).join('');
     if(src) src.textContent='Sheet → Usage · '+st.note;

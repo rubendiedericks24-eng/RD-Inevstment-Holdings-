@@ -1,4 +1,4 @@
-/* NexAgent OS shared PIN session for the module pages (same session as /operations-dashboard.html).
+/* NexAgent AI shared PIN session for the module pages (same session as /operations-dashboard.html).
    The PIN is sent once (POST body) to the feed, which checks it server-side and returns a 6 h session token.
    Only the token is kept, in sessionStorage. No access key in this file. Without a token no sheet data is fetched. */
 (function(){

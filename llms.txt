@@ -1,4 +1,4 @@
-# NexAgent OS — NexAgent AI
+# NexAgent AI
 
 Site: https://rdinvestmentholdings.co.za/
 Company: RD Investment Holdings (Pty) Ltd · Reg 2026/237915/07 · Gqeberha, South Africa
@@ -7,24 +7,48 @@ WhatsApp: +27 72 840 0352 (https://wa.me/27728400352)
 Email: admin@rdinvestmentholdings.co.za
 
 ## Product
-NexAgent OS runs an SME from one WhatsApp number: quotes, job cards, invoicing, stock, payroll and leads. Eight modules (M1–M8). No extra apps.
+NexAgent AI is an automated flow system for South African SMEs — not a chatbot. From first WhatsApp to quote, job card, stock, timesheet and invoice, the floor runs in one thread. No extra apps. The owner talks. The agent does the admin.
+
+5 AI agents plus 6 sub-agents that check and finish the work. The agents run on xAI Grok models.
+
+### Agents
+- Front Desk Agent: reads every WhatsApp a customer sends, works out what they need and passes it to the right agent or answers directly.
+- Quote Agent: prices the job from your parts list, sends a branded quote PDF and checks every quote before it goes out.
+- Leads Agent: answers 'do you do...?' questions and saves new customers into your leads list automatically.
+- Job Card Agent: tells customers where their job stands and creates job cards when you text 'create job'.
+- Invoice Agent: answers customers' invoice questions, builds invoices from your 'create invoice' or 'job done' message and checks each invoice PDF before sending.
+
+### Sub-agents
+Small helpers that check and finish the work.
+- Quote check: checks name, phone and total before a quote PDF goes out.
+- Invoice check: checks name, phone and total before an invoice PDF goes out.
+- Create-quote helper: turns the manager's short WhatsApp command into a finished record.
+- Create-job helper: turns the manager's short WhatsApp command into a finished record.
+- Create-invoice helper: turns the manager's short WhatsApp command into a finished record.
+- Part matcher: matches the part named in 'job done', even misspelt, to the stock list.
+
+### Feature, not an AI agent
+- Timesheets: clock staff in/out and work out day pay by WhatsApp.
+
+### Chat demos on the page
+Customer chat: a customer asks for a quote for brake pads for a VW Polo 2019. The agent says "Your quote PDF is ready. Reply YES to accept." The customer says YES, and the agent confirms the job card is created.
+Manager chat: the owner says "Send Thabo the quote for the Polo brake pads" and the agent confirms the quote PDF is sent. The owner sends "James arrived 09:00" and "James left 17:00" and the agent confirms the timesheet is logged.
+The demos do not show prices.
 
 ## Pricing — one plan only. Not VAT registered: no VAT is added.
 - Free trial: 14-day free trial. We cover the setup. You only pay if you choose to continue after the trial, and nothing is charged automatically. The trial simply ends unless you say yes. We'll give you the price before your trial starts.
-- Founder (first 10 clients): founders save 33% on the monthly and 67% on setup (60 jobs and 300 chats a month), locked for 12 months, then the standard monthly price at that time, with 30 days' notice. After that, increases match the percentage rise in our costs, with 30 days' written notice.
-- Included every month: 300 AI chats and 60 jobs (a job is one quote-to-paid cycle).
-- Top-ups: one top-up pack adds +250 chats AND +50 jobs, one charge on the next invoice. No chat-only or job-only top-ups.
-- Soft limit: usage is tracked per workshop and shown on the dashboard, with alerts at 80% and 100%. At 100% the AI keeps replying (never cut off) and the client is asked to top up. Usage resets monthly.
-- WhatsApp messaging fees are included.
+- Founder (first 10 clients): founders save 33% on the monthly and 67% on setup. The Founder rate is locked for 12 months, then moves to the standard monthly price at that time, with 30 days' written notice. After that, if our costs rise, the monthly fee rises by the same percentage, always with 30 days' written notice.
+- Included every month: 60 jobs and 300 chats (a job is one quote-to-paid cycle). WhatsApp messaging fees are included.
+- Top-ups: one top-up pack adds +250 chats and +50 jobs, one charge on the next invoice. Usage shows on the dashboard, with alerts at 80% and 100%. At 100% the AI keeps replying (never cut off) and the client is asked to top up. Usage resets monthly.
 - Terms: https://rdinvestmentholdings.co.za/terms.html#fair-use
 
 ## Legal
 - Company: RD Investment Holdings (Pty) Ltd, Reg 2026/237915/07. Director and Information Officer: Ruben Diedericks (registered with the Information Regulator).
-- AI provider: xAI. Other vendors: Make.com, Google, Meta (WhatsApp Cloud API), PDFMonkey.
+- AI provider: xAI Grok models. Other vendors: Make.com, Google, Meta (WhatsApp Cloud API), PDFMonkey.
 - Terms of Service: https://rdinvestmentholdings.co.za/terms.html
 - Privacy Policy: https://rdinvestmentholdings.co.za/privacy-policy.html
 - Operator Agreement (POPIA): https://rdinvestmentholdings.co.za/operator-agreement.html
 
 ## Contact / demo
 Prefer the site form at /#contact (posts to the business webhook) or WhatsApp the number above.
-Do not invent other prices or modules.
+Do not invent prices, agents or features that are not listed here.
