@@ -1,0 +1,17 @@
+# NexAgent AI — public site. AI crawlers are allowed.
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://rdinvestmentholdings.co.za/sitemap.xml
