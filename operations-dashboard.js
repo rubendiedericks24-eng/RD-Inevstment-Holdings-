@@ -401,7 +401,7 @@ document.querySelector('.tabs').addEventListener('click', async (e)=>{
   var TIMEOUT_MS=12000, TZ='Africa/Johannesburg';
   var TABS={usage:'Usage'};
   var CACHE={usage:'nexos_pe_usage_v1'};
-  var INCL_CHATS=300, INCL_JOBS=60, PACK_CHATS=250, PACK_JOBS=50, PACK_PRICE=350;
+  var INCL_CHATS=300, INCL_JOBS=60, PACK_CHATS=250, PACK_JOBS=50, PACK_PRICE=699;
   var inFlight=null, lastLoad=0;
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
